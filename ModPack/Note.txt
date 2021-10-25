@@ -1,0 +1,74 @@
+﻿public static bool StageLibraryFloorModel_AddUnitDefault(StageLibraryFloorModel __instance, StageModel stage, LibraryFloorModel floor, ref UnitDataModel data)
+        {
+            if (data.isSephirah && stage.ClassInfo.id == new LorId(packageId, 1) && floor.Sephirah == SephirahType.Hod)
+            {
+                UnitDataModel unitDataModel = new UnitDataModel(9100501, floor.Sephirah, true);
+                unitDataModel.SetTemporaryPlayerUnitByBook(9100501);
+                unitDataModel.bookItem.equipeffect.PassiveList.Remove(unitDataModel.bookItem.equipeffect.PassiveList.Find((LorId x) => x == new LorId(1005015)));
+                unitDataModel.isSephirah = true;
+                unitDataModel.SetCustomName(Singleton<CharactersNameXmlList>.Instance.GetName(40));
+                unitDataModel.forceItemChangeLock = true;
+                data = unitDataModel;
+            }
+            return true;
+        }
+
+        method = typeof(OldSamuraiInit).GetMethod("StageLibraryFloorModel_AddUnitDefault");
+            harmony.Patch(typeof(StageLibraryFloorModel).GetMethod("AddUnitDefault", AccessTools.all), new HarmonyMethod(method), null, null, null, null);
+
+            private void DestroyAura()
+        {
+            if (_aura != null && _aura.gameObject != null)
+            {
+                UnityEngine.Object.Destroy(_aura.gameObject);
+            }
+            _aura = null;
+        }
+
+        //private CreatureDlgEffectUI _dlgEffect;
+        //private List<string> _dlgIdList = new List<string>();
+        //private int _dlgIdx;
+        //private int _min;
+        //private int _max;
+        //private int _lastRnd;
+        //private bool _phaseChanged;
+
+        //public void Init(int mn, int mx)
+        //{
+        //    _lastRnd = -1;
+        //    _min = mn;
+        //    _max = mx;
+        //    _dlgIdx = 0;
+        //    // Phase 2
+        //    _dlgIdList.Add("This isn't how it should ended!");
+        //    _dlgIdList.Add("Ahhhh!!!");
+        //    _dlgIdList.Add("Father, I'll not forgive you...");
+        //    _dlgIdList.Add("No one will stand in my way!");
+        //    CreateDialog();
+        //    Debug.LogError(SingletonBehavior<BattleSceneRoot>.Instance.currentMapObject == this);
+        //    SingletonBehavior<CreatureDlgManagerUI>.Instance.Init(SingletonBehavior<BattleSceneRoot>.Instance.currentMapObject == this);
+        //    _phaseChanged = true;
+        //}
+        //public void CreateDialog()
+        //{
+        //    var rnd = new System.Random();
+        //    _dlgIdx = rnd.Next(_min, _max);
+        //    while (_lastRnd == _dlgIdx && _lastRnd != -1)
+        //    {
+        //        _dlgIdx = rnd.Next(_min, _max);
+        //    }
+        //    var text = _dlgIdList[_dlgIdx];
+        //    if (_dlgEffect != null && _dlgEffect.gameObject != null)
+        //    {
+        //        _dlgEffect.FadeOut();
+        //    }
+        //    _dlgEffect = SingletonBehavior<CreatureDlgManagerUI>.Instance.SetDlg(text);
+        //    _lastRnd = _dlgIdx;
+        //}
+        //public override void OnRoundStart()
+        //{
+        //    base.OnRoundStart();
+        //    Debug.LogError(SingletonBehavior<BattleSceneRoot>.Instance.currentMapObject == this);
+        //    if (_phaseChanged)
+        //        SingletonBehavior<CreatureDlgManagerUI>.Instance.Init(SingletonBehavior<BattleSceneRoot>.Instance.currentMapObject == this);
+        //}
