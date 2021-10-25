@@ -1,0 +1,3 @@
+[submodule "ModPack/Utilities/CustomMapUtility"]
+	path = ModPack/Utilities/CustomMapUtility
+	url = https://github.com/uGuardian/LoR_CustomMapUtility.git
