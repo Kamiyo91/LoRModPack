@@ -10,6 +10,9 @@ using ModPack21341.Models;
 
 namespace ModPack21341.Characters
 {
+    public class PassiveAbility_DropDesc : PassiveAbilityBase
+    {
+    }
     public class PassiveAbility_Kurosawa_Blade : PassiveAbilityBase
     {
         public override void BeforeRollDice(BattleDiceBehavior behavior)
@@ -151,7 +154,6 @@ namespace ModPack21341.Characters
             }
         }
     }
-
     #region EmotionalBurstPassive
     public class PassiveAbility_Happy : PassiveAbilityBase
     {
@@ -305,6 +307,12 @@ namespace ModPack21341.Characters
     public class PassiveAbility_EmotionalBurst : PassiveAbilityBase
     {
         private int _count;
+        private const EmotionBufType Happy = EmotionBufType.Happy;
+        private const EmotionBufType Sad = EmotionBufType.Sad;
+        private const EmotionBufType Angry = EmotionBufType.Angry;
+        private const EmotionBufType Neutral = EmotionBufType.Neutral;
+        private readonly List<EmotionBufType> _onlyEnemy = new List<EmotionBufType> { Happy, Sad, Angry, Neutral };
+        private EmotionBufType _enemyBuff;
         public override void OnWaveStart()
         {
             InitBufEnemy();
@@ -359,13 +367,6 @@ namespace ModPack21341.Characters
             }
             _count++;
         }
-
-        private const EmotionBufType Happy = EmotionBufType.Happy;
-        private const EmotionBufType Sad = EmotionBufType.Sad;
-        private const EmotionBufType Angry = EmotionBufType.Angry;
-        private const EmotionBufType Neutral = EmotionBufType.Neutral;
-        private readonly List<EmotionBufType> _onlyEnemy = new List<EmotionBufType> { Happy, Sad, Angry, Neutral };
-        private EmotionBufType _enemyBuff;
     }
     #endregion
 }

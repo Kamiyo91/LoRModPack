@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ModPack21341.Models
+﻿namespace ModPack21341.Models
 {
     public class MapModel
     {

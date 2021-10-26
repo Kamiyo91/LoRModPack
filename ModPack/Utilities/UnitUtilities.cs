@@ -131,7 +131,7 @@ namespace ModPack21341.Utilities
                 unit.UnitData.unitData.EquipCustomCoreBook(originalBook);
             unit.UnitData.unitData.battleDialogModel = originalDialog;
             if (isDead)
-                unit.Die();
+                unit.DieFake();
         }
 
         public static void ReturnToTheOriginalBaseSkin(BattleUnitModel owner, string originalSkinName, BattleDialogueModel dlg)

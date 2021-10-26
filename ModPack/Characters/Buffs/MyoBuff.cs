@@ -2,22 +2,30 @@
 {
     public class BattleUnitBuf_MyoBerserkCustomCheck : BattleUnitBuf
     {
+        private bool _init;
         public override KeywordBuf bufType => KeywordBuf.MyoBerserk;
         protected override string keywordId => "MyoBerserk";
         public override void Init(BattleUnitModel owner)
         {
             base.Init(owner);
-            if(owner.bufListDetail.GetActivatedBufList().Exists(x => x is DiceCardSelfAbility_myoBerserk.BattleUnitBuf_myoBerserk)) Destroy();
-            if (string.IsNullOrEmpty(owner.UnitData.unitData.workshopSkin) &&
-                owner.UnitData.unitData.bookItem == owner.UnitData.unitData.CustomBookItem)
+            _init = false;
+        }
+
+        public override void OnRoundEndTheLast()
+        {
+            if (_init) return;
+            if (_owner.bufListDetail.GetActivatedBufList().Exists(x => x is DiceCardSelfAbility_myoBerserk.BattleUnitBuf_myoBerserk)) Destroy();
+            if (string.IsNullOrEmpty(_owner.UnitData.unitData.workshopSkin) &&
+                _owner.UnitData.unitData.bookItem == _owner.UnitData.unitData.CustomBookItem && _owner.UnitData.unitData.bookItem.BookId.id == 250024 || _owner.UnitData.unitData.CustomBookItem.BookId.id == 250024)
             {
-                owner.view.SetAltSkin("Myo2");
-                owner.view.charAppearance.SetAltMotion(ActionDetail.Fire, ActionDetail.Penetrate);
+                _owner.view.SetAltSkin("Myo2");
+                _owner.view.charAppearance.SetAltMotion(ActionDetail.Fire, ActionDetail.Penetrate);
             }
             foreach (var battleDiceCardModel in _owner.allyCardDetail.GetAllDeck())
             {
                 battleDiceCardModel.ChangeFarToNearForMyo();
             }
+            _init = true;
         }
 
         public override void OnRoundStart()

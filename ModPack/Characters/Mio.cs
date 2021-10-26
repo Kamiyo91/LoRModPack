@@ -1,13 +1,9 @@
 ﻿using System.Linq;
-using System.Threading.Tasks;
-using CustomMapUtility;
 using LOR_XML;
 using ModPack21341.Characters.Buffs;
 using ModPack21341.Harmony;
 using ModPack21341.StageManager;
-using ModPack21341.StageManager.MapManager.MioStageMaps;
 using ModPack21341.Utilities;
-using UnityEngine;
 
 namespace ModPack21341.Characters
 {

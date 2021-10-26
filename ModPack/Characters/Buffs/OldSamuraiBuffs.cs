@@ -28,6 +28,10 @@ namespace ModPack21341.Characters.Buffs
             _init = true;
             ChangeToSamuraiEgoMap();
             MapUtilities.PrepareChangeBGM("Hornet.mp3", ref _changeBGM);
+        }
+
+        public override void OnRoundStart()
+        {
             MapUtilities.CheckAndChangeBGM(ref _changeBGM);
         }
 

@@ -62,7 +62,7 @@ namespace ModPack21341.Harmony
             }
             if (__instance.BookId == new LorId(PackageId, 10000005))
             {
-                __result = Resources.Load<Sprite>("Sprites/Books/Thumb/170313");
+                __result = ArtWorks["Knife_Default"];
                 return false;
             }
             if (__instance.BookId == new LorId(PackageId, 10000013))
@@ -83,6 +83,11 @@ namespace ModPack21341.Harmony
             if (__instance.BookId == new LorId(PackageId, 10000016))
             {
                 __result = Resources.Load<Sprite>("Sprites/Books/Thumb/250022");
+                return false;
+            }
+            if (__instance.BookId == new LorId(PackageId, 10000006))
+            {
+                __result = Resources.Load<Sprite>("Sprites/Books/Thumb/250035");
                 return false;
             }
             return true;
