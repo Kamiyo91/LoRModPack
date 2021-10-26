@@ -90,6 +90,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StageManager\MapManager\MioStageMaps\MioMapManager.cs" />
     <Compile Include="StageManager\MapManager\OldSamuraiStageMaps\OldSamuraiMapManager.cs" />
+    <Compile Include="StageManager\MapManager\OldSamuraiStageMaps\OldSamuraiPlayerMapManager.cs" />
     <Compile Include="StageManager\MioStageManager.cs" />
     <Compile Include="StageManager\OldSamuraiStageManager.cs" />
     <Compile Include="Utilities\CustomMapUtility\Assemblies\CustomMapUtility.cs" />

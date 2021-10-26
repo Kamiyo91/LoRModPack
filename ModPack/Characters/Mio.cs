@@ -181,7 +181,6 @@ namespace ModPack21341.Characters
         }
         public override void OnWaveStart()
         {
-            UnitUtilities.TestingUnitValues();
             owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 903));
             InitVariables();
             InitDlgAndCheckSkin();

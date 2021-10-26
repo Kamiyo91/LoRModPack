@@ -14,8 +14,9 @@ namespace ModPack21341.Utilities
         public static void ChangeMap(MapModel model)
         {
             Singleton<StageController>.Instance.CheckMapChange();
-            CustomMapHandler.InitCustomMap(model.Stage, model.Component);
             if (!Singleton<StageController>.Instance.CanChangeMap()) return;
+            if (!model.OneTurnEgo && CanChangeMapCustom(2)) return;
+            CustomMapHandler.InitCustomMap(model.Stage, model.Component);
             if (model.IsPlayer && !model.OneTurnEgo)
             {
                 PutValueInEgoMap(model.Stage);
@@ -74,6 +75,9 @@ namespace ModPack21341.Utilities
                     });
             });
         }
+
+        private static bool CanChangeMapCustom(int id) => Singleton<StageController>.Instance.GetStageModel().ClassInfo.id == new LorId(ModPack21341Init.PackageId, id);
+        
         public static void CheckAndChangeBGM(ref Task ChangeBGM)
         {
             if (ChangeBGM == null) return;

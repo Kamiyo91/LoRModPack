@@ -135,7 +135,7 @@ namespace ModPack21341.Characters
 
             UnitUtilities.RefreshCombatUI();
         }
-        public override void OnRoundEndTheLast()
+        public override void OnRoundEnd()
         {
             if (!_summonGhosts || owner.faction == Faction.Enemy) return;
             SummonSamuraiGhost();
