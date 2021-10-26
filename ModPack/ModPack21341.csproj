@@ -73,6 +73,7 @@
     <Compile Include="Characters\CardAbilities\CommonCardAbilities.cs" />
     <Compile Include="Characters\CardAbilities\GeburaCardAbilities.cs" />
     <Compile Include="Characters\CardAbilities\MioCardAbilities.cs" />
+    <Compile Include="Characters\CardAbilities\MyoCardAbility.cs" />
     <Compile Include="Characters\CardAbilities\OldSamuraiCardAbilities.cs" />
     <Compile Include="Characters\CardAbilities\RolandCardAbilities.cs" />
     <Compile Include="Characters\CommonPassives.cs" />
@@ -81,23 +82,24 @@
     <Compile Include="Characters\OldSamurai.cs" />
     <Compile Include="Characters\Roland.cs" />
     <Compile Include="Harmony\ModPack21341Init.cs" />
-    <Compile Include="Models\Wav.cs" />
     <Compile Include="Models\MapModel.cs" />
     <Compile Include="Models\UnitModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StageManager\MapManager\DlgManager\MioDlgManager.cs" />
-    <Compile Include="StageManager\MapManager\DlgManager\OldSamuraiDlgManager.cs" />
     <Compile Include="StageManager\MapManager\MioStageMaps\MioMapManager.cs" />
     <Compile Include="StageManager\MapManager\OldSamuraiStageMaps\OldSamuraiMapManager.cs" />
     <Compile Include="StageManager\MioStageManager.cs" />
     <Compile Include="StageManager\OldSamuraiStageManager.cs" />
-    <Compile Include="Utilities\AudioUtilities.cs" />
+    <Compile Include="Utilities\CustomMapUtility\Assemblies\CustomMapUtility.cs" />
+    <Compile Include="Utilities\CustomMapUtility\Assemblies\Wav.cs" />
     <Compile Include="Utilities\EmotionalBurstUtilities.cs" />
     <Compile Include="Utilities\MapUtilities.cs" />
     <Compile Include="Utilities\UnitUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Note.txt" />
+    <Content Include="Utilities\CustomMapUtility\Resource\Stage\Template\Background.png" />
+    <Content Include="Utilities\CustomMapUtility\Resource\Stage\Template\Floor.png" />
+    <Content Include="Utilities\CustomMapUtility\Resource\Stage\Template\FloorUnder.png" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />

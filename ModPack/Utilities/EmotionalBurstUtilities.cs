@@ -8,17 +8,17 @@ namespace ModPack21341.Utilities
     {
         public static void RemoveEmotionalBurstCards(BattleUnitModel unit)
         {
-            unit.personalEgoDetail.RemoveCard(new LorId(ModPack21341Init.packageId, 906));
-            unit.personalEgoDetail.RemoveCard(new LorId(ModPack21341Init.packageId, 907));
-            unit.personalEgoDetail.RemoveCard(new LorId(ModPack21341Init.packageId, 908));
-            unit.personalEgoDetail.RemoveCard(new LorId(ModPack21341Init.packageId, 909));
+            unit.personalEgoDetail.RemoveCard(new LorId(ModPack21341Init.PackageId, 906));
+            unit.personalEgoDetail.RemoveCard(new LorId(ModPack21341Init.PackageId, 907));
+            unit.personalEgoDetail.RemoveCard(new LorId(ModPack21341Init.PackageId, 908));
+            unit.personalEgoDetail.RemoveCard(new LorId(ModPack21341Init.PackageId, 909));
         }
         public static void AddEmotionalBurstCards(BattleUnitModel unit)
         {
-            unit.personalEgoDetail.AddCard(new LorId(ModPack21341Init.packageId, 906));
-            unit.personalEgoDetail.AddCard(new LorId(ModPack21341Init.packageId, 907));
-            unit.personalEgoDetail.AddCard(new LorId(ModPack21341Init.packageId, 908));
-            unit.personalEgoDetail.AddCard(new LorId(ModPack21341Init.packageId, 909));
+            unit.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 906));
+            unit.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 907));
+            unit.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 908));
+            unit.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 909));
         }
         public static void RemoveAllEmotionalPassives(BattleUnitModel unit, EmotionBufType type = EmotionBufType.Neutral)
         {

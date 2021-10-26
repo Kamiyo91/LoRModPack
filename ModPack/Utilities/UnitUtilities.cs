@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
-using Battle.CreatureEffect;
 using HarmonyLib;
 using LOR_XML;
 using ModPack21341.Characters.Buffs;
@@ -13,14 +12,14 @@ using UI;
 
 namespace ModPack21341.Utilities
 {
-    public class UnitUtilities
+    public static class UnitUtilities
     {
         public static void ChangeDeck(BattleUnitModel owner, List<int> newDeck)
         {
             owner.allyCardDetail.ExhaustAllCards();
             foreach (var cardId in newDeck)
             {
-                owner.allyCardDetail.AddNewCardToDeck(new LorId(ModPack21341Init.packageId, cardId));
+                owner.allyCardDetail.AddNewCardToDeck(new LorId(ModPack21341Init.PackageId, cardId));
             }
         }
         public static void PhaseChangeAllPlayerUnitRecoverBonus(int hp, int stagger, int light, bool fullLightRecover = false)
@@ -55,7 +54,7 @@ namespace ModPack21341.Utilities
         }
         public static void AddNewUnitEnemySide(UnitModel unit)
         {
-            var unitWithIndex = Singleton<StageController>.Instance.AddNewUnit(Faction.Enemy, new LorId(ModPack21341Init.packageId, unit.Id), unit.Pos);
+            var unitWithIndex = Singleton<StageController>.Instance.AddNewUnit(Faction.Enemy, new LorId(ModPack21341Init.PackageId, unit.Id), unit.Pos);
             if (unit.CreatureMapIsActivated)
                 unitWithIndex.view.ChangeScale(unit.ScaleSize);
             unitWithIndex.emotionDetail.SetEmotionLevel(unit.EmotionLevel);
@@ -78,7 +77,7 @@ namespace ModPack21341.Utilities
         {
             var allyUnit = Singleton<StageController>.Instance.CreateLibrarianUnit_fromBattleUnitData(unit.Index);
             allyUnit.passiveDetail.DestroyPassiveAll();
-            allyUnit.UnitData.unitData.SetTemporaryPlayerUnitByBook(new LorId(ModPack21341Init.packageId, unit.Id));
+            allyUnit.UnitData.unitData.SetTemporaryPlayerUnitByBook(new LorId(ModPack21341Init.PackageId, unit.Id));
             allyUnit.UnitData.unitData.SetTempName(unit.Name);
             originalModel = allyUnit.customBook;
             allyUnit.index = unit.Pos;
@@ -87,7 +86,7 @@ namespace ModPack21341.Utilities
             allyUnit.UnitData.unitData.workshopSkin = "";
             if (unit.UseDefaultHead)
                 allyUnit.UnitData.unitData.customizeData.SetCustomData(false);
-            allyUnit.UnitData.unitData.EquipCustomCoreBook(new BookModel(Singleton<BookXmlList>.Instance.GetData(new LorId(ModPack21341Init.packageId, unit.Id))));
+            allyUnit.UnitData.unitData.EquipCustomCoreBook(new BookModel(Singleton<BookXmlList>.Instance.GetData(new LorId(ModPack21341Init.PackageId, unit.Id))));
             allyUnit.view.CreateSkin();
             allyUnit.emotionDetail.SetEmotionLevel(unit.EmotionLevel);
             if (unit.LockedEmotion)
@@ -120,7 +119,7 @@ namespace ModPack21341.Utilities
             }
             allyUnit.OnWaveStart();
             if (unit.CustomDialog)
-                allyUnit.UnitData.unitData.InitBattleDialogByDefaultBook(new LorId(ModPack21341Init.packageId, unit.DialogId));
+                allyUnit.UnitData.unitData.InitBattleDialogByDefaultBook(new LorId(ModPack21341Init.PackageId, unit.DialogId));
             return allyUnit;
         }
         public static void ReturnToTheOriginalPlayerUnit(BattleUnitModel unit, BookModel originalBook, BattleDialogueModel originalDialog, bool isDead = false)
@@ -144,7 +143,7 @@ namespace ModPack21341.Utilities
         }
         public static void ChangeCustomSkin(BattleUnitModel owner, int skinId)
         {
-            owner.UnitData.unitData.SetTemporaryPlayerUnitByBook(new LorId(ModPack21341Init.packageId, skinId));
+            owner.UnitData.unitData.SetTemporaryPlayerUnitByBook(new LorId(ModPack21341Init.PackageId, skinId));
             owner.view.CreateSkin();
         }
 
@@ -160,19 +159,22 @@ namespace ModPack21341.Utilities
             RefreshCombatUI();
             owner.UnitData.unitData.InitBattleDialogByDefaultBook(baseDlg
                 ? new LorId(id)
-                : new LorId(ModPack21341Init.packageId, id));
+                : new LorId(ModPack21341Init.PackageId, id));
             owner.view.DisplayDlg(DialogType.START_BATTLE, "0");
         }
         public static void TestingUnitValues()
         {
-            var playerUnit = BattleObjectManager.instance.GetAliveList(Faction.Player).FirstOrDefault();
+            var playerUnit = BattleObjectManager.instance.GetAliveList(Faction.Player);
             if (playerUnit == null) return;
-            playerUnit.bufListDetail.AddBufWithoutDuplication(new BattleUnitBuf_ImmortalForTestingBuf());
-            playerUnit.emotionDetail.SetEmotionLevel(5);
+            foreach (var unit in playerUnit)
+            {
+                unit.bufListDetail.AddBufWithoutDuplication(new BattleUnitBuf_ImmortalForTestingBuf());
+                unit.emotionDetail.SetEmotionLevel(5);
+            }
         }
         public static void ReadyCounterCard(BattleUnitModel owner, int id)
         {
-            var card = BattleDiceCardModel.CreatePlayingCard(ItemXmlDataList.instance.GetCardItem(new LorId(ModPack21341Init.packageId, id)));
+            var card = BattleDiceCardModel.CreatePlayingCard(ItemXmlDataList.instance.GetCardItem(new LorId(ModPack21341Init.PackageId, id)));
             owner.cardSlotDetail.keepCard.AddBehaviours(card, card.CreateDiceCardBehaviorList());
             owner.allyCardDetail.ExhaustCardInHand(card);
         }
@@ -191,7 +193,7 @@ namespace ModPack21341.Utilities
         public static void DeckVariantActivated(BattleUnitModel owner)
         {
             if (owner.personalEgoDetail.GetHand().Exists(x => x.GetID().id == 901)) return;
-            owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.packageId, 901));
+            owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 901));
         }
         public static List<int> GetSamuraiCardsId() => new List<int> { 7, 7, 3, 3, 4, 4, 5, 5, 6 };
 
@@ -201,7 +203,7 @@ namespace ModPack21341.Utilities
         public static void AddBuffInfo()
         {
             var dictionary = typeof(BattleEffectTextsXmlList).GetField("_dictionary", AccessTools.all)?.GetValue(Singleton<BattleEffectTextsXmlList>.Instance) as Dictionary<string, BattleEffectText>;
-            var files = new DirectoryInfo(ModPack21341Init.path + "/BattleEffectTexts").GetFiles();
+            var files = new DirectoryInfo(ModPack21341Init.Path + "/BattleEffectTexts").GetFiles();
             foreach (var t in files)
             {
                 using (var stringReader = new StringReader(File.ReadAllText(t.FullName)))

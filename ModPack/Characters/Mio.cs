@@ -1,34 +1,16 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
+using CustomMapUtility;
 using LOR_XML;
 using ModPack21341.Characters.Buffs;
 using ModPack21341.Harmony;
 using ModPack21341.StageManager;
+using ModPack21341.StageManager.MapManager.MioStageMaps;
 using ModPack21341.Utilities;
-
+using UnityEngine;
 
 namespace ModPack21341.Characters
 {
-    //Not Used
-    public class PassiveAbility_CorruptionResistAtk : PassiveAbilityBase
-    {
-        public override void Init(BattleUnitModel self)
-        {
-            base.Init(self);
-            Hide();
-        }
-        public override void BeforeRollDice(BattleDiceBehavior behavior)
-        {
-            if (!behavior.card.target.bufListDetail.GetActivatedBufList()
-                .Exists(x => x is BattleUnitBuf_CorruptedGodAuraRelease)) return;
-            var battleCardResultLog = owner.battleCardResultLog;
-            battleCardResultLog?.SetPassiveAbility(this);
-            behavior.ApplyDiceStatBonus(
-                new DiceStatBonus()
-                {
-                    power = 3
-                });
-        }
-    }
     public class PassiveAbility_CorruptionResist : PassiveAbilityBase
     {
         private bool _dmgResist;
@@ -142,24 +124,24 @@ namespace ModPack21341.Characters
 
         private void OnAttackEgoCardUse(BattlePlayingCardDataInUnitModel curCard)
         {
-            if (curCard.card.GetID() == new LorId(ModPack21341Init.packageId, 904))
+            if (curCard.card.GetID() == new LorId(ModPack21341Init.PackageId, 904))
             {
                 owner.personalEgoDetail.RemoveCard(curCard.card.GetID());
             }
-            if (curCard.card.GetID() == new LorId(ModPack21341Init.packageId, 19) || curCard.card.GetID() == new LorId(ModPack21341Init.packageId, 25))
+            if (curCard.card.GetID() == new LorId(ModPack21341Init.PackageId, 19) || curCard.card.GetID() == new LorId(ModPack21341Init.PackageId, 25))
             {
                 owner.allyCardDetail.ExhaustACardAnywhere(curCard.card);
             }
-            if (curCard.card.GetID() == new LorId(ModPack21341Init.packageId, 905))
+            if (curCard.card.GetID() == new LorId(ModPack21341Init.PackageId, 905))
                 _usedMassEgo = true;
         }
         private void OnEgoCardUse(BattlePlayingCardDataInUnitModel curCard)
         {
-            if (curCard.card.GetID() != new LorId(ModPack21341Init.packageId, 903)) return;
+            if (curCard.card.GetID() != new LorId(ModPack21341Init.PackageId, 903)) return;
             _auraCheck = true;
-            owner.personalEgoDetail.RemoveCard(new LorId(ModPack21341Init.packageId, 903));
-            owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.packageId, 904));
-            owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.packageId, 905));
+            owner.personalEgoDetail.RemoveCard(new LorId(ModPack21341Init.PackageId, 903));
+            owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 904));
+            owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 905));
         }
 
         private void StartEgoTransform()
@@ -177,7 +159,7 @@ namespace ModPack21341.Characters
 
         private void ActiveAwakeningDeckPassive()
         {
-            if (!(owner.passiveDetail.AddPassive(new LorId(ModPack21341Init.packageId, 10)) is PassiveAbility_CheckDeck
+            if (!(owner.passiveDetail.AddPassive(new LorId(ModPack21341Init.PackageId, 10)) is PassiveAbility_CheckDeck
                 passive)) return;
             passive.Init(owner);
             passive.SaveAwakenedDeck(UnitUtilities.GetMioCardsId());
@@ -203,7 +185,8 @@ namespace ModPack21341.Characters
         }
         public override void OnWaveStart()
         {
-            owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.packageId, 903));
+            UnitUtilities.TestingUnitValues();
+            owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 903));
             InitVariables();
             InitDlgAndCheckSkin();
         }
@@ -211,7 +194,7 @@ namespace ModPack21341.Characters
         private void InitDlgAndCheckSkin()
         {
             if (owner.faction == Faction.Player)
-                owner.UnitData.unitData.InitBattleDialogByDefaultBook(new LorId(ModPack21341Init.packageId, 202));
+                owner.UnitData.unitData.InitBattleDialogByDefaultBook(new LorId(ModPack21341Init.PackageId, 202));
             if (!string.IsNullOrEmpty(owner.UnitData.unitData.workshopSkin) ||
                 owner.UnitData.unitData.bookItem == owner.UnitData.unitData.CustomBookItem) return;
             owner.view.ChangeSkin(owner.UnitData.unitData.CustomBookItem.GetCharacterName());
@@ -233,7 +216,7 @@ namespace ModPack21341.Characters
         private void CheckMassAttackCard()
         {
             if (_awakened)
-                _ = owner.allyCardDetail.GetHand().Exists(x => x.GetID() == new LorId(ModPack21341Init.packageId, 25)) ? _count = 4 : _count++;
+                _ = owner.allyCardDetail.GetHand().Exists(x => x.GetID() == new LorId(ModPack21341Init.PackageId, 25)) ? _count = 4 : _count++;
         }
         public void SetAwakened(bool status) => _awakened = status;
         public void SetCountValue(int value) => _count = value;
@@ -252,7 +235,7 @@ namespace ModPack21341.Characters
             if (!_awakened || _count < 4 || owner.IsBreakLifeZero() || !BattleObjectManager.instance
                 .GetAliveList(Faction.Player).Any(x => x.bufListDetail.IsTargetable())) return;
             _count = 0;
-            origin = BattleDiceCardModel.CreatePlayingCard(ItemXmlDataList.instance.GetCardItem(new LorId(ModPack21341Init.packageId, 25)));
+            origin = BattleDiceCardModel.CreatePlayingCard(ItemXmlDataList.instance.GetCardItem(new LorId(ModPack21341Init.PackageId, 25)));
         }
 
         public override void OnLevelUpEmotion() => AddAttackEgoCard();
@@ -260,7 +243,7 @@ namespace ModPack21341.Characters
         private void AddAttackEgoCard()
         {
             if (owner.emotionDetail.EmotionLevel == 5)
-                owner.allyCardDetail.AddNewCard(new LorId(ModPack21341Init.packageId, 19));
+                owner.allyCardDetail.AddNewCard(new LorId(ModPack21341Init.PackageId, 19));
         }
     }
     public class PassiveAbility_FragmentOfGod : PassiveAbilityBase

@@ -49,7 +49,7 @@ namespace ModPack21341.Characters.CardAbilities
                     passiveHappy.ChangeNameAndSetStacks(stacks + 1);
                 return;
             }
-            var passive = unit.passiveDetail.AddPassive(new LorId(ModPack21341Init.packageId, 19)) as PassiveAbility_Happy;
+            var passive = unit.passiveDetail.AddPassive(new LorId(ModPack21341Init.PackageId, 19)) as PassiveAbility_Happy;
             passive?.ChangeNameAndSetStacks(1);
             unit.passiveDetail.OnCreated();
         }
@@ -74,7 +74,7 @@ namespace ModPack21341.Characters.CardAbilities
                     passiveSad.ChangeNameAndSetStacks(stacks + 1);
                 return;
             }
-            var passive = unit.passiveDetail.AddPassive(new LorId(ModPack21341Init.packageId, 22)) as PassiveAbility_Sad;
+            var passive = unit.passiveDetail.AddPassive(new LorId(ModPack21341Init.PackageId, 22)) as PassiveAbility_Sad;
             passive?.ChangeNameAndSetStacks(1);
             unit.passiveDetail.OnCreated();
         }
@@ -99,7 +99,7 @@ namespace ModPack21341.Characters.CardAbilities
                     passiveAngry.ChangeNameAndSetStacks(stacks + 1);
                 return;
             }
-            var passive = unit.passiveDetail.AddPassive(new LorId(ModPack21341Init.packageId, 21)) as PassiveAbility_Angry;
+            var passive = unit.passiveDetail.AddPassive(new LorId(ModPack21341Init.PackageId, 21)) as PassiveAbility_Angry;
             passive?.ChangeNameAndSetStacks(1);
             unit.passiveDetail.OnCreated();
         }
@@ -122,7 +122,7 @@ namespace ModPack21341.Characters.CardAbilities
 
         private static void AddNeutralPassive(BattleUnitModel unit)
         {
-            unit.passiveDetail.AddPassive(new LorId(ModPack21341Init.packageId, 20));
+            unit.passiveDetail.AddPassive(new LorId(ModPack21341Init.PackageId, 20));
             unit.passiveDetail.OnCreated();
         }
     }

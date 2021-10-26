@@ -123,7 +123,7 @@ namespace ModPack21341.Characters
             }
             foreach (var cardId in _awakenedDeck.Where(cardId => cardId < 100))
             {
-                owner.allyCardDetail.AddNewCardToDeck(new LorId(ModPack21341Init.packageId, cardId));
+                owner.allyCardDetail.AddNewCardToDeck(new LorId(ModPack21341Init.PackageId, cardId));
             }
         }
         public void SaveAwakenedDeck(List<int> awakenedDeck) => _awakenedDeck = awakenedDeck;
@@ -136,7 +136,7 @@ namespace ModPack21341.Characters
         private void ChangeHodDialog()
         {
             _dlg = owner.UnitData.unitData.battleDialogModel;
-            owner.UnitData.unitData.InitBattleDialogByDefaultBook(new LorId(ModPack21341Init.packageId, 200));
+            owner.UnitData.unitData.InitBattleDialogByDefaultBook(new LorId(ModPack21341Init.PackageId, 200));
             owner.view.DisplayDlg(DialogType.START_BATTLE, "0");
         }
         public override void OnBattleEnd() => owner.UnitData.unitData.battleDialogModel = _dlg;
@@ -156,7 +156,7 @@ namespace ModPack21341.Characters
     public class PassiveAbility_Happy : PassiveAbilityBase
     {
         private int _stack;
-        private static Random _rndChance = new Random();
+        private static readonly Random RndChance = new Random();
         public int GetStack() => _stack;
         public void ChangeNameAndSetStacks(int stack)
         {
@@ -185,7 +185,7 @@ namespace ModPack21341.Characters
         }
         public override void BeforeRollDice(BattleDiceBehavior behavior)
         {
-            var number = _rndChance.Next(0, 100);
+            var number = RndChance.Next(0, 100);
             var value = _stack * 2;
             var buffTypeNegative = number <= _stack * 10;
             if (behavior.GetDiceVanillaMax() - value < behavior.GetDiceVanillaMin() && buffTypeNegative)

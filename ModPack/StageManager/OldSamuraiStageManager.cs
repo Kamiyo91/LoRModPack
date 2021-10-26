@@ -1,54 +1,43 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
+using CustomMapUtility;
 using LOR_XML;
 using ModPack21341.Characters;
 using ModPack21341.Harmony;
 using ModPack21341.Models;
-using ModPack21341.StageManager.MapManager.DlgManager;
 using ModPack21341.StageManager.MapManager.OldSamuraiStageMaps;
 using ModPack21341.Utilities;
-using UnityEngine;
 
 namespace ModPack21341.StageManager
 {
     public class EnemyTeamStageManager_OldSamurai : EnemyTeamStageManager
     {
-        private OldSamuraiDlgManager _dlgManager;
+        private OldSamuraiMapManager _mapManager;
         private BattleUnitModel _mainEnemyModel;
         private BattleUnitModel _hodUnitModel;
         private int _phase;
         private bool _finished;
+        private Task _changeBgm;
         public override void OnWaveStart()
         {
-            MapUtilities.EnemyTeamEmotionCoinValueChange();
-            InitCustomMap();
-            if (!(SingletonBehavior<BattleSceneRoot>.Instance.currentMapObject is OldSamuraiMapManager))
-            {
-                Singleton<StageController>.Instance.GetStageModel().SetCurrentMapInfo(0);
-            }
+            CustomMapHandler.InitCustomMap("OldSamurai", new OldSamuraiMapManager());
+            CustomMapHandler.EnforceMap();
             Singleton<StageController>.Instance.CheckMapChange();
+            _mapManager = SingletonBehavior<BattleSceneRoot>.Instance.currentMapObject as OldSamuraiMapManager;
+            _mapManager?.InitDlg(0,4);
             UnitStarterSet();
-            InitDlgManager();
             _phase = 0;
         }
 
         private void UnitStarterSet()
         {
             _hodUnitModel = BattleObjectManager.instance.GetList(Faction.Player).FirstOrDefault();
-            var passive = _hodUnitModel?.passiveDetail.AddPassive(new LorId(ModPack21341Init.packageId, 7));
+            var passive = _hodUnitModel?.passiveDetail.AddPassive(new LorId(ModPack21341Init.PackageId, 7));
             passive?.Hide();
             passive?.OnWaveStart();
             _mainEnemyModel = BattleObjectManager.instance.GetList(Faction.Enemy).FirstOrDefault();
         }
-
-        private void InitDlgManager()
-        {
-            _dlgManager = new GameObject { transform = { parent = SingletonBehavior<BattleSceneRoot>.Instance.transform } }
-                .AddComponent<OldSamuraiDlgManager>();
-            _dlgManager.Init(0, 4);
-        }
         public override void OnRoundEndTheLast() => CheckPhase();
-
-        public override void OnEndBattle() => _dlgManager.gameObject.SetActive(false);
 
         public void SetFinishable() => _finished = true;
         private void CheckSubUnit()
@@ -72,14 +61,10 @@ namespace ModPack21341.StageManager
 
         public override void OnRoundStart()
         {
-            MapUtilities.EnemyTeamEmotionCoinValueChange();
-            if (!(SingletonBehavior<BattleSceneRoot>.Instance.currentMapObject is OldSamuraiMapManager))
-            {
-                Singleton<StageController>.Instance.GetStageModel().SetCurrentMapInfo(0);
-            }
+            CustomMapHandler.EnforceMap();
+            MapUtilities.CheckAndChangeBGM(ref _changeBgm);
             CheckSubUnit();
         }
-
         private void MainEnemySetNewPhase()
         {
             var enemyPassive = _mainEnemyModel?.passiveDetail.PassiveList.Find(x => x is PassiveAbility_OldSamurai) as PassiveAbility_OldSamurai;
@@ -121,29 +106,10 @@ namespace ModPack21341.StageManager
             if (_phase >= 2) return;
             MainEnemySetNewPhase();
             SubUnitSummon();
-            AudioUtilities.ChangeEnemyTeamTheme("Hornet");
-            _dlgManager.DestroyAndInit(4, 8);
+            MapUtilities.PrepareChangeBGM("Hornet.mp3", ref _changeBgm);
+            _mapManager.ChangeDlgPhase(4, 8);
             _hodUnitModel.view.DisplayDlg(DialogType.SPECIAL_EVENT, "0");
         }
         public override bool IsStageFinishable() => _finished;
-        public global::MapManager InitCustomMap()
-        {
-            var mapManager = MapUtilities.PrepareMapComponent(new MapModel
-            {
-                Name = "RedHood",
-                Stage = "OldSamurai",
-                ArtworkBG = "OldSamurai_Background",
-                ArtworkFloor = "OldSamurai_Floor",
-                BgFx = 0.5f,
-                BgFy = 0.2f,
-                FloorFx = 0.5f,
-                FloorFy = 0.2f,
-                BgmName = "Reflection",
-                StageType = Models.StageType.CreatureType,
-                ExtraSettings = new MapExtraSettings { MapManagerType = typeof(OldSamuraiMapManager) }
-            });
-            SingletonBehavior<BattleSceneRoot>.Instance.InitInvitationMap(mapManager);
-            return mapManager;
-        }
     }
 }

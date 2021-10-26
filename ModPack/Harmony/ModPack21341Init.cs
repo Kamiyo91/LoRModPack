@@ -13,25 +13,24 @@ namespace ModPack21341.Harmony
 {
     public class ModPack21341Init : ModInitializer
     {
-        public static string packageId = "ModPack21341.Mod";
-        public static string path;
-        public static Dictionary<string, Sprite> ArtWorks = new Dictionary<string, Sprite>();
-        public static Dictionary<string, AudioClip> CustomSound;
+        public const string PackageId = "ModPack21341.Mod";
+        public static string Path;
+        public static readonly Dictionary<string, Sprite> ArtWorks = new Dictionary<string, Sprite>();
         public override void OnInitializeMod()
         {
             var harmony = new HarmonyLib.Harmony("LOR.ModPack21341_MOD");
             var method = typeof(ModPack21341Init).GetMethod("BookModel_SetXmlInfo");
             harmony.Patch(typeof(BookModel).GetMethod("SetXmlInfo", AccessTools.all), null, new HarmonyMethod(method)); ;
-            path = Path.GetDirectoryName(
+            Path = System.IO.Path.GetDirectoryName(
                 Uri.UnescapeDataString(new UriBuilder(Assembly.GetExecutingAssembly().CodeBase).Path));
             method = typeof(ModPack21341Init).GetMethod("BookModel_GetThumbSprite");
             harmony.Patch(typeof(BookModel).GetMethod("GetThumbSprite", AccessTools.all), new HarmonyMethod(method));
-            MapUtilities.GetArtWorks(new DirectoryInfo(path + "/ArtWork"));
-            CustomSound = AudioUtilities.PrepareAudioClips();
+            MapUtilities.GetArtWorks(new DirectoryInfo(Path + "/ArtWork"));
             UnitUtilities.AddBuffInfo();
             RemoveError();
         }
-        public static void RemoveError()
+
+        private static void RemoveError()
         {
             var list = new List<string>();
             var list2 = new List<string>();
@@ -56,32 +55,32 @@ namespace ModPack21341.Harmony
         }
         public static bool BookModel_GetThumbSprite(BookModel __instance, ref Sprite __result)
         {
-            if (__instance.BookId == new LorId(packageId, 10000001) || __instance.BookId == new LorId(packageId, 10000002))
+            if (__instance.BookId == new LorId(PackageId, 10000001) || __instance.BookId == new LorId(PackageId, 10000002))
             {
                 __result = Resources.Load<Sprite>("Sprites/Books/Thumb/243003");
                 return false;
             }
-            if (__instance.BookId == new LorId(packageId, 10000005))
+            if (__instance.BookId == new LorId(PackageId, 10000005))
             {
                 __result = Resources.Load<Sprite>("Sprites/Books/Thumb/170313");
                 return false;
             }
-            if (__instance.BookId == new LorId(packageId, 10000013))
+            if (__instance.BookId == new LorId(PackageId, 10000013))
             {
                 __result = Resources.Load<Sprite>("Sprites/Books/Thumb/102");
                 return false;
             }
-            if (__instance.BookId == new LorId(packageId, 10000014))
+            if (__instance.BookId == new LorId(PackageId, 10000014))
             {
                 __result = ArtWorks["Angela_Default"];
                 return false;
             }
-            if (__instance.BookId == new LorId(packageId, 10000015))
+            if (__instance.BookId == new LorId(PackageId, 10000015))
             {
                 __result = Resources.Load<Sprite>("Sprites/Books/Thumb/8");
                 return false;
             }
-            if (__instance.BookId == new LorId(packageId, 10000016))
+            if (__instance.BookId == new LorId(PackageId, 10000016))
             {
                 __result = Resources.Load<Sprite>("Sprites/Books/Thumb/250022");
                 return false;
@@ -91,10 +90,10 @@ namespace ModPack21341.Harmony
         public static void BookModel_SetXmlInfo(BookModel __instance, BookXmlInfo ____classInfo,
             ref List<DiceCardXmlInfo> ____onlyCards)
         {
-            if (__instance.BookId.packageId == packageId)
+            if (__instance.BookId.packageId == PackageId)
             {
                 ____onlyCards.AddRange(____classInfo.EquipEffect.OnlyCard.Select(id =>
-                    ItemXmlDataList.instance.GetCardItem(new LorId(packageId, id))));
+                    ItemXmlDataList.instance.GetCardItem(new LorId(PackageId, id))));
             }
         }
     }

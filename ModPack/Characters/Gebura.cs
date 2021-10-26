@@ -30,7 +30,7 @@ namespace ModPack21341.Characters
             {
                 owner.personalEgoDetail.AddCard(607022);
             }
-            owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.packageId, 912));
+            owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 912));
         }
 
         public override bool BeforeTakeDamage(BattleUnitModel attacker, int dmg)
@@ -59,7 +59,7 @@ namespace ModPack21341.Characters
         public override void OnUseCard(BattlePlayingCardDataInUnitModel curCard)
         {
             if (curCard.card.GetID().id == 912)
-                owner.personalEgoDetail.RemoveCard(new LorId(ModPack21341Init.packageId, 912));
+                owner.personalEgoDetail.RemoveCard(new LorId(ModPack21341Init.PackageId, 912));
             if (curCard.card.GetID().id == 607001)
                 owner.allyCardDetail.ExhaustACardAnywhere(curCard.card);
         }

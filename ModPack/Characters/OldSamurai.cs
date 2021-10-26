@@ -1,12 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using CustomMapUtility;
 using LOR_DiceSystem;
 using ModPack21341.Characters.Buffs;
 using ModPack21341.Characters.CardAbilities;
 using ModPack21341.Harmony;
 using ModPack21341.Models;
 using ModPack21341.StageManager;
+using ModPack21341.StageManager.MapManager.OldSamuraiStageMaps;
 using ModPack21341.Utilities;
+using UnityEngine;
 
 namespace ModPack21341.Characters
 {
@@ -37,7 +41,6 @@ namespace ModPack21341.Characters
 
         public override void OnDie() => CleanGhostUnitBuffs();
     }
-
     public class PassiveAbility_OldSamurai : PassiveAbilityBase
     {
         private bool _lethalDamage;
@@ -78,7 +81,7 @@ namespace ModPack21341.Characters
         public override void OnWaveStart()
         {
             PreLoadBasicVar();
-            owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.packageId, 902));
+            owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 902));
         }
 
         private void PreLoadBasicVar()
@@ -94,7 +97,7 @@ namespace ModPack21341.Characters
         }
         public override void OnUseCard(BattlePlayingCardDataInUnitModel curCard)
         {
-            if (curCard.card.GetID() != new LorId(ModPack21341Init.packageId, 902)) return;
+            if (curCard.card.GetID() != new LorId(ModPack21341Init.PackageId, 902)) return;
             PrepareEgoBuff();
         }
 
@@ -102,7 +105,7 @@ namespace ModPack21341.Characters
         {
             _summonGhosts = true;
             owner.bufListDetail.AddBuf(new BattleUnitBuf_OldSamuraiSummonChangeMap());
-            owner.personalEgoDetail.RemoveCard(new LorId(ModPack21341Init.packageId, 902));
+            owner.personalEgoDetail.RemoveCard(new LorId(ModPack21341Init.PackageId, 902));
         }
         private void SummonSamuraiGhost()
         {
@@ -169,7 +172,7 @@ namespace ModPack21341.Characters
 
         private void ActiveAwakeningDeckPassive()
         {
-            if (owner.passiveDetail.AddPassive(new LorId(ModPack21341Init.packageId, 10)) is PassiveAbility_CheckDeck
+            if (owner.passiveDetail.AddPassive(new LorId(ModPack21341Init.PackageId, 10)) is PassiveAbility_CheckDeck
                 passive)
             {
                 passive.Init(owner);
@@ -252,11 +255,11 @@ namespace ModPack21341.Characters
 
         private void AddDeepBreathingCard()
         {
-            _ = owner.personalEgoDetail.GetHand().Exists(x => x.GetID() == new LorId(ModPack21341Init.packageId, 900))
+            _ = owner.personalEgoDetail.GetHand().Exists(x => x.GetID() == new LorId(ModPack21341Init.PackageId, 900))
                 ? _count = 0
                 : _count++;
             if (_count != 4) return;
-            owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.packageId, 900));
+            owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 900));
             _count = 0;
 
         }
@@ -304,10 +307,10 @@ namespace ModPack21341.Characters
         {
             _lightUse = true;
             _enemyCount = 0;
-            owner.personalEgoDetail.RemoveCard(new LorId(ModPack21341Init.packageId, 900));
+            owner.personalEgoDetail.RemoveCard(new LorId(ModPack21341Init.PackageId, 900));
             DiceCardSelfAbility_DeepBreathing.Activate(owner);
         }
-        public override void OnWaveStart() => owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.packageId, 900));
+        public override void OnWaveStart() => owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 900));
 
 
         public override void BeforeRollDice(BattleDiceBehavior behavior)

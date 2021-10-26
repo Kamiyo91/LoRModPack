@@ -70,7 +70,7 @@ namespace ModPack21341.Characters
             if (!_phase2Activated || _cardUsed) return;
             _egoCard = RandomUtil.SelectOne(_egoCards);
             origin = BattleDiceCardModel.CreatePlayingCard(
-                ItemXmlDataList.instance.GetCardItem(new LorId(ModPack21341Init.packageId, _egoCard)));
+                ItemXmlDataList.instance.GetCardItem(new LorId(ModPack21341Init.PackageId, _egoCard)));
             _cardUsed = true;
         }
     }

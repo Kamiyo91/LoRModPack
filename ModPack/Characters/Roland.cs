@@ -52,14 +52,14 @@ namespace ModPack21341.Characters
         public override void OnWaveStart()
         {
             CheckRolandUnitAndChangeSkin();
-            owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.packageId, 911));
+            owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 911));
         }
 
         public override void OnUseCard(BattlePlayingCardDataInUnitModel curCard)
         {
             if (curCard.card.GetID().id == 29 || curCard.card.GetID().id == 26)
                 owner.allyCardDetail.ExhaustACardAnywhere(curCard.card);
-            if (curCard.card.GetID() != new LorId(ModPack21341Init.packageId, 911)) return;
+            if (curCard.card.GetID() != new LorId(ModPack21341Init.PackageId, 911)) return;
             owner.personalEgoDetail.RemoveCard(curCard.card.GetID());
             _blackCheck = true;
         }
@@ -90,7 +90,7 @@ namespace ModPack21341.Characters
             if (buf.stack < 9 || _specialActivated || owner.cardSlotDetail.PlayPoint < 3) return;
             _specialActivated = true;
             origin = BattleDiceCardModel.CreatePlayingCard(
-                ItemXmlDataList.instance.GetCardItem(new LorId(ModPack21341Init.packageId, 29)));
+                ItemXmlDataList.instance.GetCardItem(new LorId(ModPack21341Init.PackageId, 29)));
         }
 
         private void UseEgoMassAttackCard(ref BattleDiceCardModel origin)
@@ -99,7 +99,7 @@ namespace ModPack21341.Characters
                 .Exists(x => x is BattleUnitBuf_BlackMaskSilence && _count >= 4) || owner.cardSlotDetail.PlayPoint < 5)
                 return;
             origin = BattleDiceCardModel.CreatePlayingCard(
-                ItemXmlDataList.instance.GetCardItem(new LorId(ModPack21341Init.packageId, 26)));
+                ItemXmlDataList.instance.GetCardItem(new LorId(ModPack21341Init.PackageId, 26)));
             _count = 0;
         }
         private void ChangeToBlackSilence()
@@ -123,8 +123,8 @@ namespace ModPack21341.Characters
                 battleDiceCardModel.RemoveBuf<PassiveAbility_10012.BattleDiceCardBuf_blackSilenceEgoCount>();
             }
             owner.personalEgoDetail.RemoveCard(702010);
-            owner.personalEgoDetail.RemoveCard(new LorId(ModPack21341Init.packageId, 913));
-            owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.packageId, 910));
+            owner.personalEgoDetail.RemoveCard(new LorId(ModPack21341Init.PackageId, 913));
+            owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 910));
             ChangeToBlackSilenceMaskDeck();
             owner.bufListDetail.AddBufWithoutDuplication(new BattleUnitBuf_BlackMaskSilence());
             SingletonBehavior<SoundEffectManager>.Instance.PlayClip("Battle/Kali_Change");
@@ -135,7 +135,7 @@ namespace ModPack21341.Characters
 
         private void ChangeToBlackSilenceMaskDeck()
         {
-            if (!(owner.passiveDetail.AddPassive(new LorId(ModPack21341Init.packageId, 10)) is PassiveAbility_CheckDeck
+            if (!(owner.passiveDetail.AddPassive(new LorId(ModPack21341Init.PackageId, 10)) is PassiveAbility_CheckDeck
                 passive)) return;
             passive.Init(owner);
             passive.SaveAwakenedDeck(UnitUtilities.GetBlackSilenceMaskCardsId());
@@ -159,7 +159,7 @@ namespace ModPack21341.Characters
         }
         public override void OnWaveStart()
         {
-            owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.packageId, 913));
+            owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 913));
         }
         public override void OnRoundStart()
         {
@@ -185,7 +185,7 @@ namespace ModPack21341.Characters
         {
             _usedCount.Clear();
         }
-        private List<LorId> _usedCount = new List<LorId>();
+        private readonly List<LorId> _usedCount = new List<LorId>();
     }
     public class PassiveAbility_TheBlackSilence : PassiveAbilityBase
     {

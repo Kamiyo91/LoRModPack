@@ -72,3 +72,5 @@
         //    if (_phaseChanged)
         //        SingletonBehavior<CreatureDlgManagerUI>.Instance.Init(SingletonBehavior<BattleSceneRoot>.Instance.currentMapObject == this);
         //}
+
+        if (!(mapObject.AddComponent(model.MapManagerType) is MapManager newManager)) return null;

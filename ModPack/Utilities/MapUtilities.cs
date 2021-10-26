@@ -1,42 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
+using CustomMapUtility;
 using HarmonyLib;
 using ModPack21341.Harmony;
 using ModPack21341.Models;
+using ModPack21341.StageManager.MapManager.MioStageMaps;
 using UnityEngine;
 
 namespace ModPack21341.Utilities
 {
     public static class MapUtilities
     {
-        public static MapManager PrepareMapComponent(MapModel model)
-        {
-            switch (model.StageType)
-            {
-                case Models.StageType.InvitationType:
-                    var gameObjectInvitation = Util.LoadPrefab("InvitationMaps/InvitationMap_" + model.Name,
-                        SingletonBehavior<BattleSceneRoot>.Instance.transform);
-                    gameObjectInvitation.name = "InvitationMap_" + model.Stage;
-                    model.Component = NewManager(gameObjectInvitation, model.ExtraSettings);
-                    InitCustomMap(model);
-                    break;
-                case Models.StageType.CreatureType:
-                    var gameObjectCreature = Util.LoadPrefab("CreatureMaps/CreatureMap_" + model.Name,
-                        SingletonBehavior<BattleSceneRoot>.Instance.transform);
-                    gameObjectCreature.name = "CreatureMap_" + model.Stage;
-                    model.Component = NewManager(gameObjectCreature, model.ExtraSettings);
-                    InitCustomMap(model);
-                    break;
-            }
-            return model.Component;
-        }
         public static void ChangeMap(MapModel model)
         {
-            if (!model.OneTurnEgo)
-                EnemyTeamEmotionCoinValueChange();
             Singleton<StageController>.Instance.CheckMapChange();
-            var component = PrepareMapComponent(model);
-            SingletonBehavior<BattleSceneRoot>.Instance.AddEgoMap(component);
+            CustomMapHandler.InitCustomMap(model.Stage, model.Component);
             if (!Singleton<StageController>.Instance.CanChangeMap()) return;
             if (model.IsPlayer && !model.OneTurnEgo)
             {
@@ -76,7 +55,8 @@ namespace ModPack21341.Utilities
                 mapList.RemoveAll(x => x.name.Contains(name));
             finalType.SetValue(SingletonBehavior<BattleSceneRoot>.Instance, mapList);
         }
-        public static void EnemyTeamEmotionCoinValueChange()
+
+        private static void EnemyTeamEmotionCoinValueChange()
         {
             var emotionTotalCoinNumber = Singleton<StageController>.Instance.GetCurrentStageFloorModel().team
                 .emotionTotalCoinNumber;
@@ -84,10 +64,29 @@ namespace ModPack21341.Utilities
                 emotionTotalCoinNumber + 1;
         }
 
+        public static void PrepareChangeBGM(string bgmName,ref Task ChangeBGM)
+        {
+            ChangeBGM = Task.Run(() =>
+            {
+                SingletonBehavior<BattleSceneRoot>.Instance.currentMapObject.mapBgm =
+                    CustomMapHandler.CustomBgmParse(new []
+                    {
+                        bgmName
+                    });
+            });
+        }
+        public static void CheckAndChangeBGM(ref Task ChangeBGM)
+        {
+            if (ChangeBGM == null) return;
+            ChangeBGM.Wait();
+            SingletonBehavior<BattleSoundManager>.Instance.SetEnemyTheme(SingletonBehavior<BattleSceneRoot>.Instance
+                .currentMapObject.mapBgm);
+            ChangeBGM = null;
+        }
         public static void ReturnFromEgoMap(string mapName,BattleUnitModel caller,int originalStageId)
         {
             if (caller.faction == Faction.Enemy || Singleton<StageController>.Instance.GetStageModel().ClassInfo.id ==
-                new LorId(ModPack21341Init.packageId, originalStageId)) return;
+                new LorId(ModPack21341Init.PackageId, originalStageId)) return;
             RemoveValueInAddedMap(mapName);
             Singleton<StageController>.Instance.CheckMapChange();
             if (SingletonBehavior<BattleSceneRoot>.Instance.currentMapObject.isEgo)
@@ -99,65 +98,6 @@ namespace ModPack21341.Utilities
             SingletonBehavior<BattleSoundManager>.Instance.SetEnemyTheme(SingletonBehavior<BattleSceneRoot>
                 .Instance.currentMapObject.mapBgm);
             SingletonBehavior<BattleSoundManager>.Instance.CheckTheme();
-        }
-        private static MapManager NewManager(GameObject mapObject, MapExtraSettings model)
-        {
-            var original = mapObject.GetComponent<MapManager>();
-            if (!(mapObject.AddComponent(model.MapManagerType) is MapManager newManager)) return null;
-            newManager.isActivated = original.isActivated;
-            newManager.isEnabled = original.isEnabled;
-            newManager.mapSize = model.MapSize;
-            newManager.isCreature = model.IsCreature;
-            newManager.isBossPhase = original.isBossPhase;
-            newManager.isEgo = original.isEgo;
-            newManager.sephirahType = original.sephirahType;
-            newManager.borderFrame = original.borderFrame;
-            newManager.backgroundRoot = original.backgroundRoot;
-            newManager.sephirahColor = original.sephirahColor;
-            newManager.scratchPrefabs = original.scratchPrefabs;
-            newManager.wallCratersPrefabs = original.wallCratersPrefabs;
-            Object.Destroy(original);
-            return newManager;
-        }
-
-        private static void InitCustomMap(MapModel model)
-        {
-            model.Component.mapBgm = new AudioClip[3];
-            model.Component.mapBgm[0] = ModPack21341Init.CustomSound[model.BgmName];
-            model.Component.mapBgm[1] = ModPack21341Init.CustomSound[model.BgmName];
-            model.Component.mapBgm[2] = ModPack21341Init.CustomSound[model.BgmName];
-            foreach (var component in model.Component.GetComponentsInChildren<Component>())
-            {
-                switch (component)
-                {
-                    case SpriteRenderer renderer when renderer.name == "BG":
-                        {
-                            var texture = ModPack21341Init.ArtWorks[model.ArtworkBG].texture;
-                            renderer.sprite = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height),
-                                new Vector2(model.BgFx, model.BgFy), renderer.sprite.pixelsPerUnit, 0U, SpriteMeshType.FullRect);
-                            break;
-                        }
-                    case SpriteRenderer renderer when renderer.name.Contains("Floor"):
-                        {
-                            var texture2 = ModPack21341Init.ArtWorks[model.ArtworkFloor].texture;
-                            renderer.sprite = Sprite.Create(texture2, new Rect(0f, 0f, texture2.width, texture2.height),
-                                new Vector2(model.FloorFx, model.FloorFy), renderer.sprite.pixelsPerUnit, 0U, SpriteMeshType.FullRect);
-                            break;
-                        }
-                    default:
-                        {
-                            if (component.name != model.Component.name && !component.name.Contains("Background") &&
-                                !component.name.Contains("Frame") && !component.name.Contains("GroundSprites") &&
-                                component.name != "Camera" && component.name != "BG" && !component.name.Contains("Floor") &&
-                                !component.name.Contains("CaptureTest"))
-                            {
-                                component.gameObject.SetActive(false);
-                            }
-
-                            break;
-                        }
-                }
-            }
         }
         public static void GetArtWorks(DirectoryInfo dir)
         {
