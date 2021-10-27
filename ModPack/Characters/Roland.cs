@@ -19,6 +19,7 @@ namespace ModPack21341.Characters
         private bool _halfHpReached;
         private int _count;
         private bool _specialActivated;
+        private bool _usedMassEgo;
         public override void OnBattleEnd()
         {
             if (!string.IsNullOrEmpty(owner.UnitData.unitData.workshopSkin)) return;
@@ -32,7 +33,12 @@ namespace ModPack21341.Characters
             InitEgoChange();
             return base.BeforeTakeDamage(attacker, dmg);
         }
-
+        public override void OnRoundStart()
+        {
+            if (!_usedMassEgo) return;
+            _usedMassEgo = false;
+            MapUtilities.ReturnFromEgoMap("BlackSilenceMassEgo", owner, 2);
+        }
         private void InitEgoChange()
         {
             _halfHpReached = true;
@@ -51,6 +57,7 @@ namespace ModPack21341.Characters
         }
         public override void OnWaveStart()
         {
+            UnitUtilities.TestingUnitValues();
             CheckRolandUnitAndChangeSkin();
             owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 911));
         }
@@ -59,6 +66,8 @@ namespace ModPack21341.Characters
         {
             if (curCard.card.GetID().id == 29 || curCard.card.GetID().id == 26)
                 owner.allyCardDetail.ExhaustACardAnywhere(curCard.card);
+            if (curCard.card.GetID() == new LorId(ModPack21341Init.PackageId, 910))
+                _usedMassEgo = true;
             if (curCard.card.GetID() != new LorId(ModPack21341Init.PackageId, 911)) return;
             owner.personalEgoDetail.RemoveCard(curCard.card.GetID());
             _blackCheck = true;
@@ -78,7 +87,7 @@ namespace ModPack21341.Characters
             if (owner.bufListDetail.GetActivatedBufList()
                 .Find(x => x is PassiveAbility_10012.BattleUnitBuf_blackSilenceSpecialCount) is PassiveAbility_10012.BattleUnitBuf_blackSilenceSpecialCount buf)
             {
-                UseFuriosoCard(ref origin,buf);
+                UseFuriosoCard(ref origin, buf);
                 return base.OnSelectCardAuto(origin, currentDiceSlotIdx);
             }
             UseEgoMassAttackCard(ref origin);

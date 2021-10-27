@@ -19,7 +19,6 @@ namespace ModPack21341.StageManager.MapManager.MioStageMaps
             base.InitializeMap();
             sephirahType = SephirahType.None;
             sephirahColor = Color.black;
-            SingletonBehavior<BattleCamManager>.Instance.BlurBackgroundCam(false);
             CheckPhaseDlg();
         }
 

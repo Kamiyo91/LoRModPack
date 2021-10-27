@@ -29,7 +29,8 @@ namespace ModPack21341.Characters.CardAbilities
             Stage = "Mio",
             OneTurnEgo = true,
             IsPlayer = true,
-            Component = new MioMapManager()
+            Component = new MioMapManager(),
+            Bgy = 0.2f
         });
     }
 

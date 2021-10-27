@@ -5,55 +5,59 @@ using CustomMapUtility;
 using HarmonyLib;
 using ModPack21341.Harmony;
 using ModPack21341.Models;
+using ModPack21341.StageManager.MapManager.OldSamuraiStageMaps;
 using UnityEngine;
 
 namespace ModPack21341.Utilities
 {
     public static class MapUtilities
     {
+        private static bool ChangeMapCheck(MapModel model)
+        {
+            if (!Singleton<StageController>.Instance.CanChangeMap()) return true;
+            if (!model.OneTurnEgo && CanChangeMapCustom(2)) return true;
+            if (model.Component == new OldSamuraiPlayerMapManager() && CanChangeMapCustom(1)) return true;
+            return false;
+        }
         public static void ChangeMap(MapModel model)
         {
             Singleton<StageController>.Instance.CheckMapChange();
-            if (!Singleton<StageController>.Instance.CanChangeMap()) return;
-            if (!model.OneTurnEgo && CanChangeMapCustom(2)) return;
-            CustomMapHandler.InitCustomMap(model.Stage, model.Component);
+            if (ChangeMapCheck(model)) return;
+            CustomMapHandler.InitCustomMap(model.Stage, model.Component, model.IsPlayer, model.InitBgm, model.Bgx, model.Bgy, model.Fx, model.Fy);
             if (model.IsPlayer && !model.OneTurnEgo)
             {
-                PutValueInEgoMap(model.Stage);
+                CustomMapHandler.ChangeToCustomEgoMapByAssimilation(model.Stage);
+                return;
             }
-            SingletonBehavior<BattleSceneRoot>.Instance.ChangeToSpecialMap(model.Stage, model.ChangingEffect, model.Scale);
+            CustomMapHandler.ChangeToCustomEgoMap(model.Stage);
         }
-
+        public static void RemoveValueInEgoMap(string name)
+        {
+            var mapList = (List<string>)typeof(StageController).GetField("_addedEgoMap",
+                AccessTools.all)?.GetValue(Singleton<StageController>.Instance);
+            mapList?.RemoveAll(x => x.Contains(name));
+        }
         private static void PutValueInEgoMap(string name)
         {
-            var type = typeof(StageController);
-            var finalType = type.GetField("_addedEgoMap",
-                AccessTools.all);
-            var mapList = (List<string>)finalType.GetValue(Singleton<StageController>.Instance);
-            mapList.Add(name);
-            finalType.SetValue(Singleton<StageController>.Instance, mapList);
+            var mapList = (List<string>)typeof(StageController).GetField("_addedEgoMap",
+                AccessTools.all)?.GetValue(Singleton<StageController>.Instance);
+            mapList?.Add(name);
         }
         public static void ActiveCreatureBattleCamFilterComponent()
         {
-            var type = typeof(BattleCamManager);
-            var finalType = type.GetField("_effectCam",
-                AccessTools.all);
-            var battleCamera = (Camera)finalType.GetValue(SingletonBehavior<BattleCamManager>.Instance);
-            battleCamera.GetComponent<CameraFilterPack_Drawing_Paper3>().enabled = true;
-            finalType.SetValue(SingletonBehavior<BattleCamManager>.Instance, battleCamera);
+            var battleCamera = (Camera)typeof(BattleCamManager).GetField("_effectCam",
+                AccessTools.all)?.GetValue(SingletonBehavior<BattleCamManager>.Instance);
+            if (!(battleCamera is null)) battleCamera.GetComponent<CameraFilterPack_Drawing_Paper3>().enabled = true;
         }
 
         private static void RemoveValueInAddedMap(string name, bool removeAll = false)
         {
-            var type = typeof(BattleSceneRoot);
-            var finalType = type.GetField("_addedMapList",
-                AccessTools.all);
-            var mapList = (List<MapManager>)finalType.GetValue(SingletonBehavior<BattleSceneRoot>.Instance);
+            var mapList = (List<MapManager>)typeof(BattleSceneRoot).GetField("_addedMapList",
+                AccessTools.all)?.GetValue(SingletonBehavior<BattleSceneRoot>.Instance);
             if (removeAll)
-                mapList.Clear();
+                mapList?.Clear();
             else
-                mapList.RemoveAll(x => x.name.Contains(name));
-            finalType.SetValue(SingletonBehavior<BattleSceneRoot>.Instance, mapList);
+                mapList?.RemoveAll(x => x.name.Contains(name));
         }
 
         private static void EnemyTeamEmotionCoinValueChange()
@@ -64,12 +68,12 @@ namespace ModPack21341.Utilities
                 emotionTotalCoinNumber + 1;
         }
 
-        public static void PrepareChangeBGM(string bgmName,ref Task ChangeBGM)
+        public static void PrepareChangeBGM(string bgmName, ref Task ChangeBGM)
         {
             ChangeBGM = Task.Run(() =>
             {
                 SingletonBehavior<BattleSceneRoot>.Instance.currentMapObject.mapBgm =
-                    CustomMapHandler.CustomBgmParse(new []
+                    CustomMapHandler.CustomBgmParse(new[]
                     {
                         bgmName
                     });
@@ -77,7 +81,7 @@ namespace ModPack21341.Utilities
         }
 
         private static bool CanChangeMapCustom(int id) => Singleton<StageController>.Instance.GetStageModel().ClassInfo.id == new LorId(ModPack21341Init.PackageId, id);
-        
+
         public static void CheckAndChangeBGM(ref Task ChangeBGM)
         {
             if (ChangeBGM == null) return;
@@ -86,7 +90,7 @@ namespace ModPack21341.Utilities
                 .currentMapObject.mapBgm);
             ChangeBGM = null;
         }
-        public static void ReturnFromEgoMap(string mapName,BattleUnitModel caller,int originalStageId)
+        public static void ReturnFromEgoMap(string mapName, BattleUnitModel caller, int originalStageId)
         {
             if (caller.faction == Faction.Enemy || Singleton<StageController>.Instance.GetStageModel().ClassInfo.id ==
                 new LorId(ModPack21341Init.PackageId, originalStageId)) return;

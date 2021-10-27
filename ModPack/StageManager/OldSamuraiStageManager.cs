@@ -20,7 +20,7 @@ namespace ModPack21341.StageManager
         private Task _changeBgm;
         public override void OnWaveStart()
         {
-            CustomMapHandler.InitCustomMap("OldSamurai", new OldSamuraiMapManager());
+            CustomMapHandler.InitCustomMap("OldSamurai", new OldSamuraiMapManager(),false,true,0.5f,0.2f);
             CustomMapHandler.EnforceMap();
             Singleton<StageController>.Instance.CheckMapChange();
             _mapManager = SingletonBehavior<BattleSceneRoot>.Instance.currentMapObject as OldSamuraiMapManager;

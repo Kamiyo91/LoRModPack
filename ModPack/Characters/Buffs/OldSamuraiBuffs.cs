@@ -35,7 +35,8 @@ namespace ModPack21341.Characters.Buffs
         {
             Stage = "OldSamurai",
             IsPlayer = true,
-            Component = new OldSamuraiPlayerMapManager()
+            Component = new OldSamuraiPlayerMapManager(),
+            Bgy = 0.2f
         });
     }
 }

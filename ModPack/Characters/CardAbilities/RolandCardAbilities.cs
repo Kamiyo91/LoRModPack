@@ -1,4 +1,9 @@
-﻿namespace ModPack21341.Characters.CardAbilities
+﻿using ModPack21341.Models;
+using ModPack21341.StageManager.MapManager.BlackSilenceEgoMapManager;
+using ModPack21341.StageManager.MapManager.MioStageMaps;
+using ModPack21341.Utilities;
+
+namespace ModPack21341.Characters.CardAbilities
 {
     public class DiceCardSelfAbility_BlackSilenceMaskEgo : DiceCardSelfAbilityBase
     {
@@ -17,6 +22,17 @@
             owner.view.SetAltSkin("BlackSilence4");
         }
 
+        public override void OnStartBattle() => ChangeToBlackSilenceEgoMap();
+
+        private static void ChangeToBlackSilenceEgoMap() => MapUtilities.ChangeMap(new MapModel
+        {
+            Stage = "BlackSilenceMassEgo",
+            OneTurnEgo = true,
+            IsPlayer = true,
+            Component = new BlackSilenceEgoMapManager(),
+            InitBgm = false,
+            Fy = 0.285f
+        });
         public override void OnEndBattle()
         {
             if (string.IsNullOrEmpty(owner.UnitData.unitData.workshopSkin))

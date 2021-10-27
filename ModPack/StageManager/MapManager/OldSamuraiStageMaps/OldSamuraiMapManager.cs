@@ -19,7 +19,6 @@ namespace ModPack21341.StageManager.MapManager.OldSamuraiStageMaps
             base.InitializeMap();
             sephirahType = SephirahType.None;
             sephirahColor = Color.cyan;
-            SingletonBehavior<BattleCamManager>.Instance.BlurBackgroundCam(false);
             _dlgActivated = Singleton<StageController>.Instance.EnemyStageManager is EnemyTeamStageManager_OldSamurai;
         }
         public void InitDlg(int mn, int mx)

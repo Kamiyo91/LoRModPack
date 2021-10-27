@@ -30,7 +30,7 @@ namespace ModPack21341.StageManager
                         Name = "Mio?",
                         DialogId = 201
                    }, _floor);
-            CustomMapHandler.InitCustomMap("Mio", new MioMapManager());
+            CustomMapHandler.InitCustomMap("Mio", new MioMapManager(),false,true,0.5f,0.2f);
             CustomMapHandler.EnforceMap();
             Singleton<StageController>.Instance.CheckMapChange();
             _mioMapManager = SingletonBehavior<BattleSceneRoot>.Instance.currentMapObject as MioMapManager;

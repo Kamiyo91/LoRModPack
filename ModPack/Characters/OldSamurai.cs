@@ -62,8 +62,8 @@ namespace ModPack21341.Characters
         {
             _ghostMapRemoved = true;
             owner.bufListDetail.RemoveBufAll(typeof(BattleUnitBuf_OldSamuraiSummonChangeMap));
-            Singleton<StageController>.Instance.RemoveEgoMapByAssimilation("OldSamurai");
-            Singleton<StageController>.Instance.CheckMapChange();
+            MapUtilities.RemoveValueInEgoMap("OldSamurai");
+            MapUtilities.ReturnFromEgoMap("OldSamurai",owner,1);
             SingletonBehavior<BattleSoundManager>.Instance.SetEnemyTheme(SingletonBehavior<BattleSceneRoot>
                 .Instance.currentMapObject.mapBgm);
             SingletonBehavior<BattleSoundManager>.Instance.CheckTheme();
