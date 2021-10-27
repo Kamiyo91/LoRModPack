@@ -19,17 +19,17 @@ namespace ModPack21341.Utilities
             if (model.Component == new OldSamuraiPlayerMapManager() && CanChangeMapCustom(1)) return true;
             return false;
         }
-        public static void ChangeMap(MapModel model)
+        public static void ChangeMap(MapModel model,Faction faction = Faction.Player)
         {
             Singleton<StageController>.Instance.CheckMapChange();
             if (ChangeMapCheck(model)) return;
             CustomMapHandler.InitCustomMap(model.Stage, model.Component, model.IsPlayer, model.InitBgm, model.Bgx, model.Bgy, model.Fx, model.Fy);
             if (model.IsPlayer && !model.OneTurnEgo)
             {
-                CustomMapHandler.ChangeToCustomEgoMapByAssimilation(model.Stage);
+                CustomMapHandler.ChangeToCustomEgoMapByAssimilation(model.Stage,faction);
                 return;
             }
-            CustomMapHandler.ChangeToCustomEgoMap(model.Stage);
+            CustomMapHandler.ChangeToCustomEgoMap(model.Stage,faction);
         }
         public static void RemoveValueInEgoMap(string name)
         {
@@ -90,9 +90,9 @@ namespace ModPack21341.Utilities
                 .currentMapObject.mapBgm);
             ChangeBGM = null;
         }
-        public static void ReturnFromEgoMap(string mapName, BattleUnitModel caller, int originalStageId)
+        public static void ReturnFromEgoMap(string mapName, BattleUnitModel caller, int originalStageId,bool specialCase = false)
         {
-            if (caller.faction == Faction.Enemy || Singleton<StageController>.Instance.GetStageModel().ClassInfo.id ==
+            if (caller.faction == Faction.Enemy && specialCase == false || Singleton<StageController>.Instance.GetStageModel().ClassInfo.id ==
                 new LorId(ModPack21341Init.PackageId, originalStageId)) return;
             RemoveValueInAddedMap(mapName);
             Singleton<StageController>.Instance.CheckMapChange();

@@ -22,9 +22,9 @@ namespace ModPack21341.Characters.CardAbilities
             owner.view.SetAltSkin("BlackSilence4");
         }
 
-        public override void OnStartBattle() => ChangeToBlackSilenceEgoMap();
+        public override void OnStartBattle() => ChangeToBlackSilenceEgoMap(owner);
 
-        private static void ChangeToBlackSilenceEgoMap() => MapUtilities.ChangeMap(new MapModel
+        private static void ChangeToBlackSilenceEgoMap(BattleUnitModel owner) => MapUtilities.ChangeMap(new MapModel
         {
             Stage = "BlackSilenceMassEgo",
             OneTurnEgo = true,
@@ -32,7 +32,7 @@ namespace ModPack21341.Characters.CardAbilities
             Component = new BlackSilenceEgoMapManager(),
             InitBgm = false,
             Fy = 0.285f
-        });
+        },owner.faction);
         public override void OnEndBattle()
         {
             if (string.IsNullOrEmpty(owner.UnitData.unitData.workshopSkin))

@@ -78,7 +78,6 @@ namespace ModPack21341.Characters
 
         private void PreLoadBasicVar()
         {
-            UnitUtilities.TestingUnitValues();
             _lethalDamage = false;
             _summonGhostUsed = false;
             var currentStageFloorModel = Singleton<StageController>.Instance.GetCurrentStageFloorModel();

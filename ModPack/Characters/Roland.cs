@@ -37,7 +37,7 @@ namespace ModPack21341.Characters
         {
             if (!_usedMassEgo) return;
             _usedMassEgo = false;
-            MapUtilities.ReturnFromEgoMap("BlackSilenceMassEgo", owner, 2);
+            MapUtilities.ReturnFromEgoMap("BlackSilenceMassEgo", owner, 2,true);
         }
         private void InitEgoChange()
         {
@@ -57,7 +57,6 @@ namespace ModPack21341.Characters
         }
         public override void OnWaveStart()
         {
-            UnitUtilities.TestingUnitValues();
             CheckRolandUnitAndChangeSkin();
             owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 911));
         }
@@ -65,7 +64,10 @@ namespace ModPack21341.Characters
         public override void OnUseCard(BattlePlayingCardDataInUnitModel curCard)
         {
             if (curCard.card.GetID().id == 29 || curCard.card.GetID().id == 26)
+            {
                 owner.allyCardDetail.ExhaustACardAnywhere(curCard.card);
+                _usedMassEgo = true;
+            }
             if (curCard.card.GetID() == new LorId(ModPack21341Init.PackageId, 910))
                 _usedMassEgo = true;
             if (curCard.card.GetID() != new LorId(ModPack21341Init.PackageId, 911)) return;
