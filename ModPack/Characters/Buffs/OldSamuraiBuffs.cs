@@ -1,7 +1,6 @@
 ﻿using ModPack21341.Models;
 using ModPack21341.StageManager.MapManager.OldSamuraiStageMaps;
 using ModPack21341.Utilities;
-using System.Threading.Tasks;
 
 namespace ModPack21341.Characters.Buffs
 {
@@ -21,7 +20,7 @@ namespace ModPack21341.Characters.Buffs
             base.Init(owner);
             _init = false;
         }
-        public override void OnRoundEnd()
+        public override void OnRoundEndTheLast()
         {
             if (_init) return;
             _init = true;

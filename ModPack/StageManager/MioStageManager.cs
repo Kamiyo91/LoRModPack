@@ -15,19 +15,28 @@ namespace ModPack21341.StageManager
     {
         private MioMapManager _mioMapManager;
         private BattleUnitModel _tempMioAllyUnit;
-        private BookModel _originalBook;
-        private BattleDialogueModel _originalDialog;
         private bool _phaseChanged;
         private bool _mioStarterDlg;
         private bool _phase2Activated;
+        private StageLibraryFloorModel _floor;
         private Task _changeBgm;
         public override void OnWaveStart()
         {
+            var currentStageFloorModel = Singleton<StageController>.Instance.GetCurrentStageFloorModel();
+            _floor = Singleton<StageController>.Instance.GetStageModel().GetFloor(currentStageFloorModel.Sephirah);
+            UnitUtilities.FillUnitData(new UnitModel
+                    {
+                        Id = 10000004,
+                        Name = "Mio?",
+                        DialogId = 201
+                   }, _floor);
             CustomMapHandler.InitCustomMap("Mio", new MioMapManager());
             CustomMapHandler.EnforceMap();
             Singleton<StageController>.Instance.CheckMapChange();
             _mioMapManager = SingletonBehavior<BattleSceneRoot>.Instance.currentMapObject as MioMapManager;
         }
+
+        public override void OnEndBattle() => UnitUtilities.RemoveUnitData(_floor, "Mio?");
 
         public override void OnRoundStart()
         {
@@ -42,11 +51,6 @@ namespace ModPack21341.StageManager
         {
             if (_phase2Activated) MapUtilities.ActiveCreatureBattleCamFilterComponent();
         }
-
-        public override void OnEndBattle()
-        {
-            UnitUtilities.ReturnToTheOriginalPlayerUnit(_tempMioAllyUnit, _originalBook, _originalDialog);
-        }
         public override void OnRoundEndTheLast() => CheckPhase();
         private void CheckPhase()
         {
@@ -54,38 +58,24 @@ namespace ModPack21341.StageManager
             _phaseChanged = false;
             _mioStarterDlg = true;
             _phase2Activated = true;
-            MapUtilities.PrepareChangeBGM("MioPhase2.mp3",ref _changeBgm);
+            MapUtilities.PrepareChangeBGM("MioPhase2.mp3", ref _changeBgm);
             PrepareAllyUnit();
             MapUtilities.ActiveCreatureBattleCamFilterComponent();
             SetPassiveValues();
             _mioMapManager.InitDlg(0, 3);
         }
-
         public bool GetPhaseStatus() => _phase2Activated;
         public void SetPhaseChange() => _phaseChanged = true;
         private void PrepareAllyUnit()
         {
-            var currentStageFloorModel = Singleton<StageController>.Instance.GetCurrentStageFloorModel();
-            var floor = Singleton<StageController>.Instance.GetStageModel().GetFloor(currentStageFloorModel.Sephirah);
             var playerUnitList = BattleObjectManager.instance.GetList(Faction.Player);
-            var currentStageFloorUnitList = currentStageFloorModel.GetUnitBattleDataList();
-            foreach (var (unit, i) in currentStageFloorUnitList.Select((value, i) => (value, i)))
+            _tempMioAllyUnit = UnitUtilities.AddNewUnitPlayerSide(_floor, new UnitModel
             {
-                if (playerUnitList.Exists(x => x.UnitData == unit)) continue;
-                _tempMioAllyUnit = UnitUtilities.AddNewUnitPlayerSide(floor, new UnitModel
-                    {
-                        Index = i,
                         Id = 10000004,
                         Name = "Mio?",
                         Pos = playerUnitList.Count,
-                        EmotionLevel = 4,
-                        CurrentLight = 8,
-                        CustomDialog = true,
-                        DialogId = 201
-                    },
-                    ref _originalBook, ref _originalDialog);
-                break;
-            }
+                        Sephirah = _floor.Sephirah
+            });
             _tempMioAllyUnit.bufListDetail.AddBufWithoutDuplication(new BattleUnitBuf_GodAuraRelease());
             _tempMioAllyUnit.bufListDetail.AddBufWithoutDuplication(new BattleUnitBuf_CorruptionResist());
             _tempMioAllyUnit.passiveDetail.AddPassive(new LorId(ModPack21341Init.PackageId, 16));
@@ -94,6 +84,7 @@ namespace ModPack21341.StageManager
             _tempMioAllyUnit.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 904));
             _tempMioAllyUnit.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 905));
             UnitUtilities.ChangeDeck(_tempMioAllyUnit, UnitUtilities.GetMioCardsId());
+            _tempMioAllyUnit.UnitData.unitData.InitBattleDialogByDefaultBook(new LorId(ModPack21341Init.PackageId, 201));
         }
 
         private void SetPassiveValues()
@@ -101,8 +92,8 @@ namespace ModPack21341.StageManager
             var enemyPassive = BattleObjectManager.instance.GetAliveList(Faction.Enemy).FirstOrDefault()
                 ?.passiveDetail.PassiveList.Find(x => x is PassiveAbility_MioEnemyDesc) as PassiveAbility_MioEnemyDesc;
             enemyPassive?.SetAwakened(true);
-            var allyPassive = _tempMioAllyUnit?.passiveDetail.PassiveList.Find(x => x is PassiveAbility_God_Fragment) as PassiveAbility_God_Fragment;
-            allyPassive?.SetOriginalBookForStoryBattle(_originalBook);
+            var tempMioPassive = _tempMioAllyUnit.passiveDetail.PassiveList.Find(x => x is PassiveAbility_God_Fragment) as PassiveAbility_God_Fragment;
+            tempMioPassive?.SetSpecialCase();
         }
     }
 }

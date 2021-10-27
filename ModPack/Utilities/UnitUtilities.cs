@@ -43,86 +43,68 @@ namespace ModPack21341.Utilities
             }
             BattleObjectManager.instance.InitUI();
         }
-        public static BattleUnitModel AddOriginalPlayerUnitPlayerSide(UnitModel unit)
+        public static BattleUnitModel AddOriginalPlayerUnitPlayerSide(UnitModel unit,int index)
         {
-            var allyUnit = Singleton<StageController>.Instance.CreateLibrarianUnit_fromBattleUnitData(unit.Index);
+            var allyUnit = Singleton<StageController>.Instance.CreateLibrarianUnit_fromBattleUnitData(index);
             allyUnit.OnWaveStart();
             allyUnit.allyCardDetail.DrawCards(allyUnit.UnitData.unitData.GetStartDraw());
-            if (unit.CreatureMapIsActivated)
-                allyUnit.view.ChangeScale(unit.ScaleSize);
             return allyUnit;
         }
         public static void AddNewUnitEnemySide(UnitModel unit)
         {
             var unitWithIndex = Singleton<StageController>.Instance.AddNewUnit(Faction.Enemy, new LorId(ModPack21341Init.PackageId, unit.Id), unit.Pos);
-            if (unit.CreatureMapIsActivated)
-                unitWithIndex.view.ChangeScale(unit.ScaleSize);
             unitWithIndex.emotionDetail.SetEmotionLevel(unit.EmotionLevel);
             if (unit.LockedEmotion)
                 unitWithIndex.emotionDetail.SetMaxEmotionLevel(unit.MaxEmotionLevel);
-            if (unit.DeckActionType != DeckActionType.NoAction)
-                ChangeDeck(unitWithIndex, unit.CardsId);
-            unitWithIndex.cardSlotDetail.RecoverPlayPoint(unit.CurrentLight);
+            unitWithIndex.cardSlotDetail.RecoverPlayPoint(unitWithIndex.cardSlotDetail.GetMaxPlayPoint());
             unitWithIndex.allyCardDetail.DrawCards(unitWithIndex.UnitData.unitData.GetStartDraw());
             unitWithIndex.formation = new FormationPosition(unitWithIndex.formation._xmlInfo);
             if (!unit.AddEmotionPassive) return;
+            AddEmotionPassives(unitWithIndex);
+        }
+
+        private static void AddEmotionPassives(BattleUnitModel unit)
+        {
             foreach (var emotionCard in BattleObjectManager.instance.GetAliveList(Faction.Player).FirstOrDefault()
                 .emotionDetail.PassiveList.Where(x =>
                     x.XmlInfo.TargetType == EmotionTargetType.AllIncludingEnemy))
             {
-                unitWithIndex.emotionDetail.ApplyEmotionCard(emotionCard.XmlInfo);
+                unit.emotionDetail.ApplyEmotionCard(emotionCard.XmlInfo);
             }
         }
-        public static BattleUnitModel AddNewUnitPlayerSide(StageLibraryFloorModel floor, UnitModel unit, ref BookModel originalModel, ref BattleDialogueModel dlg)
+        public static BattleUnitModel AddNewUnitPlayerSide(StageLibraryFloorModel floor, UnitModel unit)
         {
-            var allyUnit = Singleton<StageController>.Instance.CreateLibrarianUnit_fromBattleUnitData(unit.Index);
-            allyUnit.passiveDetail.DestroyPassiveAll();
-            allyUnit.UnitData.unitData.SetTemporaryPlayerUnitByBook(new LorId(ModPack21341Init.PackageId, unit.Id));
-            allyUnit.UnitData.unitData.SetTempName(unit.Name);
-            originalModel = allyUnit.customBook;
-            allyUnit.index = unit.Pos;
-            allyUnit.RecoverHP(allyUnit.MaxHp);
-            allyUnit.breakDetail.ResetGauge();
-            allyUnit.UnitData.unitData.workshopSkin = "";
-            if (unit.UseDefaultHead)
-                allyUnit.UnitData.unitData.customizeData.SetCustomData(false);
-            allyUnit.UnitData.unitData.EquipCustomCoreBook(new BookModel(Singleton<BookXmlList>.Instance.GetData(new LorId(ModPack21341Init.PackageId, unit.Id))));
-            allyUnit.view.CreateSkin();
+            var unitBattleDataList = floor.GetUnitBattleDataList();
+            var unitBattleData = unitBattleDataList.FirstOrDefault(x => string.Equals(x.unitData.name, unit.Name));
+            var allyUnit = CreateCustomLibrarianUnit(unit.Sephirah, unitBattleData, unit.Pos);
             allyUnit.emotionDetail.SetEmotionLevel(unit.EmotionLevel);
             if (unit.LockedEmotion)
                 allyUnit.emotionDetail.SetMaxEmotionLevel(unit.MaxEmotionLevel);
             else
                 allyUnit.emotionDetail.Reset();
-            if (unit.DeckActionType != DeckActionType.NoAction)
-                ChangeDeck(allyUnit, unit.CardsId);
             allyUnit.allyCardDetail.DrawCards(allyUnit.UnitData.unitData.GetStartDraw());
-            allyUnit.Book.SetMaxPlayPoint(unit.MaxLight);
-            allyUnit.Book.SetSpeedDiceMax(unit.SpeedMax);
-            allyUnit.Book.SetSpeedDiceMin(unit.SpeedMin);
-            allyUnit.cardSlotDetail.RecoverPlayPoint(unit.CurrentLight);
-            dlg = allyUnit.UnitData.unitData.battleDialogModel;
-            allyUnit.formation = floor.GetFormationPosition(unit.Pos);
-            if (unit.CreatureMapIsActivated)
-                allyUnit.view.ChangeScale(unit.ScaleSize);
-            allyUnit.passiveDetail.PassiveList.AddRange(allyUnit.UnitData.unitData.bookItem.CreatePassiveList());
-            foreach (var passive in allyUnit.passiveDetail.PassiveList)
-                passive.Init(allyUnit);
+            allyUnit.cardSlotDetail.RecoverPlayPoint(allyUnit.cardSlotDetail.GetMaxPlayPoint());
             if (unit.AddEmotionPassive)
-            {
-                foreach (var emotionCard in BattleObjectManager.instance.GetAliveList(Faction.Player).FirstOrDefault()
-                    .emotionDetail.PassiveList.Where(x =>
-                        x.XmlInfo.TargetType == EmotionTargetType.All ||
-                        x.XmlInfo.TargetType == EmotionTargetType.AllIncludingEnemy))
-                {
-                    allyUnit.emotionDetail.ApplyEmotionCard(emotionCard.XmlInfo);
-                }
-            }
+                AddEmotionPassives(allyUnit);
             allyUnit.OnWaveStart();
-            if (unit.CustomDialog)
-                allyUnit.UnitData.unitData.InitBattleDialogByDefaultBook(new LorId(ModPack21341Init.PackageId, unit.DialogId));
             return allyUnit;
         }
-        public static void ReturnToTheOriginalPlayerUnit(BattleUnitModel unit, BookModel originalBook, BattleDialogueModel originalDialog, bool isDead = false)
+        private static BattleUnitModel CreateCustomLibrarianUnit(SephirahType sephirah, UnitBattleDataModel battleData, int index)
+        {
+            var floor = Singleton<StageController>.Instance.GetStageModel().GetFloor(sephirah);
+            var unitData = battleData.unitData;
+            var defaultUnit = BattleObjectManager.CreateDefaultUnit(Faction.Player);
+            defaultUnit.index = index;
+            defaultUnit.grade = unitData.grade;
+            defaultUnit.formation = floor.GetFormationPosition(defaultUnit.index);
+            defaultUnit.SetUnitData(battleData);
+            defaultUnit.OnCreated();
+            PutValueInLibrarianTeam(defaultUnit);
+            BattleObjectManager.instance.RegisterUnit(defaultUnit);
+            defaultUnit.passiveDetail.OnUnitCreated();
+            return defaultUnit;
+        }
+        public static void ReturnToTheOriginalPlayerUnit(BattleUnitModel unit, BookModel originalBook, BattleDialogueModel originalDialog)
         {
             unit.UnitData.unitData.customizeData.SetCustomData(true);
             unit.UnitData.unitData.ResetTempName();
@@ -130,8 +112,6 @@ namespace ModPack21341.Utilities
             if (originalBook != null)
                 unit.UnitData.unitData.EquipCustomCoreBook(originalBook);
             unit.UnitData.unitData.battleDialogModel = originalDialog;
-            if (isDead)
-                unit.DieFake();
         }
 
         public static void ReturnToTheOriginalBaseSkin(BattleUnitModel owner, string originalSkinName, BattleDialogueModel dlg)
@@ -147,7 +127,7 @@ namespace ModPack21341.Utilities
             owner.view.CreateSkin();
         }
 
-        public static void PrepareSephirahSkin(BattleUnitModel owner, int id, string charName, bool isNpc,ref string originalSkinName, ref BattleDialogueModel dlg, bool baseDlg = false, string charName2 = null, bool doubleName = false)
+        public static void PrepareSephirahSkin(BattleUnitModel owner, int id, string charName, bool isNpc, ref string originalSkinName, ref BattleDialogueModel dlg, bool baseDlg = false, string charName2 = null, bool doubleName = false)
         {
             originalSkinName = owner.UnitData.unitData.CustomBookItem.GetCharacterName();
             dlg = owner.UnitData.unitData.battleDialogModel;
@@ -231,6 +211,50 @@ namespace ModPack21341.Utilities
             {
                 owner.allyCardDetail.DrawCards(num);
             }
+        }
+        private static void PutValueInLibrarianTeam(BattleUnitModel unit)
+        {
+            var modelTeam = (BattleTeamModel)typeof(StageController).GetField("_librarianTeam",
+                AccessTools.all)?.GetValue(Singleton<StageController>.Instance);
+            modelTeam?.AddUnit(unit);
+        }
+
+        private static UnitBattleDataModel AddCustomFixUnitModel(StageModel stage, LibraryFloorModel floor, UnitModel unit)
+        {
+            var lorId = new LorId(ModPack21341Init.PackageId, unit.Id);
+            var unitDataModel = new UnitDataModel(lorId, floor.Sephirah, true);
+            unitDataModel.SetTemporaryPlayerUnitByBook(lorId);
+            unitDataModel.isSephirah = false;
+            unitDataModel.SetCustomName(unit.Name);
+            unitDataModel.CreateDeckByDeckInfo();
+            unitDataModel.forceItemChangeLock = true;
+            var unitBattleDataModel = new UnitBattleDataModel(stage, unitDataModel);
+            unitBattleDataModel.Init();
+            unitDataModel.InitBattleDialogByDefaultBook(new LorId(ModPack21341Init.PackageId, unit.DialogId));
+            return unitBattleDataModel;
+        }
+        public static void AddUnitOldSamuraiBattle(StageLibraryFloorModel __instance, StageModel stage, UnitDataModel data)
+        {
+            var list = (List<UnitBattleDataModel>)__instance.GetType().GetField("_unitList", AccessTools.all)?.GetValue(__instance);
+            var unitBattleDataModel = new UnitBattleDataModel(stage, data);
+            if (!unitBattleDataModel.unitData.isSephirah) return;
+            unitBattleDataModel.Init();
+            list?.Add(unitBattleDataModel);
+        }
+
+        public static void FillUnitData(UnitModel unit, StageLibraryFloorModel floor)
+        {
+            var modelTeam = (List<UnitBattleDataModel>)typeof(StageLibraryFloorModel).GetField("_unitList",
+                AccessTools.all)?.GetValue(Singleton<StageController>.Instance.GetStageModel().GetFloor(floor.Sephirah));
+            for (var i = 0; i < 3; i++)
+                modelTeam?.Add(AddCustomFixUnitModel(Singleton<StageController>.Instance.GetStageModel(), floor._floorModel, unit));
+        }
+
+        public static void RemoveUnitData(StageLibraryFloorModel floor,string name)
+        {
+            var modelTeam = (List<UnitBattleDataModel>)typeof(StageLibraryFloorModel).GetField("_unitList",
+                AccessTools.all)?.GetValue(Singleton<StageController>.Instance.GetStageModel().GetFloor(floor.Sephirah));
+            modelTeam?.RemoveAll(x => string.Equals(x.unitData.name, name));
         }
     }
 }

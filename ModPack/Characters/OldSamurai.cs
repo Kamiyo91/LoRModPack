@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using LOR_DiceSystem;
 using ModPack21341.Characters.Buffs;
 using ModPack21341.Characters.CardAbilities;
@@ -45,9 +44,6 @@ namespace ModPack21341.Characters
         private bool _summonGhostUsed;
         private bool _ghostMapRemoved;
         private StageLibraryFloorModel _floor;
-        private List<BattleUnitModel> _ghostList;
-        private BookModel[] _originalBookList;
-        private BattleDialogueModel[] _originalDialogList;
 
         public override void OnRoundStart()
         {
@@ -82,14 +78,17 @@ namespace ModPack21341.Characters
 
         private void PreLoadBasicVar()
         {
+            UnitUtilities.TestingUnitValues();
             _lethalDamage = false;
             _summonGhostUsed = false;
-            _ghostList = new List<BattleUnitModel>
-                {new BattleUnitModel(1), new BattleUnitModel(1), new BattleUnitModel(1)};
-            _originalBookList = new BookModel[3];
-            _originalDialogList = new BattleDialogueModel[3];
             var currentStageFloorModel = Singleton<StageController>.Instance.GetCurrentStageFloorModel();
             _floor = Singleton<StageController>.Instance.GetStageModel().GetFloor(currentStageFloorModel.Sephirah);
+            UnitUtilities.FillUnitData(new UnitModel
+            {
+                Id = 10000003,
+                Name = "Samurai's Ghost",
+                DialogId = 2
+            },_floor);
         }
         public override void OnUseCard(BattlePlayingCardDataInUnitModel curCard)
         {
@@ -107,32 +106,21 @@ namespace ModPack21341.Characters
         {
             _summonGhosts = false;
             _summonGhostUsed = true;
-            var ghostListIndex = 0;
-            var currentStageFloorModel =
-                Singleton<StageController>.Instance.GetCurrentStageFloorModel().GetUnitBattleDataList();
             foreach (var unit in BattleObjectManager.instance.GetList(Faction.Player).Where(x => x != owner))
             {
                 BattleObjectManager.instance.UnregisterUnit(unit);
             }
-
-            foreach (var (unit, i) in currentStageFloorModel.Select((value, i) => (value, i)))
+            for (var i = 1; i < 4; i++)
             {
-                if (unit == owner.UnitData || ghostListIndex >= 3) continue;
-                _ghostList[ghostListIndex] = UnitUtilities.AddNewUnitPlayerSide(_floor, new UnitModel
+                UnitUtilities.AddNewUnitPlayerSide(_floor, new UnitModel
                 {
-                    Index = i,
                     Id = 10000003,
                     Name = "Samurai's Ghost",
-                    Pos = ghostListIndex + 1,
+                    Pos = i,
                     LockedEmotion = true,
-                    DeckActionType = DeckActionType.Change,
-                    CardsId = UnitUtilities.GetSamuraiCardsId(),
-                    CustomDialog = true,
-                    DialogId = 2
-                }, ref _originalBookList[ghostListIndex], ref _originalDialogList[ghostListIndex]);
-                ghostListIndex++;
+                    Sephirah = _floor.Sephirah
+                });
             }
-
             UnitUtilities.RefreshCombatUI();
         }
         public override void OnRoundEnd()
@@ -144,17 +132,9 @@ namespace ModPack21341.Characters
         public override void OnBattleEnd()
         {
             if (!_summonGhostUsed) return;
-            ReturnToTheOriginalPlayerBookUnits();
+            ReturnToTheOriginalPlayerTeam();
         }
-
-        private void ReturnToTheOriginalPlayerBookUnits()
-        {
-            foreach (var (unit, i) in _ghostList.Select((value, i) => (value, i)))
-            {
-                UnitUtilities.ReturnToTheOriginalPlayerUnit(unit, _originalBookList[i], _originalDialogList[i], true);
-            }
-        }
-
+        private void ReturnToTheOriginalPlayerTeam() => UnitUtilities.RemoveUnitData(_floor,"Samurai's Ghost");
         private void Revive()
         {
             _lethalDamage = true;

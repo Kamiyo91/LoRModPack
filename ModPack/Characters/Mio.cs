@@ -48,15 +48,17 @@ namespace ModPack21341.Characters
         private bool _auraCheck;
         private bool _phaseChanged;
         private bool _usedMassEgo;
+        private bool _specialCase;
         private BattleDialogueModel _dlg;
         private BookModel _originalBook;
 
         public override void OnBattleEnd()
         {
-            if (owner.faction == Faction.Player)
+            if (owner.faction == Faction.Player && !_specialCase)
                 UnitUtilities.ReturnToTheOriginalPlayerUnit(owner, _originalBook, _dlg);
         }
 
+        public void SetSpecialCase() => _specialCase = true;
         private void SetPhaseChange()
         {
             _phaseChanged = true;
@@ -196,6 +198,7 @@ namespace ModPack21341.Characters
         }
         private void InitVariables()
         {
+            _specialCase = false;
             _deathCheck = false;
             _phaseChanged = false;
             _dlg = owner.UnitData.unitData.battleDialogModel;

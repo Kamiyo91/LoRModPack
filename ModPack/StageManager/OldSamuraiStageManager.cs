@@ -87,14 +87,9 @@ namespace ModPack21341.StageManager
             {
                 UnitUtilities.AddNewUnitEnemySide(new UnitModel
                 {
-                    CreatureMapIsActivated = true,
                     Id = 2,
                     Pos = i,
-                    LockedEmotion = true,
-                    DeckActionType = DeckActionType.Change,
-                    CustomDialog = true,
-                    DialogId = 2,
-                    CardsId = UnitUtilities.GetSamuraiCardsId()
+                    LockedEmotion = true
                 });
             }
             UnitUtilities.RefreshCombatUI(true);

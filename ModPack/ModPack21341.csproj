@@ -100,12 +100,6 @@
     <Compile Include="Utilities\UnitUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Note.txt" />
-    <Content Include="Utilities\CustomMapUtility\Resource\Stage\Template\Background.png" />
-    <Content Include="Utilities\CustomMapUtility\Resource\Stage\Template\Floor.png" />
-    <Content Include="Utilities\CustomMapUtility\Resource\Stage\Template\FloorUnder.png" />
-  </ItemGroup>
-  <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup />
