@@ -225,7 +225,7 @@ namespace ModPack21341.Characters
     public class PassiveAbility_ControlledBreathing : PassiveAbilityBase
     {
         private int _count;
-        private int _enemyCount = 4;
+        private int _enemyCount = 3;
         private bool _lightUse;
 
         private void AddDeepBreathingCard()
@@ -233,7 +233,7 @@ namespace ModPack21341.Characters
             _ = owner.personalEgoDetail.GetHand().Exists(x => x.GetID() == new LorId(ModPack21341Init.PackageId, 900))
                 ? _count = 0
                 : _count++;
-            if (_count != 4) return;
+            if (_count != 3) return;
             owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 900));
             _count = 0;
 
@@ -273,7 +273,7 @@ namespace ModPack21341.Characters
                 return;
             }
 
-            if (_enemyCount <= 3) return;
+            if (_enemyCount <= 2) return;
             if (owner.cardSlotDetail.PlayPoint < 2) return;
             UseDeepBreathingCardNpc();
         }

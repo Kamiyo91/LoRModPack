@@ -58,12 +58,12 @@ namespace ModPack21341.Characters.Buffs
         protected override string keywordIconId => "KeterFinal_Light";
 
         public override string bufActivatedText =>
-            "Power +2 - Recover 3 Hp and Stagger Resist at the end of each scene";
+            "Power +1 - Recover 3 Hp and Stagger Resist at the end of each scene";
 
         public override void BeforeRollDice(BattleDiceBehavior behavior) => behavior.ApplyDiceStatBonus(
                 new DiceStatBonus()
                 {
-                    power = 2
+                    power = 1
                 });
         public override void Init(BattleUnitModel owner)
         {

@@ -1,6 +1,5 @@
 ﻿using ModPack21341.Models;
 using ModPack21341.StageManager.MapManager.BlackSilenceEgoMapManager;
-using ModPack21341.StageManager.MapManager.MioStageMaps;
 using ModPack21341.Utilities;
 
 namespace ModPack21341.Characters.CardAbilities
@@ -22,8 +21,11 @@ namespace ModPack21341.Characters.CardAbilities
             owner.view.SetAltSkin("BlackSilence4");
         }
 
-        public override void OnStartBattle() => ChangeToBlackSilenceEgoMap(owner);
-
+        public override void OnStartBattle()
+        {
+            if (SingletonBehavior<BattleSceneRoot>.Instance.currentMapObject.isEgo) return;
+            ChangeToBlackSilenceEgoMap(owner);
+        }
         private static void ChangeToBlackSilenceEgoMap(BattleUnitModel owner) => MapUtilities.ChangeMap(new MapModel
         {
             Stage = "BlackSilenceMassEgo",

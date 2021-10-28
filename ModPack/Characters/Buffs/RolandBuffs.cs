@@ -7,13 +7,13 @@
         protected override string keywordId => "BlackMaskEgo";
         public override int paramInBufDesc => 0;
         protected override string keywordIconId => "BlackFrantic";
-        public override string bufActivatedText => "Power +2,draw 1 additional Card and Restore 1 Light each scene";
+        public override string bufActivatedText => "Power +1,draw 1 additional Card and Restore 1 Light each scene";
         public override bool isAssimilation => true;
 
         public override void BeforeRollDice(BattleDiceBehavior behavior) => behavior.ApplyDiceStatBonus(
             new DiceStatBonus
             {
-                power = 2
+                power = 1
             });
         public override void OnRoundStart()
         {

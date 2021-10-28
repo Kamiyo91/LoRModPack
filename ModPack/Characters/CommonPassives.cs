@@ -19,7 +19,7 @@ namespace ModPack21341.Characters
         {
             if (behavior.Detail != BehaviourDetail.Slash) return;
             UnitUtilities.SetPassiveCombatLog(this, owner);
-            behavior.ApplyDiceStatBonus(new DiceStatBonus { power = 2 });
+            behavior.ApplyDiceStatBonus(new DiceStatBonus { power = 1 });
         }
 
         public override void OnSucceedAttack(BattleDiceBehavior behavior) => RecoverHpAndStagger();
@@ -37,7 +37,7 @@ namespace ModPack21341.Characters
         {
             if (behavior.Detail != BehaviourDetail.Evasion) return;
             UnitUtilities.SetPassiveCombatLog(this, owner);
-            behavior.ApplyDiceStatBonus(new DiceStatBonus { power = 2 });
+            behavior.ApplyDiceStatBonus(new DiceStatBonus { power = 1 });
             if (!behavior.IsParrying() || _buffCheck) return;
             AddHasteBuff();
         }

@@ -16,7 +16,6 @@
     {
         public override bool IsImmortal() => true;
         public override bool IsInvincibleHp(BattleUnitModel attacker) => true;
-        public override bool IsInvincibleBp(BattleUnitModel attacker) => true;
         public override void OnRoundEnd() => Destroy();
     }
     public class BattleUnitBuf_ImmortalBuff: BattleUnitBuf

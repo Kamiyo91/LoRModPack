@@ -1,26 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CustomMapUtility;
-using HarmonyLib;
+﻿using CustomMapUtility;
 using UnityEngine;
 
 namespace ModPack21341.StageManager.MapManager.BlackSilenceEgoMapManager
 {
     public class BlackSilenceEgoMapManager : CustomCreatureMapManager
     {
+        private BlackSilence4thMapManager _mapGameObject;
         private GameObject _aura;
         public override void InitializeMap()
         {
             base.InitializeMap();
             sephirahType = SephirahType.None;
             sephirahColor = Color.black;
+            var map = Util.LoadPrefab("InvitationMaps/InvitationMap_BlackSilence4",
+                SingletonBehavior<BattleSceneRoot>.Instance.transform);
+            _mapGameObject = map.GetComponent<global::MapManager>() as BlackSilence4thMapManager;
+            Destroy(map);
         }
         public void BoomFirst()
         {
-            var gameObject = Instantiate(SingletonBehavior<BlackSilence4thMapManager>.Instance.areaBoomEffect);
+            var gameObject = Instantiate(_mapGameObject.areaBoomEffect);
             var battleUnitModel = BattleObjectManager.instance.GetList(Faction.Enemy)[0];
             gameObject.transform.SetParent(battleUnitModel.view.gameObject.transform);
             gameObject.transform.localPosition = Vector3.zero;
