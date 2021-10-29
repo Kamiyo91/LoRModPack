@@ -16,7 +16,7 @@ namespace ModPack21341.Utilities
         {
             if (!Singleton<StageController>.Instance.CanChangeMap()) return true;
             if (!model.OneTurnEgo && CanChangeMapCustom(2)) return true;
-            if (model.Component == new OldSamuraiPlayerMapManager() && CanChangeMapCustom(1)) return true;
+            if (model.StageId != 0 && CanChangeMapCustom(model.StageId)) return true;
             return false;
         }
         public static void ChangeMap(MapModel model,Faction faction = Faction.Player)

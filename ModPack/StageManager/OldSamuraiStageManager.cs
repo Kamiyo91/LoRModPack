@@ -52,7 +52,6 @@ namespace ModPack21341.StageManager
                 unit.breakDetail.RecoverBreakLife(1, true);
                 unit.breakDetail.nextTurnBreak = false;
                 unit.cardSlotDetail.RecoverPlayPoint(unit.cardSlotDetail.GetMaxPlayPoint());
-                unit.view.ChangeScale(MapSize.L);
                 unit.moveDetail.ReturnToFormationByBlink(true);
                 unit.view.EnableView(true);
                 unit.view.CreateSkin();

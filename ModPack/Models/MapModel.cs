@@ -4,8 +4,7 @@
     {
         public MapManager Component { get; set; }
         public string Stage { get; set; }
-        public bool ChangingEffect { get; set; } = true;
-        public bool Scale { get; set; } = false;
+        public int StageId { get; set; }
         public bool IsPlayer { get; set; }
         public bool OneTurnEgo { get; set; }
         public float Bgx { get; set; } = 0.5f;

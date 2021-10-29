@@ -10,9 +10,6 @@ using ModPack21341.Models;
 
 namespace ModPack21341.Characters
 {
-    public class PassiveAbility_DropDesc : PassiveAbilityBase
-    {
-    }
     public class PassiveAbility_Kurosawa_Blade : PassiveAbilityBase
     {
         public override void BeforeRollDice(BattleDiceBehavior behavior)
@@ -30,37 +27,17 @@ namespace ModPack21341.Characters
             owner.breakDetail.RecoverBreak(2);
         }
     }
-    public class PassiveAbility_Mask_of_Perception : PassiveAbilityBase
-    {
-        private bool _buffCheck;
-        public override void BeforeRollDice(BattleDiceBehavior behavior)
-        {
-            if (behavior.Detail != BehaviourDetail.Evasion) return;
-            UnitUtilities.SetPassiveCombatLog(this, owner);
-            behavior.ApplyDiceStatBonus(new DiceStatBonus { power = 1 });
-            if (!behavior.IsParrying() || _buffCheck) return;
-            AddHasteBuff();
-        }
-
-        private void AddHasteBuff()
-        {
-            _buffCheck = true;
-            owner.bufListDetail.AddKeywordBufByEtc(KeywordBuf.Quickness, 1, owner);
-        }
-        public override void OnRoundStartAfter() => _buffCheck = false;
-
-    }
     public class PassiveAbility_EvadeCounter : PassiveAbilityBase
     {
         private bool _recoveryCheck;
         public override void OnStartBattle()
         {
             _recoveryCheck = false;
-            UnitUtilities.ReadyCounterCard(owner, 15);
+            UnitUtilities.ReadyCounterCard(owner, 30);
         }
         public override void OnWinParrying(BattleDiceBehavior behavior)
         {
-            if (behavior.card.card.GetID().id != 15) return;
+            if (behavior.card.card.GetID().id != 30) return;
             if (_recoveryCheck) return;
             _recoveryCheck = true;
             UnitUtilities.SetPassiveCombatLog(this, owner);

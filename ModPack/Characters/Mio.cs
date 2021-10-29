@@ -4,6 +4,7 @@ using ModPack21341.Characters.Buffs;
 using ModPack21341.Harmony;
 using ModPack21341.StageManager;
 using ModPack21341.Utilities;
+using UnityEngine;
 
 namespace ModPack21341.Characters
 {
@@ -210,11 +211,15 @@ namespace ModPack21341.Characters
     {
         private bool _awakened;
         private int _count = 4;
-        public override void OnRoundEnd() => CheckMassAttackCard();
+
+        public override void OnRoundEndTheLast_ignoreDead() => CheckMassAttackCard();
+
+
         private void CheckMassAttackCard()
         {
             if (_awakened)
                 _ = owner.allyCardDetail.GetHand().Exists(x => x.GetID() == new LorId(ModPack21341Init.PackageId, 25)) ? _count = 4 : _count++;
+            Debug.LogError($"Mio Mass Count{_count}");
         }
         public void SetAwakened(bool status) => _awakened = status;
         public void SetCountValue(int value) => _count = value;
@@ -248,12 +253,44 @@ namespace ModPack21341.Characters
     {
         public override void OnRoundStartAfter()
         {
-            UnitUtilities.DrawUntilX(owner,4);
+            UnitUtilities.DrawUntilX(owner, 4);
         }
-        
+
         public override void OnRoundEnd()
         {
             owner.cardSlotDetail.RecoverPlayPoint(1);
+        }
+    }
+
+    public class PassiveAbility_MioMirror : PassiveAbilityBase
+    {
+        private bool _usedMassEgo;
+        public override void OnWaveStart()
+        {
+            if (!owner.bufListDetail.GetActivatedBufList().Exists(x => x is BattleUnitBuf_GodAuraRelease))
+                owner.bufListDetail.AddBufWithoutDuplication(new BattleUnitBuf_GodAuraRelease());
+            owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 904));
+            owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 905));
+        }
+
+        public override void OnUseCard(BattlePlayingCardDataInUnitModel curCard)
+        {
+            if (curCard.card.GetID() == new LorId(ModPack21341Init.PackageId, 904))
+            {
+                owner.personalEgoDetail.RemoveCard(curCard.card.GetID());
+            }
+            if (curCard.card.GetID() == new LorId(ModPack21341Init.PackageId, 19) || curCard.card.GetID() == new LorId(ModPack21341Init.PackageId, 25))
+            {
+                owner.allyCardDetail.ExhaustACardAnywhere(curCard.card);
+            }
+            if (curCard.card.GetID() == new LorId(ModPack21341Init.PackageId, 905))
+                _usedMassEgo = true;
+        }
+        public override void OnRoundStart()
+        {
+            if (!_usedMassEgo) return;
+            _usedMassEgo = false;
+            MapUtilities.ReturnFromEgoMap("Mio", owner, 2);
         }
     }
 }

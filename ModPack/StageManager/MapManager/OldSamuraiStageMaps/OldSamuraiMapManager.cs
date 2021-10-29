@@ -70,7 +70,7 @@ namespace ModPack21341.StageManager.MapManager.OldSamuraiStageMaps
         public void ChangeDlgPhase(int mn, int mx)
         {
             OnDestroy();
-            InitDlg(mn, mx);
+            ChangeDlg(mn, mx);
         }
     }
 }

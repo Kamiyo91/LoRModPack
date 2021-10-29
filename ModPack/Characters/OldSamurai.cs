@@ -1,10 +1,12 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using LOR_DiceSystem;
 using ModPack21341.Characters.Buffs;
 using ModPack21341.Characters.CardAbilities;
 using ModPack21341.Harmony;
 using ModPack21341.Models;
 using ModPack21341.StageManager;
+using ModPack21341.StageManager.MapManager.OldSamuraiStageMaps;
 using ModPack21341.Utilities;
 
 namespace ModPack21341.Characters
@@ -43,11 +45,12 @@ namespace ModPack21341.Characters
         private bool _summonGhosts;
         private bool _summonGhostUsed;
         private bool _ghostMapRemoved;
+        private bool _mapChanged;
         private StageLibraryFloorModel _floor;
 
         public override void OnRoundStart()
         {
-            if (owner.faction == Faction.Player && !_ghostMapRemoved &&
+            if (owner.faction == Faction.Player && !_ghostMapRemoved && _summonGhostUsed &&
                 BattleObjectManager.instance.GetAliveList(Faction.Player).All(x => x == owner))
             {
                 RemoveSamuraiEgoMap();
@@ -58,12 +61,19 @@ namespace ModPack21341.Characters
                 owner.bufListDetail.AddBuf(new BattleUnitBuf_ReviveCheckBuf());
             }
         }
+        private static void ChangeToSamuraiEgoMap() => MapUtilities.ChangeMap(new MapModel
+        {
+            Stage = "OldSamurai",
+            StageId = 1,
+            IsPlayer = true,
+            Component = new OldSamuraiPlayerMapManager(),
+            Bgy = 0.2f
+        });
         private void RemoveSamuraiEgoMap()
         {
             _ghostMapRemoved = true;
-            owner.bufListDetail.RemoveBufAll(typeof(BattleUnitBuf_OldSamuraiSummonChangeMap));
             MapUtilities.RemoveValueInEgoMap("OldSamurai");
-            MapUtilities.ReturnFromEgoMap("OldSamurai",owner,1);
+            MapUtilities.ReturnFromEgoMap("OldSamurai", owner, 1);
             SingletonBehavior<BattleSoundManager>.Instance.SetEnemyTheme(SingletonBehavior<BattleSceneRoot>
                 .Instance.currentMapObject.mapBgm);
             SingletonBehavior<BattleSoundManager>.Instance.CheckTheme();
@@ -87,35 +97,42 @@ namespace ModPack21341.Characters
                 Id = 10000003,
                 Name = "Samurai's Ghost",
                 DialogId = 2
-            },_floor);
+            }, _floor);
         }
         public override void OnUseCard(BattlePlayingCardDataInUnitModel curCard)
         {
             if (curCard.card.GetID() != new LorId(ModPack21341Init.PackageId, 902)) return;
-            PrepareEgoBuff();
+            PrepareEgo();
         }
 
-        private void PrepareEgoBuff()
+        private void PrepareEgo()
         {
             _summonGhosts = true;
-            owner.bufListDetail.AddBuf(new BattleUnitBuf_OldSamuraiSummonChangeMap());
+            _mapChanged = true;
             owner.personalEgoDetail.RemoveCard(new LorId(ModPack21341Init.PackageId, 902));
         }
         private void SummonSamuraiGhost()
         {
             _summonGhosts = false;
             _summonGhostUsed = true;
-            foreach (var unit in BattleObjectManager.instance.GetList(Faction.Player).Where(x => x != owner))
+            var indexList = new List<int>();
+            foreach (var (battleUnit, num) in BattleObjectManager.instance.GetList(Faction.Player)
+                .Select((value, i) => (value, i)))
+            {
+                if (num == owner.index) continue;
+                indexList.Add(num);
+                if (indexList.Count > 2) break;
+            }
+            foreach (var unit in BattleObjectManager.instance.GetList(Faction.Player).Where(x => indexList.Contains(x.index)))
             {
                 BattleObjectManager.instance.UnregisterUnit(unit);
             }
-            for (var i = 1; i < 4; i++)
+            for (var i = 0; i < 3; i++)
             {
                 UnitUtilities.AddNewUnitPlayerSide(_floor, new UnitModel
                 {
-                    Id = 10000003,
                     Name = "Samurai's Ghost",
-                    Pos = i,
+                    Pos = indexList[i],
                     LockedEmotion = true,
                     Sephirah = _floor.Sephirah
                 });
@@ -133,7 +150,7 @@ namespace ModPack21341.Characters
             if (!_summonGhostUsed) return;
             ReturnToTheOriginalPlayerTeam();
         }
-        private void ReturnToTheOriginalPlayerTeam() => UnitUtilities.RemoveUnitData(_floor,"Samurai's Ghost");
+        private void ReturnToTheOriginalPlayerTeam() => UnitUtilities.RemoveUnitData(_floor, "Samurai's Ghost");
         private void Revive()
         {
             _lethalDamage = true;
@@ -156,6 +173,14 @@ namespace ModPack21341.Characters
             }
             owner.allyCardDetail.DrawCards(4);
         }
+
+        public override void OnRoundEndTheLast()
+        {
+            if (!_mapChanged) return;
+            _mapChanged = false;
+            ChangeToSamuraiEgoMap();
+        }
+
         public override void OnRoundEndTheLast_ignoreDead()
         {
             if (_lethalDamage || !owner.IsDead() || owner.faction == Faction.Enemy) return;
@@ -350,7 +375,7 @@ namespace ModPack21341.Characters
     {
         public override void BeforeRollDice(BattleDiceBehavior behavior)
         {
-            UnitUtilities.SetPassiveCombatLog(this,owner);
+            UnitUtilities.SetPassiveCombatLog(this, owner);
             behavior.ApplyDiceStatBonus(
                 new DiceStatBonus
                 {
@@ -373,7 +398,7 @@ namespace ModPack21341.Characters
         {
             if (!_counterReload) return;
             _counterReload = false;
-            UnitUtilities.SetPassiveCombatLog(this,owner);
+            UnitUtilities.SetPassiveCombatLog(this, owner);
             UnitUtilities.ReadyCounterCard(owner, 2);
         }
     }

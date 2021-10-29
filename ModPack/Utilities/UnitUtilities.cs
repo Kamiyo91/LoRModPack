@@ -43,24 +43,29 @@ namespace ModPack21341.Utilities
             }
             BattleObjectManager.instance.InitUI();
         }
-        public static BattleUnitModel AddOriginalPlayerUnitPlayerSide(UnitModel unit,int index)
+        public static BattleUnitModel AddOriginalPlayerUnitPlayerSide(UnitModel unit, int index)
         {
             var allyUnit = Singleton<StageController>.Instance.CreateLibrarianUnit_fromBattleUnitData(index);
             allyUnit.OnWaveStart();
             allyUnit.allyCardDetail.DrawCards(allyUnit.UnitData.unitData.GetStartDraw());
             return allyUnit;
         }
-        public static void AddNewUnitEnemySide(UnitModel unit)
+        public static BattleUnitModel AddNewUnitEnemySide(UnitModel unit)
         {
             var unitWithIndex = Singleton<StageController>.Instance.AddNewUnit(Faction.Enemy, new LorId(ModPack21341Init.PackageId, unit.Id), unit.Pos);
             unitWithIndex.emotionDetail.SetEmotionLevel(unit.EmotionLevel);
             if (unit.LockedEmotion)
                 unitWithIndex.emotionDetail.SetMaxEmotionLevel(unit.MaxEmotionLevel);
+            else
+                unitWithIndex.emotionDetail.Reset();
             unitWithIndex.cardSlotDetail.RecoverPlayPoint(unitWithIndex.cardSlotDetail.GetMaxPlayPoint());
             unitWithIndex.allyCardDetail.DrawCards(unitWithIndex.UnitData.unitData.GetStartDraw());
             unitWithIndex.formation = new FormationPosition(unitWithIndex.formation._xmlInfo);
-            if (!unit.AddEmotionPassive) return;
-            AddEmotionPassives(unitWithIndex);
+            if (unit.AddEmotionPassive)
+                AddEmotionPassives(unitWithIndex);
+            if(unit.OnWaveStart)
+                unitWithIndex.OnWaveStart();
+            return unitWithIndex;
         }
 
         private static void AddEmotionPassives(BattleUnitModel unit)
@@ -178,6 +183,7 @@ namespace ModPack21341.Utilities
         public static List<int> GetSamuraiCardsId() => new List<int> { 7, 7, 3, 3, 4, 4, 5, 5, 6 };
 
         public static List<int> GetMioCardsId() => new List<int> { 20, 20, 21, 22, 23, 1, 1, 13, 13 };
+        public static List<int> GetKamiyoCardsId() => new List<int> { 32, 36, 31, 31, 33, 33, 34, 34, 46 };
 
         public static List<int> GetBlackSilenceMaskCardsId() => new List<int> { 705206, 705207, 705208, 39, 40, 41, 42, 702001, 702004 };
         public static void AddBuffInfo()
@@ -250,7 +256,7 @@ namespace ModPack21341.Utilities
                 modelTeam?.Add(AddCustomFixUnitModel(Singleton<StageController>.Instance.GetStageModel(), floor._floorModel, unit));
         }
 
-        public static void RemoveUnitData(StageLibraryFloorModel floor,string name)
+        public static void RemoveUnitData(StageLibraryFloorModel floor, string name)
         {
             var modelTeam = (List<UnitBattleDataModel>)typeof(StageLibraryFloorModel).GetField("_unitList",
                 AccessTools.all)?.GetValue(Singleton<StageController>.Instance.GetStageModel().GetFloor(floor.Sephirah));

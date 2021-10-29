@@ -7,10 +7,6 @@ using Sound;
 
 namespace ModPack21341.Characters
 {
-    public class PassiveAbility_RolandEnemyDesc : PassiveAbilityBase
-    {
-
-    }
     public class PassiveAbility_RolandUnit : PassiveAbilityBase
     {
         private bool _blackCheck;

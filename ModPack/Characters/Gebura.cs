@@ -9,10 +9,6 @@ using UnityEngine;
 
 namespace ModPack21341.Characters
 {
-    public class PassiveAbility_GeburaEnemyDesc : PassiveAbilityBase
-    {
-
-    }
     public class PassiveAbility_GeburaUnit : PassiveAbilityBase
     {
         private BattleDialogueModel _dlg;

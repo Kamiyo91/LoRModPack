@@ -14,7 +14,7 @@ namespace ModPack21341.Characters
         private int _egoCard;
 
         private readonly List<int> _egoCards = new List<int>
-            {30, 31, 32, 33, 34, 35, 36, 37, 38};
+            {918, 919, 920, 921, 922, 923, 924, 925, 926};
 
         public override void OnWaveStart() => InitAngelaPhase();
 

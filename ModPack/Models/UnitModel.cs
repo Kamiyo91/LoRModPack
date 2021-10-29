@@ -11,6 +11,7 @@
         public int EmotionLevel { get; set; }
         public int DialogId { get; set; }
         public bool AddEmotionPassive { get; set; } = true;
+        public bool OnWaveStart { get; set; } = false;
     }
     public enum EmotionBufType
     {

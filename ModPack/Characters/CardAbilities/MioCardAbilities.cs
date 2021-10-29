@@ -7,17 +7,16 @@ namespace ModPack21341.Characters.CardAbilities
     public class DiceCardSelfAbility_GodAura_Card : DiceCardSelfAbilityBase
     {
         public static string Desc = "[Single Use]\nCan only be used at Emotion level 4 or above\n[On Use] Unleash Ego's power, recover full Stagger Resist and full Light next Scene.";
+
         public override bool OnChooseCard(BattleUnitModel owner) => owner.emotionDetail.EmotionLevel >= 4 &&
-                                                                    !owner.bufListDetail.HasAssimilation() &&
-                                                                    owner.passiveDetail.PassiveList.Exists(x => x is PassiveAbility_God_Fragment);
+                                                                    !owner.bufListDetail.HasAssimilation();
     }
     public class DiceCardSelfAbility_SakuraMirage : DiceCardSelfAbilityBase
     {
         public static string Desc = "Can only be used at Emotion level 4 or above and [Ego's Aura] is required";
 
         public override bool OnChooseCard(BattleUnitModel owner) => owner.emotionDetail.EmotionLevel >= 4 &&
-                                                                    owner.bufListDetail.HasAssimilation() &&
-                                                                    owner.passiveDetail.PassiveList.Exists(x => x is PassiveAbility_God_Fragment);
+                                                                    owner.bufListDetail.HasAssimilation();
         public override void OnStartBattle()
         {
             if (owner.faction != Faction.Player || SingletonBehavior<BattleSceneRoot>.Instance.currentMapObject.isEgo) return;
@@ -27,6 +26,7 @@ namespace ModPack21341.Characters.CardAbilities
         private static void ChangeToMioEgoMap() => MapUtilities.ChangeMap(new MapModel
         {
             Stage = "Mio",
+            StageId = 2,
             OneTurnEgo = true,
             IsPlayer = true,
             Component = new MioMapManager(),
@@ -39,9 +39,7 @@ namespace ModPack21341.Characters.CardAbilities
         public static string Desc = "[Single Use]\nCan only be used at [Emotion Level 5] and [Ego's Aura] is required";
 
         public override bool OnChooseCard(BattleUnitModel owner) => owner.emotionDetail.EmotionLevel >= 5 &&
-                                                                    owner.bufListDetail.HasAssimilation() &&
-                                                                    owner.passiveDetail.PassiveList.Exists(x =>
-                                                                        x is PassiveAbility_God_Fragment);
+                                                                    owner.bufListDetail.HasAssimilation();
     }
     public class DiceCardAbility_Death : DiceCardAbilityBase
     {
