@@ -106,7 +106,7 @@ namespace ModPack21341.StageManager
         {
             if (_kamiyoModel.IsDead()) return;
             if (!_mioGhostModel.IsDead()) return;
-            _mioGhostModel.Revive(75);
+            _mioGhostModel.Revive(_mioGhostModel.MaxHp);
             _mioGhostModel.bufListDetail.RemoveBufAll(BufPositiveType.Negative);
             _mioGhostModel.bufListDetail.RemoveBufAll(typeof(BattleUnitBuf_sealTemp));
             _mioGhostModel.breakDetail.ResetGauge();

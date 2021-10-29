@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
 using LOR_DiceSystem;
-using LOR_XML;
 using Mod;
 using ModPack21341.Utilities;
-using TMPro;
 using UnityEngine;
 
 namespace ModPack21341.Harmony

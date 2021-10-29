@@ -1,22 +1,24 @@
-﻿namespace ModPack21341.Characters.CardAbilities
+﻿using System.Linq;
+
+namespace ModPack21341.Characters.CardAbilities
 {
     public class DiceCardSelfAbility_AlterEgo_Card : DiceCardSelfAbilityBase
     {
         public static string Desc = "Can be used at Emotion Level 4 or above\n[On Use] Unleash Alter Ego's Power next Scene";
 
-        //public override bool OnChooseCard(BattleUnitModel owner) => owner.emotionDetail.EmotionLevel >= 4 && !owner.bufListDetail.HasAssimilation() &&
-        //                                                            owner.passiveDetail.PassiveList.Exists(x =>
-        //                                                                x is PassiveAbility_Power_of_the_Unknown);
+        public override bool OnChooseCard(BattleUnitModel owner) => owner.emotionDetail.EmotionLevel >= 4 && !owner.bufListDetail.HasAssimilation() &&
+                                                                    owner.passiveDetail.PassiveList.Exists(x =>
+                                                                        x is PassiveAbility_Power_of_the_Unknown);
 
     }
     public class DiceCardSelfAbility_Emotion_Lv5 : DiceCardSelfAbilityBase
     {
         public static string Desc = "Can only be used at [Emotion Level 5] and [Alter Ego's Aura] is required";
 
-        //public override bool OnChooseCard(BattleUnitModel owner) => owner.emotionDetail.EmotionLevel >= 5 &&
-        //                                                            owner.bufListDetail.HasAssimilation() &&
-        //                                                            owner.passiveDetail.PassiveList.Exists(x =>
-        //                                                                x is PassiveAbility_Power_of_the_Unknown);
+        public override bool OnChooseCard(BattleUnitModel owner) => owner.emotionDetail.EmotionLevel >= 5 &&
+                                                                    owner.bufListDetail.HasAssimilation() &&
+                                                                    owner.passiveDetail.PassiveList.Exists(x =>
+                                                                        x is PassiveAbility_Power_of_the_Unknown);
 
     }
     public class DiceCardSelfAbility_MioMemory : DiceCardSelfAbilityBase
@@ -24,10 +26,10 @@
         public static string Desc =
             "[Single Use]\nCan only be used at [Emotion Level 5] and when there are [no other allies alive]\n[On Use]Summon Mio's Memory next Scene.";
 
-        //public override bool OnChooseCard(BattleUnitModel owner) => owner.emotionDetail.EmotionLevel >= 5 &&
-        //                                                             BattleObjectManager.instance
-        //                                                                 .GetAliveList(Faction.Player)
-        //                                                                 .All(x => x == owner);
+        public override bool OnChooseCard(BattleUnitModel owner) => owner.emotionDetail.EmotionLevel >= 5 &&
+                                                                     BattleObjectManager.instance
+                                                                         .GetAliveList(Faction.Player)
+                                                                         .All(x => x == owner);
 
     }
     public class DiceCardSelfAbility_BurningField3 : DiceCardSelfAbilityBase

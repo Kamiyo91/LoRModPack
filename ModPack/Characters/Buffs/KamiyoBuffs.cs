@@ -10,9 +10,9 @@ namespace ModPack21341.Characters.Buffs
         public BattleUnitBuf_RedAuraRelease() => stack = 0;
         public override bool isAssimilation => true;
         public override int paramInBufDesc => 0;
-        protected override string keywordId => "";
+        protected override string keywordId => "Kamiyo";
         protected override string keywordIconId => "RedHood_Rage";
-        public override string bufActivatedText => "Alter Ego's Aura\nPower + 1";
+        public override string bufActivatedText => "Power + 1 - Inflict 2 Burn to self at the start of each Scene";
         public override void BeforeRollDice(BattleDiceBehavior behavior) => behavior.ApplyDiceStatBonus(
             new DiceStatBonus
             {
@@ -23,6 +23,10 @@ namespace ModPack21341.Characters.Buffs
         {
             base.Init(owner);
             PlayChangingEffect(owner);
+        }
+        public override void OnRoundStart()
+        {
+            _owner.bufListDetail.AddKeywordBufByEtc(KeywordBuf.Burn,2,_owner);
         }
         private void PlayChangingEffect(BattleUnitModel owner)
         {

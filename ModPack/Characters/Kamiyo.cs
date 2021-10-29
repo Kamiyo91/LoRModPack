@@ -343,7 +343,7 @@ namespace ModPack21341.Characters
     public class PassiveAbility_KamiyoShimmering : PassiveAbilityBase
     {
         public override void OnRoundStartAfter() => SetCards();
-        public override int SpeedDiceNumAdder() => 4;
+        public override int SpeedDiceNumAdder() => 2;
         private void SetCards()
         {
             owner.allyCardDetail.ExhaustAllCards();
