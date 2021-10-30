@@ -83,34 +83,12 @@ namespace ModPack21341.Characters
                 SingletonBehavior<BattleSoundManager>.Instance.CheckTheme();
             if (!_dialogActivated) return;
             _dialogActivated = false;
-            BattleAbDialog(owner.view.dialogUI);
-        }
-
-        private static void BattleAbDialog(BattleDialogUI instance)
-        {
-            var abnormalityCardDialogList = new List<AbnormalityCardDialog>
+            UnitUtilities.BattleAbDialog(owner.view.dialogUI, new List<AbnormalityCardDialog>
             {
                 new AbnormalityCardDialog {id = "Kamiyo", dialog = "You need me,Don't you?"},
                 new AbnormalityCardDialog {id = "Kamiyo", dialog = "Leave it to me!Time to show what I can do!"},
                 new AbnormalityCardDialog {id = "Kamiyo", dialog = "Mhm...I guess is my turn now!"}
-            };
-            var component = instance.GetComponent<CanvasGroup>();
-            var dialog = abnormalityCardDialogList[Random.Range(0, abnormalityCardDialogList.Count)].dialog;
-            var txtAbnormalityDlg = (TextMeshProUGUI)typeof(BattleDialogUI).GetField("_txtAbnormalityDlg",
-                AccessTools.all)?.GetValue(instance);
-            txtAbnormalityDlg.text = dialog;
-            txtAbnormalityDlg.fontMaterial.SetColor("_GlowColor", SingletonBehavior<BattleManagerUI>.Instance.negativeCoinColor);
-            txtAbnormalityDlg.color = SingletonBehavior<BattleManagerUI>.Instance.negativeTextColor;
-            var canvas = (Canvas)typeof(BattleDialogUI).GetField("_canvas",
-                AccessTools.all)?.GetValue(instance);
-            canvas.enabled = true;
-            component.interactable = true;
-            component.blocksRaycasts = true;
-            txtAbnormalityDlg.GetComponent<AbnormalityDlgEffect>().Init();
-            var routine = (Coroutine)typeof(BattleDialogUI).GetField("_routine",
-                AccessTools.all)?.GetValue(instance);
-            var method = typeof(BattleDialogUI).GetMethod("AbnormalityDlgRoutine", AccessTools.all);
-            instance.StartCoroutine(method.Invoke(instance, new object[0]) as IEnumerator);
+            });
         }
         private void RemoveEgoMap()
         {
@@ -213,10 +191,12 @@ namespace ModPack21341.Characters
 
         public override void OnRoundEnd()
         {
+            if (_egoActivated && owner.bufListDetail.GetActivatedBuf(KeywordBuf.Burn)?.stack > 3)
+            {
+                owner.cardSlotDetail.RecoverPlayPoint(1);
+            }
             if (owner.faction == Faction.Enemy && _phaseChanged)
                 _count++;
-            if (owner.faction == Faction.Enemy)
-                Debug.LogError($"Kamiyo Mass Count {_count}");
             if (_summonMio)
                 SummonMio();
         }

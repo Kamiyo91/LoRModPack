@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,7 +9,10 @@ using LOR_XML;
 using ModPack21341.Characters.Buffs;
 using ModPack21341.Harmony;
 using ModPack21341.Models;
+using TMPro;
 using UI;
+using UnityEngine;
+using Random = System.Random;
 
 namespace ModPack21341.Utilities
 {
@@ -261,6 +265,27 @@ namespace ModPack21341.Utilities
             var modelTeam = (List<UnitBattleDataModel>)typeof(StageLibraryFloorModel).GetField("_unitList",
                 AccessTools.all)?.GetValue(Singleton<StageController>.Instance.GetStageModel().GetFloor(floor.Sephirah));
             modelTeam?.RemoveAll(x => string.Equals(x.unitData.name, name));
+        }
+        public static void BattleAbDialog(MonoBehaviour instance, List<AbnormalityCardDialog> dialogs)
+        {
+            var abnormalityCardDialogList = dialogs;
+            var component = instance.GetComponent<CanvasGroup>();
+            var dialog = abnormalityCardDialogList[UnityEngine.Random.Range(0, abnormalityCardDialogList.Count)].dialog;
+            var txtAbnormalityDlg = (TextMeshProUGUI)typeof(BattleDialogUI).GetField("_txtAbnormalityDlg",
+                AccessTools.all)?.GetValue(instance);
+            txtAbnormalityDlg.text = dialog;
+            txtAbnormalityDlg.fontMaterial.SetColor("_GlowColor", SingletonBehavior<BattleManagerUI>.Instance.negativeCoinColor);
+            txtAbnormalityDlg.color = SingletonBehavior<BattleManagerUI>.Instance.negativeTextColor;
+            var canvas = (Canvas)typeof(BattleDialogUI).GetField("_canvas",
+                AccessTools.all)?.GetValue(instance);
+            canvas.enabled = true;
+            component.interactable = true;
+            component.blocksRaycasts = true;
+            txtAbnormalityDlg.GetComponent<AbnormalityDlgEffect>().Init();
+            var routine = (Coroutine)typeof(BattleDialogUI).GetField("_routine",
+                AccessTools.all)?.GetValue(instance);
+            var method = typeof(BattleDialogUI).GetMethod("AbnormalityDlgRoutine", AccessTools.all);
+            instance.StartCoroutine(method.Invoke(instance, new object[0]) as IEnumerator);
         }
     }
 }

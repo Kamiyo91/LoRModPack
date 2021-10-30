@@ -219,7 +219,6 @@ namespace ModPack21341.Characters
         {
             if (_awakened)
                 _ = owner.allyCardDetail.GetHand().Exists(x => x.GetID() == new LorId(ModPack21341Init.PackageId, 25)) ? _count = 4 : _count++;
-            Debug.LogError($"Mio Mass Count{_count}");
         }
         public void SetAwakened(bool status) => _awakened = status;
         public void SetCountValue(int value) => _count = value;

@@ -103,7 +103,11 @@ namespace ModPack21341.Harmony
                 __result = Resources.Load<Sprite>("Sprites/Books/Thumb/250035");
                 return false;
             }
-
+            if (__instance.BookId == new LorId(PackageId, 10000009))
+            {
+                __result = Resources.Load<Sprite>("Sprites/Books/Thumb/250024");
+                return false;
+            }
             return true;
         }
 

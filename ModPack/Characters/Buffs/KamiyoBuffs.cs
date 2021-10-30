@@ -12,7 +12,7 @@ namespace ModPack21341.Characters.Buffs
         public override int paramInBufDesc => 0;
         protected override string keywordId => "Kamiyo";
         protected override string keywordIconId => "RedHood_Rage";
-        public override string bufActivatedText => "Power + 1 - Inflict 2 Burn to self at the start of each Scene";
+        public override string bufActivatedText => "Power + 1 - Inflict 3 Burn to self at the start of each Scene";
         public override void BeforeRollDice(BattleDiceBehavior behavior) => behavior.ApplyDiceStatBonus(
             new DiceStatBonus
             {
@@ -26,7 +26,7 @@ namespace ModPack21341.Characters.Buffs
         }
         public override void OnRoundStart()
         {
-            _owner.bufListDetail.AddKeywordBufByEtc(KeywordBuf.Burn,2,_owner);
+            _owner.bufListDetail.AddKeywordBufByEtc(KeywordBuf.Burn,3,_owner);
         }
         private void PlayChangingEffect(BattleUnitModel owner)
         {
