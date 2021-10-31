@@ -6,13 +6,13 @@ using System.Linq;
 using System.Xml.Serialization;
 using HarmonyLib;
 using LOR_XML;
+using ModPack21341.Characters;
 using ModPack21341.Characters.Buffs;
 using ModPack21341.Harmony;
 using ModPack21341.Models;
 using TMPro;
 using UI;
 using UnityEngine;
-using Random = System.Random;
 
 namespace ModPack21341.Utilities
 {
@@ -47,7 +47,7 @@ namespace ModPack21341.Utilities
             }
             BattleObjectManager.instance.InitUI();
         }
-        public static BattleUnitModel AddOriginalPlayerUnitPlayerSide(UnitModel unit, int index)
+        public static BattleUnitModel AddOriginalPlayerUnitPlayerSide(int index)
         {
             var allyUnit = Singleton<StageController>.Instance.CreateLibrarianUnit_fromBattleUnitData(index);
             allyUnit.OnWaveStart();
@@ -185,11 +185,10 @@ namespace ModPack21341.Utilities
             owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 901));
         }
         public static List<int> GetSamuraiCardsId() => new List<int> { 7, 7, 3, 3, 4, 4, 5, 5, 6 };
-
         public static List<int> GetMioCardsId() => new List<int> { 20, 20, 21, 22, 23, 1, 1, 13, 13 };
         public static List<int> GetKamiyoCardsId() => new List<int> { 32, 36, 31, 31, 33, 33, 34, 34, 46 };
-
         public static List<int> GetBlackSilenceMaskCardsId() => new List<int> { 705206, 705207, 705208, 39, 40, 41, 42, 702001, 702004 };
+        public static List<int> GetHayateCardsId() => new List<int> { 49,51,53,48,48,50,50,56,52,52};
         public static void AddBuffInfo()
         {
             var dictionary = typeof(BattleEffectTextsXmlList).GetField("_dictionary", AccessTools.all)?.GetValue(Singleton<BattleEffectTextsXmlList>.Instance) as Dictionary<string, BattleEffectText>;
@@ -243,7 +242,7 @@ namespace ModPack21341.Utilities
             unitDataModel.InitBattleDialogByDefaultBook(new LorId(ModPack21341Init.PackageId, unit.DialogId));
             return unitBattleDataModel;
         }
-        public static void AddUnitOldSamuraiBattle(StageLibraryFloorModel __instance, StageModel stage, UnitDataModel data)
+        public static void AddUnitSephiraOnly(StageLibraryFloorModel __instance, StageModel stage, UnitDataModel data)
         {
             var list = (List<UnitBattleDataModel>)__instance.GetType().GetField("_unitList", AccessTools.all)?.GetValue(__instance);
             var unitBattleDataModel = new UnitBattleDataModel(stage, data);
@@ -259,7 +258,26 @@ namespace ModPack21341.Utilities
             for (var i = 0; i < 3; i++)
                 modelTeam?.Add(AddCustomFixUnitModel(Singleton<StageController>.Instance.GetStageModel(), floor._floorModel, unit));
         }
+        public static void FillUnitDataSingle(UnitModel unit, StageLibraryFloorModel floor)
+        {
+            var modelTeam = (List<UnitBattleDataModel>)typeof(StageLibraryFloorModel).GetField("_unitList",
+                AccessTools.all)?.GetValue(Singleton<StageController>.Instance.GetStageModel().GetFloor(floor.Sephirah));
+            modelTeam?.Add(AddCustomFixUnitModel(Singleton<StageController>.Instance.GetStageModel(), floor._floorModel, unit));
+        }
 
+        public static void FillBaseUnit(StageLibraryFloorModel floor)
+        {
+            var modelTeam = (List<UnitBattleDataModel>)typeof(StageLibraryFloorModel).GetField("_unitList",
+                AccessTools.all)?.GetValue(Singleton<StageController>.Instance.GetStageModel().GetFloor(floor.Sephirah));
+            var stage = Singleton<StageController>.Instance.GetStageModel();
+            modelTeam?.AddRange(floor._floorModel.GetUnitDataList().Where(x => x.OwnerSephirah == floor.Sephirah && !x.isSephirah).Select(unit => InitUnitDefault(stage, unit)));
+        }
+        private static UnitBattleDataModel InitUnitDefault(StageModel stage, UnitDataModel data)
+        {
+            var unitBattleDataModel = new UnitBattleDataModel(stage, data);
+            unitBattleDataModel.Init();
+            return unitBattleDataModel;
+        }
         public static void RemoveUnitData(StageLibraryFloorModel floor, string name)
         {
             var modelTeam = (List<UnitBattleDataModel>)typeof(StageLibraryFloorModel).GetField("_unitList",
@@ -268,9 +286,8 @@ namespace ModPack21341.Utilities
         }
         public static void BattleAbDialog(MonoBehaviour instance, List<AbnormalityCardDialog> dialogs)
         {
-            var abnormalityCardDialogList = dialogs;
             var component = instance.GetComponent<CanvasGroup>();
-            var dialog = abnormalityCardDialogList[UnityEngine.Random.Range(0, abnormalityCardDialogList.Count)].dialog;
+            var dialog = dialogs[UnityEngine.Random.Range(0, dialogs.Count)].dialog;
             var txtAbnormalityDlg = (TextMeshProUGUI)typeof(BattleDialogUI).GetField("_txtAbnormalityDlg",
                 AccessTools.all)?.GetValue(instance);
             txtAbnormalityDlg.text = dialog;
@@ -287,5 +304,31 @@ namespace ModPack21341.Utilities
             var method = typeof(BattleDialogUI).GetMethod("AbnormalityDlgRoutine", AccessTools.all);
             instance.StartCoroutine(method.Invoke(instance, new object[0]) as IEnumerator);
         }
+        public static void ActiveAwakeningDeckPassive(BattleUnitModel owner, string deckName)
+        {
+            if (!(owner.passiveDetail.AddPassive(new LorId(ModPack21341Init.PackageId, 10)) is PassiveAbility_CheckDeck
+                passive)) return;
+            passive.Init(owner);
+            passive.SaveAwakenedDeck(GetDeck(deckName));
+            passive.ChangeDeck();
+        }
+
+        private static List<int> GetDeck(string deckName)
+        {
+            switch (deckName)
+            {
+                case "Kamiyo":
+                    return GetKamiyoCardsId();
+                case "Mio":
+                    return GetMioCardsId();
+                case "OldSamurai":
+                    return GetSamuraiCardsId();
+                case "Hayate":
+                    return GetHayateCardsId();
+            }
+
+            return null;
+        }
+
     }
 }

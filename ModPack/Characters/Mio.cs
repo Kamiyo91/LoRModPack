@@ -4,7 +4,6 @@ using ModPack21341.Characters.Buffs;
 using ModPack21341.Harmony;
 using ModPack21341.StageManager;
 using ModPack21341.Utilities;
-using UnityEngine;
 
 namespace ModPack21341.Characters
 {
@@ -64,7 +63,7 @@ namespace ModPack21341.Characters
         {
             _phaseChanged = true;
             _auraCheck = true;
-            owner.bufListDetail.AddBuf(new BattleUnitBuf_ImmortalBuffUntiLRoundEnd());
+            owner.bufListDetail.AddBuf(new BattleUnitBuf_ImmortalBuffUntilRoundEnd());
             owner.SetHp(owner.MaxHp / 2);
             if (Singleton<StageController>.Instance.EnemyStageManager != null && Singleton<StageController>.Instance.EnemyStageManager is EnemyTeamStageManager_Mio stage)
                 stage.SetPhaseChange();
@@ -82,7 +81,7 @@ namespace ModPack21341.Characters
         private void ImmortalOnLethalDamage()
         {
             _deathCheck = true;
-            owner.bufListDetail.AddBuf(new BattleUnitBuf_ImmortalBuffUntiLRoundEnd());
+            owner.bufListDetail.AddBuf(new BattleUnitBuf_ImmortalBuffUntilRoundEnd());
             owner.SetHp(1);
             owner.breakDetail.nextTurnBreak = false;
             owner.breakDetail.ResetGauge();
@@ -111,8 +110,8 @@ namespace ModPack21341.Characters
         public override void OnStartBattle() => RemoveImmortalBuff();
         private void RemoveImmortalBuff()
         {
-            if (owner.bufListDetail.GetActivatedBufList().Find(x => x is BattleUnitBuf_ImmortalBuffUntiLRoundEnd) is
-                BattleUnitBuf_ImmortalBuffUntiLRoundEnd buf)
+            if (owner.bufListDetail.GetActivatedBufList().Find(x => x is BattleUnitBuf_ImmortalBuffUntilRoundEnd) is
+                BattleUnitBuf_ImmortalBuffUntilRoundEnd buf)
                 owner.bufListDetail.RemoveBuf(buf);
         }
         public override void OnUseCard(BattlePlayingCardDataInUnitModel curCard)
@@ -156,25 +155,16 @@ namespace ModPack21341.Characters
             owner.view.DisplayDlg(DialogType.SPECIAL_EVENT, "1");
         }
 
-        private void ActiveAwakeningDeckPassive()
-        {
-            if (!(owner.passiveDetail.AddPassive(new LorId(ModPack21341Init.PackageId, 10)) is PassiveAbility_CheckDeck
-                passive)) return;
-            passive.Init(owner);
-            passive.SaveAwakenedDeck(UnitUtilities.GetMioCardsId());
-            if (owner.UnitData.unitData.bookItem == owner.UnitData.unitData.CustomBookItem)
-            {
-                var skinId = owner.faction == Faction.Player ? 10000200 : 10000201;
-                UnitUtilities.ChangeCustomSkin(owner, skinId);
-                UnitUtilities.RefreshCombatUI();
-            }
-            passive.ChangeDeck();
-        }
+        
         public override void OnRoundEndTheLast()
         {
             if (!_auraCheck) return;
             StartEgoTransform();
-            ActiveAwakeningDeckPassive();
+            UnitUtilities.ActiveAwakeningDeckPassive(owner,"Mio");
+            if (owner.UnitData.unitData.bookItem != owner.UnitData.unitData.CustomBookItem) return;
+            var skinId = owner.faction == Faction.Player ? 10000200 : 10000201;
+            UnitUtilities.ChangeCustomSkin(owner, skinId);
+            UnitUtilities.RefreshCombatUI();
         }
         public override void OnRoundStart()
         {

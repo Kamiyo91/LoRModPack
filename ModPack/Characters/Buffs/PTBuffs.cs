@@ -12,7 +12,7 @@ namespace ModPack21341.Characters.Buffs
         {
             if (!PassiveExists() || behavior.Detail != BehaviourDetail.Slash)
                 return;
-            behavior.ApplyDiceStatBonus(new DiceStatBonus()
+            behavior.ApplyDiceStatBonus(new DiceStatBonus
             {
                 power = 2,
                 dmgRate = 50
@@ -31,7 +31,7 @@ namespace ModPack21341.Characters.Buffs
         {
             if (!PassiveExists() || behavior.Detail != BehaviourDetail.Penetrate)
                 return;
-            behavior.ApplyDiceStatBonus(new DiceStatBonus()
+            behavior.ApplyDiceStatBonus(new DiceStatBonus
             {
                 power = 2
             });
@@ -56,7 +56,7 @@ namespace ModPack21341.Characters.Buffs
         {
             if (!PassiveExists() || behavior.Detail != BehaviourDetail.Hit)
                 return;
-            behavior.ApplyDiceStatBonus(new DiceStatBonus()
+            behavior.ApplyDiceStatBonus(new DiceStatBonus
             {
                 power = 2,
                 breakRate = 50
@@ -77,7 +77,7 @@ namespace ModPack21341.Characters.Buffs
         {
             if (!PassiveExists() || !IsDefenseDice(behavior.Detail))
                 return;
-            behavior.ApplyDiceStatBonus(new DiceStatBonus()
+            behavior.ApplyDiceStatBonus(new DiceStatBonus
             {
                 power = 2
             });

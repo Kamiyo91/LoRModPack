@@ -156,7 +156,7 @@ namespace ModPack21341.Characters
             }
 
             desc =
-                $"Gain {_stack * 2} [Haste] each Scene.[On Dice Roll]Boost the *maximum* Dice Roll by {_stack * 2} or Lower the *maximum* Dice Roll by {_stack * 2} at {_stack * 10}% chance.At the end of each Scene change all Emotions Coin Type in [Positive Coin]";
+                $"Gain {_stack} [Haste] each Scene.[On Dice Roll]Boost the *maximum* Dice Roll by {_stack} or Lower the *maximum* Dice Roll by {_stack } at {_stack * 10}% chance.At the end of each Scene change all Emotions Coin Type in [Positive Coin]";
         }
         public override void OnRoundStartAfter()
         {
@@ -165,7 +165,7 @@ namespace ModPack21341.Characters
         public override void BeforeRollDice(BattleDiceBehavior behavior)
         {
             var number = RndChance.Next(0, 100);
-            var value = _stack * 2;
+            var value = _stack;
             var buffTypeNegative = number <= _stack * 10;
             if (behavior.GetDiceVanillaMax() - value < behavior.GetDiceVanillaMin() && buffTypeNegative)
                 value = behavior.GetDiceVanillaMax() - behavior.GetDiceVanillaMin();

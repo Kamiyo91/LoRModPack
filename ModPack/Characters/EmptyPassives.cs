@@ -15,4 +15,8 @@
     public class PassiveAbility_KamiyoDesc : PassiveAbilityBase
     {
     }
+
+    public class PassiveAbility_HayateDesc : PassiveAbilityBase
+    {
+    }
 }

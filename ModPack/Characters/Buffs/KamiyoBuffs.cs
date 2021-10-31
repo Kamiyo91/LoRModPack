@@ -26,7 +26,7 @@ namespace ModPack21341.Characters.Buffs
         }
         public override void OnRoundStart()
         {
-            _owner.bufListDetail.AddKeywordBufByEtc(KeywordBuf.Burn,3,_owner);
+            _owner.bufListDetail.AddKeywordBufByEtc(KeywordBuf.Burn, 3, _owner);
         }
         private void PlayChangingEffect(BattleUnitModel owner)
         {
@@ -46,5 +46,27 @@ namespace ModPack21341.Characters.Buffs
 
             SingletonBehavior<SoundEffectManager>.Instance.PlayClip("Battle/Kali_Change");
         }
+    }
+
+    public class BattleUnitBuf_KamiyoAndHayate : BattleUnitBuf
+    {
+        public BattleUnitBuf_KamiyoAndHayate() => stack = 0;
+        protected override string keywordId => "KamiyoHayate";
+        public override int paramInBufDesc => 0;
+        protected override string keywordIconId => "BlackFrantic";
+        public override string bufActivatedText => "Power +2 against Hayate, on battle end Die.";
+
+        public override void BeforeRollDice(BattleDiceBehavior behavior)
+        {
+            if (behavior.TargetDice.owner.bufListDetail.GetActivatedBufList().Exists(x => x is BattleUnitBuf_TrueGodAura))
+                behavior.ApplyDiceStatBonus(
+                    new DiceStatBonus
+                    {
+                        power = 2
+                    });
+        }
+
+        public override void OnKill(BattleUnitModel target) => _owner.Die();
+        
     }
 }

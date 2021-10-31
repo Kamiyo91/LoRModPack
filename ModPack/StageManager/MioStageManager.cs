@@ -24,7 +24,7 @@ namespace ModPack21341.StageManager
         {
             var currentStageFloorModel = Singleton<StageController>.Instance.GetCurrentStageFloorModel();
             _floor = Singleton<StageController>.Instance.GetStageModel().GetFloor(currentStageFloorModel.Sephirah);
-            UnitUtilities.FillUnitData(new UnitModel
+            UnitUtilities.FillUnitDataSingle(new UnitModel
                     {
                         Id = 10000004,
                         Name = "Mio?",

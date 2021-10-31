@@ -74,3 +74,4 @@
         //}
 
         if (!(mapObject.AddComponent(model.MapManagerType) is MapManager newManager)) return null;
+        //CustomMapHandler.InitCustomMap("Hayate", new HayateMapManager(), false, true, 0.5f, 0.3f, 0.5f, 0.8f);

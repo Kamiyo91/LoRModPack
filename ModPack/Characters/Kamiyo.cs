@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using HarmonyLib;
 using LOR_DiceSystem;
 using LOR_XML;
 using ModPack21341.Characters.Buffs;
@@ -9,9 +7,6 @@ using ModPack21341.Harmony;
 using ModPack21341.Models;
 using ModPack21341.StageManager.MapManager.KamiyoStageMaps;
 using ModPack21341.Utilities;
-using TMPro;
-using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace ModPack21341.Characters
 {
@@ -26,6 +21,7 @@ namespace ModPack21341.Characters
         private bool _mapChange;
         private bool _egoMap;
         private bool _dialogActivated;
+        private bool _specialCase;
         private int _count;
         private BattleDialogueModel _dlg;
         private BookModel _originalBook;
@@ -42,6 +38,22 @@ namespace ModPack21341.Characters
             _egoActivated = false;
             PrepareEgoChange();
             EgoChange();
+        }
+
+        public void SetEgoReadyFinalPhaseHayate()
+        {
+            _egoActivated = false;
+            PrepareEgoChange();
+            _specialCase = true;
+            EgoChange();
+            owner.personalEgoDetail.RemoveCard(new LorId(ModPack21341Init.PackageId, 929));
+        }
+        public override void OnStartBattle() => RemoveImmortalBuff();
+        private void RemoveImmortalBuff()
+        {
+            if (owner.bufListDetail.GetActivatedBufList().Find(x => x is BattleUnitBuf_ImmortalBuffUntilRoundEnd) is
+                BattleUnitBuf_ImmortalBuffUntilRoundEnd buf)
+                owner.bufListDetail.RemoveBuf(buf);
         }
         private void PrepareEgoChange(bool lethalDamage = false)
         {
@@ -62,7 +74,7 @@ namespace ModPack21341.Characters
             if (!lethalDamage && !_deathCheck) return;
             _deathCheck = true;
             owner.SetHp(1);
-            owner.bufListDetail.AddBuf(new BattleUnitBuf_ImmortalBuffUntiLRoundEnd());
+            owner.bufListDetail.AddBuf(new BattleUnitBuf_ImmortalBuffUntilRoundEnd());
             if (owner.faction == Faction.Player) owner.view.DisplayDlg(DialogType.SPECIAL_EVENT, "0");
             if (owner.faction == Faction.Player)
                 owner.RecoverHP(owner.MaxHp * 60 / 100);
@@ -83,12 +95,18 @@ namespace ModPack21341.Characters
                 SingletonBehavior<BattleSoundManager>.Instance.CheckTheme();
             if (!_dialogActivated) return;
             _dialogActivated = false;
-            UnitUtilities.BattleAbDialog(owner.view.dialogUI, new List<AbnormalityCardDialog>
+            if (!_specialCase)
+                UnitUtilities.BattleAbDialog(owner.view.dialogUI, new List<AbnormalityCardDialog>
             {
                 new AbnormalityCardDialog {id = "Kamiyo", dialog = "You need me,Don't you?"},
                 new AbnormalityCardDialog {id = "Kamiyo", dialog = "Leave it to me!Time to show what I can do!"},
                 new AbnormalityCardDialog {id = "Kamiyo", dialog = "Mhm...I guess is my turn now!"}
             });
+            else
+                UnitUtilities.BattleAbDialog(owner.view.dialogUI,
+                    new List<AbnormalityCardDialog>
+                        {new AbnormalityCardDialog {id = "Kamiyo", dialog = "Time to end this Hayate!!!"}});
+            
         }
         private void RemoveEgoMap()
         {
@@ -107,7 +125,8 @@ namespace ModPack21341.Characters
             CheckEgoMapUse();
             if (!_auraCheck) return;
             EgoChange();
-            ActiveAwakeningDeckPassive();
+            if (!_specialCase)
+                UnitUtilities.ActiveAwakeningDeckPassive(owner,"Kamiyo");
         }
         public override void OnDie()
         {
@@ -134,7 +153,15 @@ namespace ModPack21341.Characters
         {
             if (!owner.bufListDetail.GetActivatedBufList().Exists(x => x is BattleUnitBuf_RedAuraRelease))
                 owner.bufListDetail.AddBufWithoutDuplication(new BattleUnitBuf_RedAuraRelease());
-            if (owner.faction == Faction.Player) owner.view.DisplayDlg(DialogType.SPECIAL_EVENT, "1");
+            if (owner.faction == Faction.Player)
+            {
+                owner.view.DisplayDlg(DialogType.SPECIAL_EVENT, "1");
+                if (owner.UnitData.unitData.bookItem == owner.UnitData.unitData.CustomBookItem && owner.faction == Faction.Player)
+                {
+                    UnitUtilities.ChangeCustomSkin(owner, 10000202);
+                    UnitUtilities.RefreshCombatUI();
+                }
+            }
             _auraCheck = false;
         }
         public override void OnWaveStart()
@@ -170,19 +197,6 @@ namespace ModPack21341.Characters
             });
             UnitUtilities.RefreshCombatUI();
         }
-        private void ActiveAwakeningDeckPassive()
-        {
-            if (!(owner.passiveDetail.AddPassive(new LorId(ModPack21341Init.PackageId, 10)) is PassiveAbility_CheckDeck
-                passive)) return;
-            passive.Init(owner);
-            passive.SaveAwakenedDeck(UnitUtilities.GetKamiyoCardsId());
-            if (owner.UnitData.unitData.bookItem == owner.UnitData.unitData.CustomBookItem && owner.faction == Faction.Player)
-            {
-                UnitUtilities.ChangeCustomSkin(owner, 10000202);
-                UnitUtilities.RefreshCombatUI();
-            }
-            passive.ChangeDeck();
-        }
         public void SetEgoReady()
         {
             _auraCheck = true;
@@ -212,7 +226,7 @@ namespace ModPack21341.Characters
             var currentStageFloorModel = Singleton<StageController>.Instance.GetCurrentStageFloorModel();
             _floor = Singleton<StageController>.Instance.GetStageModel().GetFloor(currentStageFloorModel.Sephirah);
             _originalBook = owner.UnitData.unitData.GetCustomBookItemData();
-            UnitUtilities.FillUnitData(new UnitModel
+            UnitUtilities.FillUnitDataSingle(new UnitModel
             {
                 Id = 10000008,
                 Name = "Mio's Memory",
@@ -272,19 +286,18 @@ namespace ModPack21341.Characters
         public override void BeforeRollDice(BattleDiceBehavior behavior)
         {
             if (behavior.Detail != BehaviourDetail.Evasion) return;
-            UnitUtilities.SetPassiveCombatLog(this, owner);
             behavior.ApplyDiceStatBonus(new DiceStatBonus { power = 1 });
         }
 
         public override void OnStartTargetedOneSide(BattlePlayingCardDataInUnitModel attackerCard)
         {
             base.OnStartTargetedOneSide(attackerCard);
+            UnitUtilities.SetPassiveCombatLog(this, owner);
             attackerCard?.ApplyDiceStatBonus(DiceMatch.AllDice, new DiceStatBonus
             {
                 max = -1
             });
         }
-
         public override void OnStartParrying(BattlePlayingCardDataInUnitModel card)
         {
             base.OnStartParrying(card);
@@ -299,6 +312,7 @@ namespace ModPack21341.Characters
                 battlePlayingCardDataInUnitModel = target?.currentDiceAction;
             }
             var battlePlayingCardDataInUnitModel2 = battlePlayingCardDataInUnitModel;
+            UnitUtilities.SetPassiveCombatLog(this, owner);
             battlePlayingCardDataInUnitModel2?.ApplyDiceStatBonus(DiceMatch.AllDice, new DiceStatBonus
             {
                 max = -1
@@ -341,6 +355,20 @@ namespace ModPack21341.Characters
         {
             var card = owner.allyCardDetail.AddTempCard(id);
             card?.SetCostToZero();
+        }
+    }
+    public class PassiveAbility_KamiyoHayate : PassiveAbilityBase
+    {
+        public override void Init(BattleUnitModel self)
+        {
+            base.Init(self);
+            Hide();
+        }
+
+        public override void BeforeRollDice(BattleDiceBehavior behavior)
+        {
+            if (behavior.TargetDice.owner.bufListDetail.GetActivatedBufList().Exists(x => x is BattleUnitBuf_TrueGodAura))
+                UnitUtilities.SetPassiveCombatLog(this,owner);
         }
     }
 }

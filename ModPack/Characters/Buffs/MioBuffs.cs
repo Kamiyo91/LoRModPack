@@ -15,7 +15,7 @@ namespace ModPack21341.Characters.Buffs
             "Power +4 - Lose 80 Hp and 95 Stagger Resist each Scene";
 
         public override void BeforeRollDice(BattleDiceBehavior behavior) => behavior.ApplyDiceStatBonus(
-                new DiceStatBonus()
+                new DiceStatBonus
                 {
                     power = 4
                 });
@@ -61,7 +61,7 @@ namespace ModPack21341.Characters.Buffs
             "Power +1 - Recover 3 Hp and Stagger Resist at the end of each scene";
 
         public override void BeforeRollDice(BattleDiceBehavior behavior) => behavior.ApplyDiceStatBonus(
-                new DiceStatBonus()
+                new DiceStatBonus
                 {
                     power = 1
                 });

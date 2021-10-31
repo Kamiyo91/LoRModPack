@@ -132,11 +132,16 @@ namespace ModPack21341.Harmony
             {
                 if (stage.ClassInfo.id.id == 1)
                 {
-                    UnitUtilities.AddUnitOldSamuraiBattle(__instance, stage, unitDataModel);
+                    UnitUtilities.AddUnitSephiraOnly(__instance, stage, unitDataModel);
+                    return false;
+                }
+
+                if (stage.ClassInfo.id.id == 6)
+                {
+                    UnitUtilities.AddUnitSephiraOnly(__instance, stage, unitDataModel);
                     return false;
                 }
             }
-
             return true;
         }
     }

@@ -31,7 +31,7 @@ namespace ModPack21341.Characters.CardAbilities
     }
     public class DiceCardSelfAbility_Happy : DiceCardSelfAbilityBase
     {
-        public static string Desc = "Add Emotion [Happy] in Passives([Using it more times will increase its effects]) and remove other Emotion Passives this Scene\n[Happy]:\nGain 1/2/3 [Haste] each Scene.[On Dice Roll]Boost the *maximum* Dice Roll by 2/4/6 or Lower the *maximum* Dice Roll by 2/4/6 at 10%/20%/30% chance.At the end of each Scene change all Emotions Coin Type in [Positive Coin]";
+        public static string Desc = "Add Emotion [Happy] in Passives([Using it more times will increase its effects]) and remove other Emotion Passives this Scene\n[Happy]:\nGain 1/2/3 [Haste] each Scene.[On Dice Roll]Boost the *maximum* Dice Roll by 1/2/3 or Lower the *maximum* Dice Roll by 1/2/3 at 10%/20%/30% chance.At the end of each Scene change all Emotions Coin Type in [Positive Coin]";
         public override void OnUseInstance(BattleUnitModel unit, BattleDiceCardModel self, BattleUnitModel targetUnit)
         {
             Activate(unit);

@@ -39,7 +39,7 @@ namespace ModPack21341.Characters
         {
             _halfHpReached = true;
             _blackCheck = true;
-            owner.bufListDetail.AddBuf(new BattleUnitBuf_ImmortalBuffUntiLRoundEnd());
+            owner.bufListDetail.AddBuf(new BattleUnitBuf_ImmortalBuffUntilRoundEnd());
             owner.SetHp(owner.MaxHp / 2);
             owner.cardSlotDetail.RecoverPlayPointByCard(6);
             owner.breakDetail.RecoverBreak(owner.breakDetail.GetDefaultBreakGauge());

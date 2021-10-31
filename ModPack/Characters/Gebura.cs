@@ -40,7 +40,7 @@ namespace ModPack21341.Characters
         private void InitForcedEgoChange()
         {
             _egoTransform = true;
-            owner.bufListDetail.AddBuf(new BattleUnitBuf_ImmortalBuffUntiLRoundEnd());
+            owner.bufListDetail.AddBuf(new BattleUnitBuf_ImmortalBuffUntilRoundEnd());
             owner.SetHp(owner.MaxHp / 2);
             owner.cardSlotDetail.RecoverPlayPointByCard(6);
             owner.breakDetail.RecoverBreak(owner.breakDetail.GetDefaultBreakGauge());
@@ -48,8 +48,8 @@ namespace ModPack21341.Characters
         public override void OnStartBattle() => RemoveImmortalBuff();
         private void RemoveImmortalBuff()
         {
-            if (owner.bufListDetail.GetActivatedBufList().Find(x => x is BattleUnitBuf_ImmortalBuffUntiLRoundEnd) is
-                BattleUnitBuf_ImmortalBuffUntiLRoundEnd buf)
+            if (owner.bufListDetail.GetActivatedBufList().Find(x => x is BattleUnitBuf_ImmortalBuffUntilRoundEnd) is
+                BattleUnitBuf_ImmortalBuffUntilRoundEnd buf)
                 owner.bufListDetail.RemoveBuf(buf);
         }
         public override void OnUseCard(BattlePlayingCardDataInUnitModel curCard)

@@ -162,18 +162,6 @@ namespace ModPack21341.Characters
             owner.cardSlotDetail.RecoverPlayPoint(owner.cardSlotDetail.GetMaxPlayPoint());
         }
 
-        private void ActiveAwakeningDeckPassive()
-        {
-            if (owner.passiveDetail.AddPassive(new LorId(ModPack21341Init.PackageId, 10)) is PassiveAbility_CheckDeck
-                passive)
-            {
-                passive.Init(owner);
-                passive.SaveAwakenedDeck(UnitUtilities.GetSamuraiCardsId());
-                passive.ChangeDeck();
-            }
-            owner.allyCardDetail.DrawCards(4);
-        }
-
         public override void OnRoundEndTheLast()
         {
             if (!_mapChanged) return;
@@ -185,7 +173,8 @@ namespace ModPack21341.Characters
         {
             if (_lethalDamage || !owner.IsDead() || owner.faction == Faction.Enemy) return;
             Revive();
-            ActiveAwakeningDeckPassive();
+            UnitUtilities.ActiveAwakeningDeckPassive(owner,"OldSamurai");
+            owner.allyCardDetail.DrawCards(4);
         }
 
         private void SetStageFinish()
