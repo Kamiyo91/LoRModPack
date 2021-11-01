@@ -139,8 +139,9 @@
     <Compile Include="Characters\Roland\DiceEffects\BehaviourAction_ModPack21341Init4.cs" />
     <Compile Include="Characters\Roland\DiceEffects\BehaviourAction_ModPack21341Init1.cs" />
     <Compile Include="Characters\Roland\DiceEffects\BehaviourAction_ModPack21341Init2.cs" />
-    <Compile Include="Characters\Roland\DiceEffects\FarAreaeffect_ModPack21341Init1.cs" />
-    <Compile Include="Characters\Roland\DiceEffects\FarAreaeffect_ModPack21341Init2.cs" />
+    <Compile Include="Characters\Roland\DiceEffects\BehaviourAction_ModPack21341Init5.cs" />
+    <Compile Include="Characters\Roland\DiceEffects\FarAreaEffect_ModPack21341Init1.cs" />
+    <Compile Include="Characters\Roland\DiceEffects\FarAreaEffect_ModPack21341Init2.cs" />
     <Compile Include="Characters\Roland\DiceEffects\BehaviourAction_ModPack21341Init3.cs" />
     <Compile Include="Characters\CommonPassiveAbilities\PassiveAbility_ModPack21341Init10.cs" />
     <Compile Include="Characters\Gebura\PassiveAbilities\PassiveAbility_ModPack21341Init21.cs" />

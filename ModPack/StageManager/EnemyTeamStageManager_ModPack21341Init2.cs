@@ -29,7 +29,7 @@ namespace ModPack21341.StageManager
             UnitUtilities.FillUnitDataSingle(new UnitModel
             {
                 Id = 10000004,
-                Name = "Mio?",
+                Name = "ModPack21341InitStoryMio",
                 DialogId = 201
             }, _floor);
             CustomMapHandler.InitCustomMap("Mio", new ModPack21341InitMioMapManager(), false, true, 0.5f, 0.2f);
@@ -41,7 +41,7 @@ namespace ModPack21341.StageManager
 
         public override void OnEndBattle()
         {
-            UnitUtilities.RemoveUnitData(_floor, "Mio?");
+            UnitUtilities.RemoveUnitData(_floor, "ModPack21341InitStoryMio");
         }
 
         public override void OnRoundStart()
@@ -92,7 +92,8 @@ namespace ModPack21341.StageManager
             _tempMioAllyUnit = UnitUtilities.AddNewUnitPlayerSide(_floor, new UnitModel
             {
                 Id = 10000004,
-                Name = "Mio?",
+                Name = "ModPack21341InitStoryMio",
+                OverrideName = "Mio?",
                 Pos = playerUnitList.Count,
                 Sephirah = _floor.Sephirah
             });

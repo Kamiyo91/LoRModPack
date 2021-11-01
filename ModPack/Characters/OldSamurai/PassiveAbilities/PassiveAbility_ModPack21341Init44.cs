@@ -73,7 +73,7 @@ namespace ModPack21341.Characters.OldSamurai.PassiveAbilities
             UnitUtilities.FillUnitData(new UnitModel
             {
                 Id = 10000003,
-                Name = "Samurai's Ghost",
+                Name = "ModPack21341InitEgoOldSamurai",
                 DialogId = 2
             }, _floor);
         }
@@ -101,7 +101,8 @@ namespace ModPack21341.Characters.OldSamurai.PassiveAbilities
             for (var i = 0; i < 3; i++)
                 UnitUtilities.AddNewUnitPlayerSide(_floor, new UnitModel
                 {
-                    Name = "Samurai's Ghost",
+                    Name = "ModPack21341InitEgoOldSamurai",
+                    OverrideName = "Samurai's Ghost",
                     Pos = indexList[i],
                     LockedEmotion = true,
                     Sephirah = _floor.Sephirah
@@ -123,7 +124,7 @@ namespace ModPack21341.Characters.OldSamurai.PassiveAbilities
 
         private void ReturnToTheOriginalPlayerTeam()
         {
-            UnitUtilities.RemoveUnitData(_floor, "Samurai's Ghost");
+            UnitUtilities.RemoveUnitData(_floor, "ModPack21341InitEgoOldSamurai");
         }
 
         private void Revive()

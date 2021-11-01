@@ -5,7 +5,7 @@ using UnityEngine;
 namespace ModPack21341.Characters.Roland.DiceEffects
 {
     //BlackSilenceCustomEgoAreaStrongFinal
-    public class FarAreaeffect_ModPack21341Init2 : FarAreaEffect
+    public class FarAreaEffect_ModPack21341Init2 : FarAreaEffect
     {
         private bool _damaged;
         private float _elapsed;

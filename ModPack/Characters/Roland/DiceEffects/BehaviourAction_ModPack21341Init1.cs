@@ -10,7 +10,7 @@ namespace ModPack21341.Characters.Roland.DiceEffects
         {
             _self = self;
             var farAreaeffectBlackSilence4ThAreaStrong =
-                new GameObject().AddComponent<FarAreaeffect_ModPack21341Init1>();
+                new GameObject().AddComponent<FarAreaEffect_ModPack21341Init1>();
             farAreaeffectBlackSilence4ThAreaStrong.Init(self, Array.Empty<object>());
             return farAreaeffectBlackSilence4ThAreaStrong;
         }

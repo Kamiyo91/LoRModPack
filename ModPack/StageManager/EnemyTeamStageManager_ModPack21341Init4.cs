@@ -72,7 +72,7 @@ namespace ModPack21341.StageManager
 
         public override void OnEndBattle()
         {
-            UnitUtilities.RemoveUnitData(_floor, "Kamiyo");
+            UnitUtilities.RemoveUnitData(_floor, "ModPack21341InitStoryKamiyo");
         }
 
         private void CheckLastPhase()
@@ -83,7 +83,7 @@ namespace ModPack21341.StageManager
                 MapUtilities.PrepareChangeBgm("HayatePhase3.mp3", ref _changeBgm);
                 var kamiyoModel = UnitUtilities.AddNewUnitPlayerSide(_floor, new UnitModel
                 {
-                    Name = "Kamiyo546312",
+                    Name = "ModPack21341InitStoryKamiyo",
                     OverrideName = "Kamiyo",
                     Pos = 0,
                     EmotionLevel = 5,
@@ -115,7 +115,7 @@ namespace ModPack21341.StageManager
             UnitUtilities.FillUnitDataSingle(new UnitModel
             {
                 Id = 10000011,
-                Name = "Kamiyo546312",
+                Name = "ModPack21341InitStoryKamiyo",
                 DialogId = 2
             }, _floor);
         }

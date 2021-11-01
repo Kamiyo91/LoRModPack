@@ -2,7 +2,7 @@
 
 namespace ModPack21341.Characters.CommonCardAbilities
 {
-    //CustomInstantIndexrelease
+    //CustomInstantIndexRelease
     public class DiceCardSelfAbility_ModPack21341Init2 : DiceCardSelfAbilityBase
     {
         public static string Desc = "Can only be used at Emotion Level 3 or higher\n[On Play]Release Locked Potential";

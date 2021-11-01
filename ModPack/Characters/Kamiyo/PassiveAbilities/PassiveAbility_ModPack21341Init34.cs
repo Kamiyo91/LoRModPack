@@ -203,7 +203,7 @@ namespace ModPack21341.Characters.Kamiyo.PassiveAbilities
 
         private void ReturnToTheOriginalPlayerTeam()
         {
-            UnitUtilities.RemoveUnitData(_floor, "Mio's Memory");
+            UnitUtilities.RemoveUnitData(_floor, "ModPack21341InitEgoMio");
         }
 
         private void SummonMio()
@@ -216,7 +216,8 @@ namespace ModPack21341.Characters.Kamiyo.PassiveAbilities
                 BattleObjectManager.instance.UnregisterUnit(unit);
             UnitUtilities.AddNewUnitPlayerSide(_floor, new UnitModel
             {
-                Name = "Mio's Memory",
+                Name = "ModPack21341InitEgoMio",
+                OverrideName = "Mio's Memory",
                 Pos = index,
                 EmotionLevel = 5,
                 Sephirah = _floor.Sephirah
@@ -254,7 +255,7 @@ namespace ModPack21341.Characters.Kamiyo.PassiveAbilities
             UnitUtilities.FillUnitDataSingle(new UnitModel
             {
                 Id = 10000008,
-                Name = "Mio's Memory",
+                Name = "ModPack21341InitEgoMio",
                 DialogId = 2
             }, _floor);
             if (!string.IsNullOrEmpty(owner.UnitData.unitData.workshopSkin) ||
