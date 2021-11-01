@@ -19,6 +19,7 @@ namespace ModPack21341.StageManager
         private BattleUnitModel _sephiraModel;
         private StageLibraryFloorModel _floor;
         private bool _lastPhaseStarted;
+        private bool _musicChanged;
         private Task _changeBgm;
         public override void OnWaveStart()
         {
@@ -32,6 +33,8 @@ namespace ModPack21341.StageManager
             _sephiraModel = BattleObjectManager.instance.GetAliveList(Faction.Player).FirstOrDefault();
             _hayatePassive = _hayateModel?.passiveDetail.PassiveList.Find(x => x is PassiveAbility_Hayate) as PassiveAbility_Hayate;
             _firstStep = true;
+            _musicChanged = false;
+            _lastPhaseStarted = false;
         }
         public override void OnRoundStart()
         {
@@ -48,10 +51,17 @@ namespace ModPack21341.StageManager
 
         public override void OnRoundEndTheLast()
         {
+            ChangeToPhase2Music();
             CheckUnitSummon();
             CheckLastPhase();
         }
 
+        private void ChangeToPhase2Music()
+        {
+            if (_musicChanged || !_hayatePassive.GetPhase2Status()) return;
+            _musicChanged = true;
+            MapUtilities.PrepareChangeBGM("HayatePhase2.mp3",ref _changeBgm);
+        }
         public override void OnEndBattle()
         {
             UnitUtilities.RemoveUnitData(_floor, "Kamiyo");
@@ -87,7 +97,6 @@ namespace ModPack21341.StageManager
         {
             if (!_firstStep || _sephiraModel.hp > _sephiraModel.MaxHp * 0.75f && !_hayatePassive.GetPhase2Status()) return;
             _firstStep = false;
-            MapUtilities.PrepareChangeBGM("HayatePhase2.mp3", ref _changeBgm);
             for (var i = 1; i < 5; i++)
                 UnitUtilities.AddOriginalPlayerUnitPlayerSide(i);
             UnitUtilities.RefreshCombatUI();
