@@ -31,7 +31,7 @@ namespace ModPack21341.Characters.CardAbilities
     }
     public class DiceCardSelfAbility_Happy : DiceCardSelfAbilityBase
     {
-        public static string Desc = "Add Emotion [Happy] in Passives([Using it more times will increase its effects]) and remove other Emotion Passives this Scene\n[Happy]:\nGain 1/2/3 [Haste] each Scene.[On Dice Roll]Boost the *maximum* Dice Roll by 1/2/3 or Lower the *maximum* Dice Roll by 1/2/3 at 10%/20%/30% chance.At the end of each Scene change all Emotions Coin Type in [Positive Coin]";
+        public static string Desc = "[On Play]Add Emotion [Happy] in Passives([Using it more times will increase its effects]) and remove other Emotion Passives this Scene\n[Happy]:\nGain 1/2/3 [Haste] each Scene.[On Dice Roll]Boost the *maximum* Dice Roll by 1/2/3 or Lower the *maximum* Dice Roll by 1/2/3 at 10%/20%/30% chance.At the end of each Scene change all Emotions Coin Type in [Positive Coin]";
         public override void OnUseInstance(BattleUnitModel unit, BattleDiceCardModel self, BattleUnitModel targetUnit)
         {
             Activate(unit);
@@ -56,7 +56,7 @@ namespace ModPack21341.Characters.CardAbilities
     }
     public class DiceCardSelfAbility_Sad : DiceCardSelfAbilityBase
     {
-        public static string Desc = "Add Emotion [Sad] in Passives([Using it more times will increase its effects]) and remove other Emotion Passives this Scene\n[Sad]:\nGain 1/2/3 [Endurance] and 2/4/6 [Protection], inflict on self 1/2/3 [Bind] each Scene.At the end of each Scene change all Emotions Coin Type in [Negative Coin]";
+        public static string Desc = "[On Play]Add Emotion [Sad] in Passives([Using it more times will increase its effects]) and remove other Emotion Passives this Scene\n[Sad]:\nGain 1/2/3 [Endurance] and 2/4/6 [Protection], inflict on self 1/2/3 [Bind] each Scene.At the end of each Scene change all Emotions Coin Type in [Negative Coin]";
         public override void OnUseInstance(BattleUnitModel unit, BattleDiceCardModel self, BattleUnitModel targetUnit)
         {
             Activate(unit);
@@ -81,7 +81,7 @@ namespace ModPack21341.Characters.CardAbilities
     }
     public class DiceCardSelfAbility_Angry : DiceCardSelfAbilityBase
     {
-        public static string Desc = "Add Emotion [Angry] in Passives([Using it more times will increase its effects]) and remove other Emotion Passives this Scene\n[Angry]:\nGain 1/2/3 [Strength],inflict on self 1/2/3 [Disarm] and 3/6/9 [Fragile] each Scene.Each time this Character takes damage Gain 1 [Negative Emotion Coin]";
+        public static string Desc = "[On Play]Add Emotion [Angry] in Passives([Using it more times will increase its effects]) and remove other Emotion Passives this Scene\n[Angry]:\nGain 1/2/3 [Strength],inflict on self 1/2/3 [Disarm] and 3/6/9 [Fragile] each Scene.Each time this Character takes damage Gain 1 [Negative Emotion Coin]";
         public override void OnUseInstance(BattleUnitModel unit, BattleDiceCardModel self, BattleUnitModel targetUnit)
         {
             Activate(unit);
@@ -106,7 +106,7 @@ namespace ModPack21341.Characters.CardAbilities
     }
     public class DiceCardSelfAbility_Neutral : DiceCardSelfAbilityBase
     {
-        public static string Desc = "Add Emotion [Neutral] in Passives and remove other Emotion Passives this Scene\n[Neutral]:\nDraw one additional page and Restore 1 Light each Scene.";
+        public static string Desc = "[On Play]Add Emotion [Neutral] in Passives and remove other Emotion Passives this Scene\n[Neutral]:\nDraw one additional page and Restore 1 Light each Scene.";
         public override void OnUseInstance(BattleUnitModel unit, BattleDiceCardModel self, BattleUnitModel targetUnit)
         {
             Activate(unit);
@@ -124,6 +124,21 @@ namespace ModPack21341.Characters.CardAbilities
         {
             unit.passiveDetail.AddPassive(new LorId(ModPack21341Init.PackageId, 20));
             unit.passiveDetail.OnCreated();
+        }
+    }
+    public class DiceCardSelfAbility_CustomInstantIndexRelease : DiceCardSelfAbilityBase
+    {
+        public static string Desc = "Can only be used at Emotion Level 3 or higher\n[On Play]Release Locked Potential";
+        public override bool OnChooseCard(BattleUnitModel owner) => owner.emotionDetail.EmotionLevel >= 3;
+        public override void OnUseInstance(BattleUnitModel unit, BattleDiceCardModel self, BattleUnitModel targetUnit)
+        {
+            Activate(unit);
+            self.exhaust = true;
+        }
+
+        private static void Activate(BattleUnitModel unit)
+        {
+            unit.bufListDetail.AddBufWithoutDuplication(new BattleUnitBuf_CustomInstantIndexRelease());
         }
     }
 }

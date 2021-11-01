@@ -98,7 +98,7 @@ namespace ModPack21341.Characters
         public void SetFinalPhase(bool value) => _finalPhase = value;
         public override BattleUnitModel ChangeAttackTarget(BattleDiceCardModel card, int idx)
         {
-            if (card.GetID().id != 54) return base.ChangeAttackTarget(card, idx);
+            if (card.GetID() != new LorId(ModPack21341Init.PackageId,54)) return base.ChangeAttackTarget(card, idx);
             if (BattleObjectManager.instance
                 .GetAliveList(Faction.Player).Any(x => !x.UnitData.unitData.isSephirah))
                 return RandomUtil.SelectOne(BattleObjectManager.instance.GetAliveList(Faction.Player)

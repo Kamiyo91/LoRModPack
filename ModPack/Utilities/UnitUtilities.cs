@@ -18,7 +18,7 @@ namespace ModPack21341.Utilities
 {
     public static class UnitUtilities
     {
-        public static void ChangeDeck(BattleUnitModel owner, List<int> newDeck)
+        public static void ChangeDeck(BattleUnitModel owner, IEnumerable<int> newDeck)
         {
             owner.allyCardDetail.ExhaustAllCards();
             foreach (var cardId in newDeck)
@@ -68,7 +68,7 @@ namespace ModPack21341.Utilities
             unitWithIndex.formation = new FormationPosition(unitWithIndex.formation._xmlInfo);
             if (unit.AddEmotionPassive)
                 AddEmotionPassives(unitWithIndex);
-            if(unit.OnWaveStart)
+            if (unit.OnWaveStart)
                 unitWithIndex.OnWaveStart();
             return unitWithIndex;
         }
@@ -96,7 +96,7 @@ namespace ModPack21341.Utilities
             allyUnit.cardSlotDetail.RecoverPlayPoint(allyUnit.cardSlotDetail.GetMaxPlayPoint());
             if (unit.AddEmotionPassive)
                 AddEmotionPassives(allyUnit);
-            if(!string.IsNullOrEmpty(unit.OverrideName))
+            if (!string.IsNullOrEmpty(unit.OverrideName))
                 allyUnit.UnitData.unitData.SetCustomName(unit.OverrideName);
             allyUnit.OnWaveStart();
             return allyUnit;
@@ -191,7 +191,7 @@ namespace ModPack21341.Utilities
         public static List<int> GetMioCardsId() => new List<int> { 20, 20, 21, 22, 23, 1, 1, 13, 13 };
         public static List<int> GetKamiyoCardsId() => new List<int> { 32, 36, 31, 31, 33, 33, 34, 34, 46 };
         public static List<int> GetBlackSilenceMaskCardsId() => new List<int> { 705206, 705207, 705208, 39, 40, 41, 42, 702001, 702004 };
-        public static List<int> GetHayateCardsId() => new List<int> { 49,51,53,48,48,50,50,56,52,52};
+        public static List<int> GetHayateCardsId() => new List<int> { 49, 51, 53, 48, 48, 50, 50, 56, 52, 52 };
         public static void AddBuffInfo()
         {
             var dictionary = typeof(BattleEffectTextsXmlList).GetField("_dictionary", AccessTools.all)?.GetValue(Singleton<BattleEffectTextsXmlList>.Instance) as Dictionary<string, BattleEffectText>;
@@ -333,5 +333,19 @@ namespace ModPack21341.Utilities
             return null;
         }
 
+        public static List<int> GetSamuraiGhostIndex(int originalUnitIndex)
+        {
+            switch (originalUnitIndex)
+            {
+                case 0:
+                    return new List<int> { 1, 2, 3 };
+                case 1:
+                    return new List<int> { 0, 2, 3 };
+                case 2:
+                    return new List<int> { 0, 1, 3 };
+                default:
+                    return new List<int> { 0, 1, 2 };
+            }
+        }
     }
 }

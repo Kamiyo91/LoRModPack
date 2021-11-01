@@ -57,9 +57,9 @@ namespace ModPack21341.Characters
         }
         public override void OnUseCard(BattlePlayingCardDataInUnitModel curCard)
         {
-            if (curCard.card.GetID().id == 912)
+            if (curCard.card.GetID() == new LorId(ModPack21341Init.PackageId,912))
                 owner.personalEgoDetail.RemoveCard(new LorId(ModPack21341Init.PackageId, 912));
-            if (curCard.card.GetID().id == 607001)
+            if (curCard.card.GetID().id == 607001 && curCard.card.GetID().IsBasic())
                 owner.allyCardDetail.ExhaustACardAnywhere(curCard.card);
         }
 

@@ -20,6 +20,7 @@ namespace ModPack21341.StageManager
         private BattleUnitModel _mioGhostModel;
         public override void OnWaveStart()
         {
+            UnitUtilities.TestingUnitValues();
             _kamiyoModel = BattleObjectManager.instance.GetAliveList(Faction.Enemy).FirstOrDefault();
             _kamiyoModel?.UnitData.unitData.InitBattleDialogByDefaultBook(new LorId(ModPack21341Init.PackageId, 22));
             CustomMapHandler.InitCustomMap("Kamiyo1", new Kamiyo1MapManager(), false, true, 0.5f, 0.2f, 0.5f, 0.45f);

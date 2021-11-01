@@ -115,14 +115,7 @@ namespace ModPack21341.Characters
         {
             _summonGhosts = false;
             _summonGhostUsed = true;
-            var indexList = new List<int>();
-            foreach (var (battleUnit, num) in BattleObjectManager.instance.GetList(Faction.Player)
-                .Select((value, i) => (value, i)))
-            {
-                if (num == owner.index) continue;
-                indexList.Add(num);
-                if (indexList.Count > 2) break;
-            }
+            var indexList = UnitUtilities.GetSamuraiGhostIndex(owner.index);
             foreach (var unit in BattleObjectManager.instance.GetList(Faction.Player).Where(x => indexList.Contains(x.index)))
             {
                 BattleObjectManager.instance.UnregisterUnit(unit);

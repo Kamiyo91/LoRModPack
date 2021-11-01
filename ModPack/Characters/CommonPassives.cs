@@ -2,11 +2,14 @@
 using LOR_XML;
 using System.Collections.Generic;
 using System.Linq;
+using ModPack21341.Characters.Buffs;
 using ModPack21341.Harmony;
 using ModPack21341.Utilities;
-using System;
 using ModPack21341.Characters.CardAbilities;
 using ModPack21341.Models;
+using Sound;
+using UnityEngine;
+using Random = System.Random;
 
 namespace ModPack21341.Characters
 {
@@ -37,7 +40,7 @@ namespace ModPack21341.Characters
         }
         public override void OnWinParrying(BattleDiceBehavior behavior)
         {
-            if (behavior.card.card.GetID().id != 30) return;
+            if (behavior.card.card.GetID() != new LorId(ModPack21341Init.PackageId,30)) return;
             if (_recoveryCheck) return;
             _recoveryCheck = true;
             UnitUtilities.SetPassiveCombatLog(this, owner);
@@ -346,4 +349,12 @@ namespace ModPack21341.Characters
         }
     }
     #endregion
+    public class PassiveAbility_CustomInstantIndexRelease : PassiveAbilityBase
+    {
+        public override void OnWaveStart()
+        {
+            if(owner.passiveDetail.HasPassive<PassiveAbility_250115>() || owner.passiveDetail.HasPassiveInReady<PassiveAbility_250115>()) owner.passiveDetail.DestroyPassive(this);
+            owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 932));
+        }
+    }
 }

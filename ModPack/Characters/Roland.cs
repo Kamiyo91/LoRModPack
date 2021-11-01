@@ -62,7 +62,7 @@ namespace ModPack21341.Characters
 
         public override void OnUseCard(BattlePlayingCardDataInUnitModel curCard)
         {
-            if (curCard.card.GetID().id == 29 || curCard.card.GetID().id == 26)
+            if (curCard.card.GetID() == new LorId(ModPack21341Init.PackageId, 29) || curCard.card.GetID() == new LorId(ModPack21341Init.PackageId, 26))
             {
                 owner.allyCardDetail.ExhaustACardAnywhere(curCard.card);
                 _usedMassEgo = true;

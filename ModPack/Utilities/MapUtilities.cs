@@ -14,7 +14,7 @@ namespace ModPack21341.Utilities
         private static bool ChangeMapCheck(MapModel model)
         {
             if (!Singleton<StageController>.Instance.CanChangeMap()) return true;
-            if (!model.OneTurnEgo && CanChangeMapCustom(2)) return true;
+            if (!model.OneTurnEgo && CanChangeMapCustom(1) || CanChangeMapCustom(2) || CanChangeMapCustom(5)) return true;
             if (model.StageId != 0 && CanChangeMapCustom(model.StageId)) return true;
             return false;
         }

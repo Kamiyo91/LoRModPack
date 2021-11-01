@@ -13,8 +13,16 @@ namespace ModPack21341.Characters
         private bool _cardUsed;
         private int _egoCard;
 
-        private readonly List<int> _egoCards = new List<int>
-            {918, 919, 920, 921, 922, 923, 924, 925, 926};
+        private readonly List<LorId> _egoCards = new List<LorId>
+            {new LorId(ModPack21341Init.PackageId,918), 
+                new LorId(ModPack21341Init.PackageId,919),
+                new LorId(ModPack21341Init.PackageId,920),
+                new LorId(ModPack21341Init.PackageId,921),
+                new LorId(ModPack21341Init.PackageId,922),
+                new LorId(ModPack21341Init.PackageId,923),
+                new LorId(ModPack21341Init.PackageId,924),
+                new LorId(ModPack21341Init.PackageId,925),
+                new LorId(ModPack21341Init.PackageId,926)};
 
         public override void OnWaveStart() => InitAngelaPhase();
 
@@ -36,7 +44,7 @@ namespace ModPack21341.Characters
 
         public override void OnUseCard(BattlePlayingCardDataInUnitModel curCard)
         {
-            if(_egoCards.Contains(curCard.card.GetID().id))
+            if(_egoCards.Contains(curCard.card.GetID()))
                 owner.allyCardDetail.ExhaustACardAnywhere(curCard.card);
         }
 
@@ -68,7 +76,7 @@ namespace ModPack21341.Characters
         private void ChooseEgoCard(ref BattleDiceCardModel origin)
         {
             if (!_phase2Activated || _cardUsed) return;
-            _egoCard = RandomUtil.SelectOne(_egoCards);
+            _egoCard = RandomUtil.SelectOne(_egoCards.Select(x => x.id).ToList());
             origin = BattleDiceCardModel.CreatePlayingCard(
                 ItemXmlDataList.instance.GetCardItem(new LorId(ModPack21341Init.PackageId, _egoCard)));
             _cardUsed = true;
