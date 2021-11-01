@@ -49,11 +49,22 @@ namespace ModPack21341.Characters.CardAbilities
                 else
                 {
                     unit.TakeDamage(100, DamageType.ETC);
-                    unit.breakDetail.TakeBreakDamage(100,DamageType.ETC);
+                    unit.breakDetail.TakeBreakDamage(100, DamageType.ETC);
                 }
             }
         }
     }
+
+    public class DiceCardSelfAbility_Str1Light2 : DiceCardSelfAbilityBase
+    {
+        public static string Desc = "[On Use]Restore 2 Light,Gain 1 Strength next Scene";
+        public override void OnUseCard()
+        {
+            owner.cardSlotDetail.RecoverPlayPoint(2);
+            owner.bufListDetail.AddKeywordBufByCard(KeywordBuf.Strength, 1, owner);
+        }
+    }
+
     public class DiceCardSelfAbility_TrueGodAura : DiceCardSelfAbilityBase
     {
         public static string Desc = "Can be used at Emotion Level 4 or above\n[On Use] Unleash The True Power of a God next Scene";

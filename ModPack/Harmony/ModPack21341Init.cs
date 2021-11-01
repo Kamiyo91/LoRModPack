@@ -108,6 +108,11 @@ namespace ModPack21341.Harmony
                 __result = Resources.Load<Sprite>("Sprites/Books/Thumb/250024");
                 return false;
             }
+            if (__instance.BookId == new LorId(PackageId, 10000010))
+            {
+                __result = ArtWorks["Hayate_Default"];
+                return false;
+            }
             return true;
         }
 

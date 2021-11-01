@@ -27,6 +27,9 @@ namespace ModPack21341.Characters
                 owner.personalEgoDetail.AddCard(607022);
             }
             owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 912));
+            if (owner.faction != Faction.Enemy || !(owner.hp < owner.MaxHp * 0.5f)) return;
+            _egoTransform = true;
+            owner.passiveDetail.AddPassive(new PassiveAbility_GeburaRedMistEgo());
         }
 
         public override bool BeforeTakeDamage(BattleUnitModel attacker, int dmg)
@@ -96,7 +99,7 @@ namespace ModPack21341.Characters
         public override void OnBattleEnd()
         {
             if (string.IsNullOrEmpty(owner.UnitData.unitData.workshopSkin) &&
-                owner.UnitData.unitData.bookItem == owner.UnitData.unitData.CustomBookItem)
+                owner.UnitData.unitData.bookItem == owner.UnitData.unitData.CustomBookItem && owner.faction == Faction.Player)
                 UnitUtilities.ReturnToTheOriginalBaseSkin(owner, _originalSkinName, _dlg);
         }
         public override void OnRoundStart() => UpdateResist();

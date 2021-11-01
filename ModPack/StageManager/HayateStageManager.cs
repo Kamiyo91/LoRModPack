@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CustomMapUtility;
+using LOR_XML;
 using ModPack21341.Characters;
 using ModPack21341.Characters.Buffs;
 using ModPack21341.Models;
@@ -33,7 +35,6 @@ namespace ModPack21341.StageManager
         }
         public override void OnRoundStart()
         {
-            UnitUtilities.TestingUnitValues();
             CustomMapHandler.EnforceMap();
             MapUtilities.CheckAndChangeBGM(ref _changeBgm);
         }
@@ -64,7 +65,8 @@ namespace ModPack21341.StageManager
                 MapUtilities.PrepareChangeBGM("HayatePhase3.mp3", ref _changeBgm);
                 var kamiyoModel = UnitUtilities.AddNewUnitPlayerSide(_floor, new UnitModel
                 {
-                    Name = "Kamiyo",
+                    Name = "Kamiyo546312",
+                    OverrideName = "Kamiyo",
                     Pos = 0,
                     EmotionLevel = 5,
                     Sephirah = _floor.Sephirah
@@ -78,6 +80,7 @@ namespace ModPack21341.StageManager
                 if (kamiyoModel.passiveDetail.PassiveList.Find(x => x is PassiveAbility_Power_of_the_Unknown) is
                     PassiveAbility_Power_of_the_Unknown kamiyoPassive)
                     kamiyoPassive.SetEgoReadyFinalPhaseHayate();
+                UnitUtilities.BattleAbDialog(_hayateModel.view.dialogUI,new List<AbnormalityCardDialog>{new AbnormalityCardDialog{id = "Hayate",dialog = "Kamiyo...The time has come!"}});
             }
         }
         private void CheckUnitSummon()
@@ -91,7 +94,7 @@ namespace ModPack21341.StageManager
             UnitUtilities.FillUnitDataSingle(new UnitModel
             {
                 Id = 10000011,
-                Name = "Kamiyo",
+                Name = "Kamiyo546312",
                 DialogId = 2
             }, _floor);
         }

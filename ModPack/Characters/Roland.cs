@@ -55,6 +55,9 @@ namespace ModPack21341.Characters
         {
             CheckRolandUnitAndChangeSkin();
             owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 911));
+            if (owner.faction != Faction.Enemy || !(owner.hp < owner.MaxHp * 0.5f)) return;
+            _halfHpReached = true;
+            ChangeToBlackSilence();
         }
 
         public override void OnUseCard(BattlePlayingCardDataInUnitModel curCard)

@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string OverrideName { get; set; }
         public int Pos { get; set; }
         public SephirahType Sephirah { get; set; }
         public bool LockedEmotion { get; set; }

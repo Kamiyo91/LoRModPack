@@ -143,7 +143,7 @@ namespace ModPack21341.Characters
         public override void OnBattleEnd()
         {
             if (string.IsNullOrEmpty(owner.UnitData.unitData.workshopSkin) &&
-                owner.UnitData.unitData.bookItem == owner.UnitData.unitData.CustomBookItem)
+                owner.UnitData.unitData.bookItem == owner.UnitData.unitData.CustomBookItem && owner.faction == Faction.Player)
                 UnitUtilities.ReturnToTheOriginalBaseSkin(owner,_originalSkinName,_dlg);
         }
     }

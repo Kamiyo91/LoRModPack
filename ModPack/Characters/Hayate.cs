@@ -15,6 +15,7 @@ namespace ModPack21341.Characters
         private bool _lastPrePhase;
         private bool _finalPhase;
         private bool _auraChange;
+        private bool _showLastPrePhaseDlg;
         public override void OnWaveStart()
         {
             _phase2 = false;
@@ -70,6 +71,11 @@ namespace ModPack21341.Characters
         public override void OnRoundStartAfter()
         {
             if (!_lastPrePhase || _finalPhase) return;
+            if (_showLastPrePhaseDlg)
+            {
+                _showLastPrePhaseDlg = false;
+                owner.view.DisplayDlg(DialogType.SPECIAL_EVENT,"1");
+            }
             owner.allyCardDetail.ExhaustAllCards();
             owner.allyCardDetail.AddTempCard(new LorId(ModPack21341Init.PackageId, 55));
             owner.breakDetail.RecoverBreakLife(1, true);
@@ -86,6 +92,7 @@ namespace ModPack21341.Characters
         private void ChangeToFinalPhase()
         {
             _lastPrePhase = true;
+            _showLastPrePhaseDlg = true;
         }
 
         public void SetFinalPhase(bool value) => _finalPhase = value;

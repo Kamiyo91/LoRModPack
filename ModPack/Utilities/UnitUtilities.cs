@@ -52,6 +52,7 @@ namespace ModPack21341.Utilities
             var allyUnit = Singleton<StageController>.Instance.CreateLibrarianUnit_fromBattleUnitData(index);
             allyUnit.OnWaveStart();
             allyUnit.allyCardDetail.DrawCards(allyUnit.UnitData.unitData.GetStartDraw());
+            AddEmotionPassives(allyUnit);
             return allyUnit;
         }
         public static BattleUnitModel AddNewUnitEnemySide(UnitModel unit)
@@ -95,6 +96,8 @@ namespace ModPack21341.Utilities
             allyUnit.cardSlotDetail.RecoverPlayPoint(allyUnit.cardSlotDetail.GetMaxPlayPoint());
             if (unit.AddEmotionPassive)
                 AddEmotionPassives(allyUnit);
+            if(!string.IsNullOrEmpty(unit.OverrideName))
+                allyUnit.UnitData.unitData.SetCustomName(unit.OverrideName);
             allyUnit.OnWaveStart();
             return allyUnit;
         }
