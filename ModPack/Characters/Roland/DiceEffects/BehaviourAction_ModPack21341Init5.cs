@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace ModPack21341.Characters.Roland.DiceEffects
 {
@@ -18,7 +14,7 @@ namespace ModPack21341.Characters.Roland.DiceEffects
             var list = new List<RencounterManager.MovingAction>();
             var movingAction = new RencounterManager.MovingAction(ActionDetail.Slash, CharMoveState.MoveForward,
                     30f, false, 0.9f)
-            { customEffectRes = "FX_PC_RolRang_Dagger" };
+                {customEffectRes = "FX_PC_RolRang_Dagger"};
             movingAction.SetEffectTiming(EffectTiming.PRE, EffectTiming.PRE, EffectTiming.PRE);
             new RencounterManager.MovingAction(ActionDetail.Slash, CharMoveState.Stop, 0f, true, 0.1f)
                 .SetEffectTiming(EffectTiming.NOT_PRINT, EffectTiming.NOT_PRINT, EffectTiming.NOT_PRINT);

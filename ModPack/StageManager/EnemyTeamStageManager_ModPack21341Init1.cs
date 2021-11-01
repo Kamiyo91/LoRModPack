@@ -22,6 +22,7 @@ namespace ModPack21341.StageManager
 
         public override void OnWaveStart()
         {
+            UnitUtilities.TestingUnitValues();
             CustomMapHandler.InitCustomMap("OldSamurai", new ModPack21341InitOldSamuraiMapManager(), false, true, 0.5f,
                 0.2f);
             CustomMapHandler.EnforceMap();

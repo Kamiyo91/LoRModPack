@@ -20,6 +20,11 @@ namespace ModPack21341.Utilities
             return false;
         }
 
+        public static bool ChangeMusicCheck()
+        {
+            return CanChangeMapCustom(1) || CanChangeMapCustom(2) || CanChangeMapCustom(5);
+        }
+
         public static void ChangeMap(MapModel model, Faction faction = Faction.Player)
         {
             Singleton<StageController>.Instance.CheckMapChange();

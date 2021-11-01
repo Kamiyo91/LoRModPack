@@ -201,11 +201,6 @@ namespace ModPack21341.Characters.Kamiyo.PassiveAbilities
             _count = 4;
         }
 
-        private void ReturnToTheOriginalPlayerTeam()
-        {
-            UnitUtilities.RemoveUnitData(_floor, "ModPack21341InitEgoMio");
-        }
-
         private void SummonMio()
         {
             _summonMio = false;
@@ -252,12 +247,13 @@ namespace ModPack21341.Characters.Kamiyo.PassiveAbilities
             var currentStageFloorModel = Singleton<StageController>.Instance.GetCurrentStageFloorModel();
             _floor = Singleton<StageController>.Instance.GetStageModel().GetFloor(currentStageFloorModel.Sephirah);
             _originalBook = owner.UnitData.unitData.GetCustomBookItemData();
-            UnitUtilities.FillUnitDataSingle(new UnitModel
-            {
-                Id = 10000008,
-                Name = "ModPack21341InitEgoMio",
-                DialogId = 2
-            }, _floor);
+            if (owner.faction == Faction.Player)
+                UnitUtilities.FillUnitDataSingle(new UnitModel
+                {
+                    Id = 10000008,
+                    Name = "ModPack21341InitEgoMio",
+                    DialogId = 2
+                }, _floor);
             if (!string.IsNullOrEmpty(owner.UnitData.unitData.workshopSkin) ||
                 owner.UnitData.unitData.bookItem == owner.UnitData.unitData.CustomBookItem) return;
             owner.view.ChangeSkin(owner.UnitData.unitData.CustomBookItem.GetCharacterName());
@@ -288,11 +284,10 @@ namespace ModPack21341.Characters.Kamiyo.PassiveAbilities
 
         public override void OnBattleEnd()
         {
+            if (owner.faction == Faction.Player) UnitUtilities.RemoveUnitData(_floor, "ModPack21341InitEgoMio");
             owner.UnitData.unitData.battleDialogModel = _dlg;
             if (owner.faction == Faction.Player)
                 UnitUtilities.ReturnToTheOriginalPlayerUnit(owner, _originalBook, _dlg);
-            if (!_summonMioUsed) return;
-            ReturnToTheOriginalPlayerTeam();
         }
     }
 }

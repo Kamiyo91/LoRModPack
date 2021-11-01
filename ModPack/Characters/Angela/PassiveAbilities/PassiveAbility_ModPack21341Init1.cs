@@ -2,6 +2,7 @@
 using System.Linq;
 using ModPack21341.Characters.Angela.Buffs;
 using ModPack21341.Harmony;
+using ModPack21341.Utilities;
 
 namespace ModPack21341.Characters.Angela.PassiveAbilities
 {
@@ -28,6 +29,7 @@ namespace ModPack21341.Characters.Angela.PassiveAbilities
 
         public override void OnWaveStart()
         {
+            UnitUtilities.TestingUnitValues();
             InitAngelaPhase();
         }
 

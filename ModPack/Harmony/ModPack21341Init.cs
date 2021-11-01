@@ -52,76 +52,76 @@ namespace ModPack21341.Harmony
             foreach (var item in list2) Singleton<ModContentManager>.Instance.GetErrorLogs().Remove(item);
         }
 
-        public static bool BookModel_GetThumbSprite(BookModel instance, ref Sprite result)
+        public static bool BookModel_GetThumbSprite(BookModel __instance, ref Sprite __result)
         {
-            if (instance.BookId.packageId != PackageId) return true;
-            if (instance.BookId == new LorId(PackageId, 10000001) ||
-                instance.BookId == new LorId(PackageId, 10000002))
+            if (__instance.BookId.packageId != PackageId) return true;
+            if (__instance.BookId == new LorId(PackageId, 10000001) ||
+                __instance.BookId == new LorId(PackageId, 10000002))
             {
-                result = Resources.Load<Sprite>("Sprites/Books/Thumb/243003");
+                __result = Resources.Load<Sprite>("Sprites/Books/Thumb/243003");
                 return false;
             }
 
-            if (instance.BookId == new LorId(PackageId, 10000005))
+            if (__instance.BookId == new LorId(PackageId, 10000005))
             {
-                result = ArtWorks["Knife_Default"];
+                __result = ArtWorks["Knife_Default"];
                 return false;
             }
 
-            if (instance.BookId == new LorId(PackageId, 10000013))
+            if (__instance.BookId == new LorId(PackageId, 10000013))
             {
-                result = Resources.Load<Sprite>("Sprites/Books/Thumb/102");
+                __result = Resources.Load<Sprite>("Sprites/Books/Thumb/102");
                 return false;
             }
 
-            if (instance.BookId == new LorId(PackageId, 10000014))
+            if (__instance.BookId == new LorId(PackageId, 10000014))
             {
-                result = ArtWorks["Angela_Default"];
+                __result = ArtWorks["Angela_Default"];
                 return false;
             }
 
-            if (instance.BookId == new LorId(PackageId, 10000015))
+            if (__instance.BookId == new LorId(PackageId, 10000015))
             {
-                result = Resources.Load<Sprite>("Sprites/Books/Thumb/8");
+                __result = Resources.Load<Sprite>("Sprites/Books/Thumb/8");
                 return false;
             }
 
-            if (instance.BookId == new LorId(PackageId, 10000016))
+            if (__instance.BookId == new LorId(PackageId, 10000016))
             {
-                result = Resources.Load<Sprite>("Sprites/Books/Thumb/250022");
+                __result = Resources.Load<Sprite>("Sprites/Books/Thumb/250022");
                 return false;
             }
 
-            if (instance.BookId == new LorId(PackageId, 10000006))
+            if (__instance.BookId == new LorId(PackageId, 10000006))
             {
-                result = Resources.Load<Sprite>("Sprites/Books/Thumb/250035");
+                __result = Resources.Load<Sprite>("Sprites/Books/Thumb/250035");
                 return false;
             }
 
-            if (instance.BookId == new LorId(PackageId, 10000009))
+            if (__instance.BookId == new LorId(PackageId, 10000009))
             {
-                result = Resources.Load<Sprite>("Sprites/Books/Thumb/250024");
+                __result = Resources.Load<Sprite>("Sprites/Books/Thumb/250024");
                 return false;
             }
 
-            if (instance.BookId == new LorId(PackageId, 10000010))
+            if (__instance.BookId == new LorId(PackageId, 10000010))
             {
-                result = ArtWorks["Hayate_Default"];
+                __result = ArtWorks["Hayate_Default"];
                 return false;
             }
 
             return true;
         }
 
-        public static void BookModel_SetXmlInfo(BookModel instance, BookXmlInfo classInfo,
-            ref List<DiceCardXmlInfo> onlyCards)
+        public static void BookModel_SetXmlInfo(BookModel __instance, BookXmlInfo ____classInfo,
+            ref List<DiceCardXmlInfo> ____onlyCards)
         {
-            if (instance.BookId.packageId == PackageId)
-                onlyCards.AddRange(classInfo.EquipEffect.OnlyCard.Select(id =>
+            if (__instance.BookId.packageId == PackageId)
+                ____onlyCards.AddRange(____classInfo.EquipEffect.OnlyCard.Select(id =>
                     ItemXmlDataList.instance.GetCardItem(new LorId(PackageId, id))));
         }
 
-        public static bool StageLibraryFloorModel_InitUnitList(StageLibraryFloorModel instance, StageModel stage,
+        public static bool StageLibraryFloorModel_InitUnitList(StageLibraryFloorModel __instance, StageModel stage,
             LibraryFloorModel floor)
         {
             if (stage.ClassInfo.id.packageId != PackageId) return true;
@@ -129,13 +129,13 @@ namespace ModPack21341.Harmony
             {
                 if (stage.ClassInfo.id.id == 1)
                 {
-                    UnitUtilities.AddUnitSephiraOnly(instance, stage, unitDataModel);
+                    UnitUtilities.AddUnitSephiraOnly(__instance, stage, unitDataModel);
                     return false;
                 }
 
                 if (stage.ClassInfo.id.id == 6)
                 {
-                    UnitUtilities.AddUnitSephiraOnly(instance, stage, unitDataModel);
+                    UnitUtilities.AddUnitSephiraOnly(__instance, stage, unitDataModel);
                     return false;
                 }
             }

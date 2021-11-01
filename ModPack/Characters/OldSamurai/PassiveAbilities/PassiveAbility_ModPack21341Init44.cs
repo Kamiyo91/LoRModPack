@@ -70,12 +70,13 @@ namespace ModPack21341.Characters.OldSamurai.PassiveAbilities
             _summonGhostUsed = false;
             var currentStageFloorModel = Singleton<StageController>.Instance.GetCurrentStageFloorModel();
             _floor = Singleton<StageController>.Instance.GetStageModel().GetFloor(currentStageFloorModel.Sephirah);
-            UnitUtilities.FillUnitData(new UnitModel
-            {
-                Id = 10000003,
-                Name = "ModPack21341InitEgoOldSamurai",
-                DialogId = 2
-            }, _floor);
+            if (owner.faction == Faction.Player)
+                UnitUtilities.FillUnitData(new UnitModel
+                {
+                    Id = 10000003,
+                    Name = "ModPack21341InitEgoOldSamurai",
+                    DialogId = 2
+                }, _floor);
         }
 
         public override void OnUseCard(BattlePlayingCardDataInUnitModel curCard)
@@ -118,13 +119,7 @@ namespace ModPack21341.Characters.OldSamurai.PassiveAbilities
 
         public override void OnBattleEnd()
         {
-            if (!_summonGhostUsed) return;
-            ReturnToTheOriginalPlayerTeam();
-        }
-
-        private void ReturnToTheOriginalPlayerTeam()
-        {
-            UnitUtilities.RemoveUnitData(_floor, "ModPack21341InitEgoOldSamurai");
+            if (owner.faction == Faction.Player) UnitUtilities.RemoveUnitData(_floor, "ModPack21341InitEgoOldSamurai");
         }
 
         private void Revive()
@@ -144,7 +139,8 @@ namespace ModPack21341.Characters.OldSamurai.PassiveAbilities
             _mapChanged = false;
             owner.bufListDetail.AddBufWithoutDuplication(new BattleUnitBuf_ModPack21341Init18());
             ChangeToSamuraiEgoMap();
-            CustomMapHandler.SetEnemyTheme("Hornet.mp3", true);
+            if (!MapUtilities.ChangeMusicCheck())
+                CustomMapHandler.SetEnemyTheme("Hornet.mp3", true);
         }
 
         public override void OnRoundEndTheLast_ignoreDead()

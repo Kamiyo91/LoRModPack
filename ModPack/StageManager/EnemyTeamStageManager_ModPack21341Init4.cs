@@ -27,6 +27,7 @@ namespace ModPack21341.StageManager
 
         public override void OnWaveStart()
         {
+            UnitUtilities.TestingUnitValues();
             var currentStageFloorModel = Singleton<StageController>.Instance.GetCurrentStageFloorModel();
             _floor = Singleton<StageController>.Instance.GetStageModel().GetFloor(currentStageFloorModel.Sephirah);
             CustomMapHandler.InitCustomMap("Hayate", new ModPack21341InitHayateMapManager(), false, true, 0.5f, 0.3f,

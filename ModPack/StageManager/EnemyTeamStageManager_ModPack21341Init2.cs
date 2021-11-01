@@ -24,6 +24,7 @@ namespace ModPack21341.StageManager
 
         public override void OnWaveStart()
         {
+            UnitUtilities.TestingUnitValues();
             var currentStageFloorModel = Singleton<StageController>.Instance.GetCurrentStageFloorModel();
             _floor = Singleton<StageController>.Instance.GetStageModel().GetFloor(currentStageFloorModel.Sephirah);
             UnitUtilities.FillUnitDataSingle(new UnitModel
