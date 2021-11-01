@@ -14,11 +14,4 @@
         public bool AddEmotionPassive { get; set; } = true;
         public bool OnWaveStart { get; set; } = false;
     }
-    public enum EmotionBufType
-    {
-        Happy,
-        Sad,
-        Angry,
-        Neutral
-    }
 }
