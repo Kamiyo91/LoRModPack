@@ -29,7 +29,6 @@ namespace ModPack21341.Characters.Angela.PassiveAbilities
 
         public override void OnWaveStart()
         {
-            UnitUtilities.TestingUnitValues();
             InitAngelaPhase();
         }
 
