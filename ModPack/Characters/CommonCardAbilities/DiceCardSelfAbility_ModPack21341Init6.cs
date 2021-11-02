@@ -34,7 +34,7 @@ namespace ModPack21341.Characters.CommonCardAbilities
                 unit.passiveDetail.AddPassive(new LorId(ModPack21341Init.PackageId, 22)) as
                     PassiveAbility_ModPack21341Init17;
             passive?.ChangeNameAndSetStacks(1);
-            unit.passiveDetail.OnCreated();
+            if (unit.faction == Faction.Player) unit.passiveDetail.OnCreated();
         }
     }
 }

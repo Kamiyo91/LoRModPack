@@ -70,13 +70,6 @@ namespace ModPack21341.Characters.OldSamurai.PassiveAbilities
             _summonGhostUsed = false;
             var currentStageFloorModel = Singleton<StageController>.Instance.GetCurrentStageFloorModel();
             _floor = Singleton<StageController>.Instance.GetStageModel().GetFloor(currentStageFloorModel.Sephirah);
-            if (owner.faction == Faction.Player)
-                UnitUtilities.FillUnitData(new UnitModel
-                {
-                    Id = 10000003,
-                    Name = "ModPack21341InitEgoOldSamurai",
-                    DialogId = 2
-                }, _floor);
         }
 
         public override void OnUseCard(BattlePlayingCardDataInUnitModel curCard)
@@ -102,8 +95,8 @@ namespace ModPack21341.Characters.OldSamurai.PassiveAbilities
             for (var i = 0; i < 3; i++)
                 UnitUtilities.AddNewUnitPlayerSide(_floor, new UnitModel
                 {
-                    Name = "ModPack21341InitEgoOldSamurai",
-                    OverrideName = "Samurai's Ghost",
+                    Id = 10000003,
+                    Name = "Samurai's Ghost",
                     Pos = indexList[i],
                     LockedEmotion = true,
                     Sephirah = _floor.Sephirah
@@ -115,11 +108,6 @@ namespace ModPack21341.Characters.OldSamurai.PassiveAbilities
         {
             if (!_summonGhosts || owner.faction == Faction.Enemy) return;
             SummonSamuraiGhost();
-        }
-
-        public override void OnBattleEnd()
-        {
-            if (owner.faction == Faction.Player) UnitUtilities.RemoveUnitData(_floor, "ModPack21341InitEgoOldSamurai");
         }
 
         private void Revive()
@@ -138,9 +126,14 @@ namespace ModPack21341.Characters.OldSamurai.PassiveAbilities
             if (!_mapChanged) return;
             _mapChanged = false;
             owner.bufListDetail.AddBufWithoutDuplication(new BattleUnitBuf_ModPack21341Init18());
+            if (MapUtilities.ChangeMusicCheck())
+            {
+                _ghostMapRemoved = true;
+                return;
+            }
+
             ChangeToSamuraiEgoMap();
-            if (!MapUtilities.ChangeMusicCheck())
-                CustomMapHandler.SetEnemyTheme("Hornet.mp3", true);
+            CustomMapHandler.SetEnemyTheme("Hornet.mp3", true);
         }
 
         public override void OnRoundEndTheLast_ignoreDead()

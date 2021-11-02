@@ -6,6 +6,7 @@ using ModPack21341.Characters.Hayate.Buffs;
 using ModPack21341.Characters.Hayate.PassiveAbilities;
 using ModPack21341.Characters.Kamiyo.Buffs;
 using ModPack21341.Characters.Kamiyo.PassiveAbilities;
+using ModPack21341.Harmony;
 using ModPack21341.Models;
 using ModPack21341.StageManager.MapManager.HayateStageMaps;
 using ModPack21341.Utilities;
@@ -27,7 +28,6 @@ namespace ModPack21341.StageManager
 
         public override void OnWaveStart()
         {
-            UnitUtilities.TestingUnitValues();
             var currentStageFloorModel = Singleton<StageController>.Instance.GetCurrentStageFloorModel();
             _floor = Singleton<StageController>.Instance.GetStageModel().GetFloor(currentStageFloorModel.Sephirah);
             CustomMapHandler.InitCustomMap("Hayate", new ModPack21341InitHayateMapManager(), false, true, 0.5f, 0.3f,
@@ -71,21 +71,18 @@ namespace ModPack21341.StageManager
             MapUtilities.PrepareChangeBgm("HayatePhase2.mp3", ref _changeBgm);
         }
 
-        public override void OnEndBattle()
-        {
-            UnitUtilities.RemoveUnitData(_floor, "ModPack21341InitStoryKamiyo");
-        }
-
         private void CheckLastPhase()
         {
             if (_lastPhaseStarted || BattleObjectManager.instance.GetAliveList(Faction.Player).Count > 0) return;
             {
                 _lastPhaseStarted = true;
                 MapUtilities.PrepareChangeBgm("HayatePhase3.mp3", ref _changeBgm);
+                foreach (var unit in BattleObjectManager.instance.GetList(Faction.Player))
+                    BattleObjectManager.instance.UnregisterUnit(unit);
                 var kamiyoModel = UnitUtilities.AddNewUnitPlayerSide(_floor, new UnitModel
                 {
-                    Name = "ModPack21341InitStoryKamiyo",
-                    OverrideName = "Kamiyo",
+                    Id = 10000011,
+                    Name = "Kamiyo",
                     Pos = 0,
                     EmotionLevel = 5,
                     Sephirah = _floor.Sephirah
@@ -94,6 +91,13 @@ namespace ModPack21341.StageManager
                 _hayateModel.RecoverHP(231);
                 _hayateModel.breakDetail.ResetGauge();
                 _hayateModel.breakDetail.RecoverBreakLife(1, true);
+                if (_hayateModel.passiveDetail.PassiveList.Find(x => x is PassiveAbility_ModPack21341Init24) is
+                    PassiveAbility_ModPack21341Init24 shimmeringPassive)
+                {
+                    _hayateModel.passiveDetail.DestroyPassive(shimmeringPassive);
+                    _hayateModel.passiveDetail.AddPassive(new LorId(ModPack21341Init.PackageId, 52));
+                }
+
                 _hayatePassive.SetFinalPhase(true);
                 kamiyoModel.bufListDetail.AddBufWithoutDuplication(new BattleUnitBuf_ModPack21341Init11());
                 if (kamiyoModel.passiveDetail.PassiveList.Find(x => x is PassiveAbility_ModPack21341Init34) is
@@ -113,12 +117,6 @@ namespace ModPack21341.StageManager
             for (var i = 1; i < 5; i++)
                 UnitUtilities.AddOriginalPlayerUnitPlayerSide(i);
             UnitUtilities.RefreshCombatUI();
-            UnitUtilities.FillUnitDataSingle(new UnitModel
-            {
-                Id = 10000011,
-                Name = "ModPack21341InitStoryKamiyo",
-                DialogId = 2
-            }, _floor);
         }
     }
 }

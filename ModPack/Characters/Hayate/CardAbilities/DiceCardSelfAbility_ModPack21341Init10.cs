@@ -11,12 +11,7 @@ namespace ModPack21341.Characters.Hayate.CardAbilities
         public override void OnStartBattle()
         {
             SoundEffectPlayer.PlaySound("Creature/FingerSnap");
-            foreach (var unit in BattleObjectManager.instance.GetAliveList(Faction.Player))
-            {
-                unit.Die();
-                BattleObjectManager.instance.UnregisterUnit(unit);
-            }
-
+            foreach (var unit in BattleObjectManager.instance.GetAliveList(Faction.Player)) unit.Die();
             UnitUtilities.RefreshCombatUI();
         }
     }

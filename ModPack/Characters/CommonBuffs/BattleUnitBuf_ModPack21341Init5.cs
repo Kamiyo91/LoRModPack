@@ -28,7 +28,7 @@
             behavior.ApplyDiceStatBonus(
                 new DiceStatBonus
                 {
-                    power = 30
+                    power = 100
                 });
         }
     }

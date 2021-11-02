@@ -11,11 +11,11 @@
         protected override string keywordId => "KamiyoHayate";
         public override int paramInBufDesc => 0;
         protected override string keywordIconId => "BlackFrantic";
-        public override string bufActivatedText => "Power +2 against Hayate, on battle end Die.";
+        public override string bufActivatedText => "Power +4 against Hayate, when the battle ends,Die.";
 
         public override void BeforeRollDice(BattleDiceBehavior behavior)
         {
-            behavior.ApplyDiceStatBonus(new DiceStatBonus {power = 2});
+            behavior.ApplyDiceStatBonus(new DiceStatBonus {power = 4});
         }
 
         public override void OnKill(BattleUnitModel target)

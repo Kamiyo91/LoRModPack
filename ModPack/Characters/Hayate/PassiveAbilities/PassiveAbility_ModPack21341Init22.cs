@@ -14,10 +14,12 @@ namespace ModPack21341.Characters.Hayate.PassiveAbilities
         private bool _auraChange;
         private BattleUnitBuf_ModPack21341Init8 _buf;
         private bool _changeBuffs;
+        private bool _deleteEnemy;
         private bool _finalPhase;
         private bool _lastPrePhase;
         private bool _phase2;
         private bool _showLastPrePhaseDlg;
+        private BattleUnitModel _target;
         private bool _useCard;
 
         public override void OnWaveStart()
@@ -51,6 +53,14 @@ namespace ModPack21341.Characters.Hayate.PassiveAbilities
 
         public override void OnRoundEndTheLast()
         {
+            if (_deleteEnemy)
+            {
+                _deleteEnemy = false;
+                BattleObjectManager.instance.UnregisterUnit(_target);
+                _target = null;
+                UnitUtilities.RefreshCombatUI();
+            }
+
             if (_auraChange)
                 UnitUtilities.ActiveAwakeningDeckPassive(owner, "Hayate");
         }
@@ -137,14 +147,17 @@ namespace ModPack21341.Characters.Hayate.PassiveAbilities
             if (curCard.card.GetID() == new LorId(ModPack21341Init.PackageId, 930))
                 owner.personalEgoDetail.RemoveCard(new LorId(ModPack21341Init.PackageId, 930));
 
-            if (curCard.card.GetID() == new LorId(ModPack21341Init.PackageId, 54) ||
-                curCard.card.GetID() == new LorId(ModPack21341Init.PackageId, 55))
-                owner.allyCardDetail.ExhaustACardAnywhere(curCard.card);
+            if (curCard.card.GetID() != new LorId(ModPack21341Init.PackageId, 54) &&
+                curCard.card.GetID() != new LorId(ModPack21341Init.PackageId, 55)) return;
+            owner.allyCardDetail.ExhaustACardAnywhere(curCard.card);
+            if (curCard.card.GetID() != new LorId(ModPack21341Init.PackageId, 54)) return;
+            _deleteEnemy = true;
+            _target = curCard.target;
         }
 
         public override BattleDiceCardModel OnSelectCardAuto(BattleDiceCardModel origin, int currentDiceSlotIdx)
         {
-            if (_lastPrePhase && !_finalPhase || owner.faction == Faction.Player)
+            if (_lastPrePhase || owner.faction == Faction.Player)
                 return base.OnSelectCardAuto(origin, currentDiceSlotIdx);
             if (_useCard)
             {

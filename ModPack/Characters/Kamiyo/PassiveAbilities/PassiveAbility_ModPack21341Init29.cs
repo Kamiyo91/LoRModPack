@@ -1,5 +1,4 @@
-﻿using ModPack21341.Characters.Hayate.Buffs;
-using ModPack21341.Utilities;
+﻿using ModPack21341.Utilities;
 
 namespace ModPack21341.Characters.Kamiyo.PassiveAbilities
 {
@@ -14,9 +13,7 @@ namespace ModPack21341.Characters.Kamiyo.PassiveAbilities
 
         public override void BeforeRollDice(BattleDiceBehavior behavior)
         {
-            if (behavior.TargetDice.owner.bufListDetail.GetActivatedBufList()
-                .Exists(x => x is BattleUnitBuf_ModPack21341Init10))
-                UnitUtilities.SetPassiveCombatLog(this, owner);
+            UnitUtilities.SetPassiveCombatLog(this, owner);
         }
     }
 }

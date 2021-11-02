@@ -13,7 +13,6 @@ namespace ModPack21341.Characters.Hayate.CardAbilities
         {
             SoundEffectPlayer.PlaySound("Creature/FingerSnap");
             card.target.Die(owner);
-            BattleObjectManager.instance.UnregisterUnit(card.target);
             UnitUtilities.RefreshCombatUI();
         }
 

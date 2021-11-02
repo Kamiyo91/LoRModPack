@@ -25,7 +25,7 @@ namespace ModPack21341.Characters.CommonCardAbilities
         private static void AddNeutralPassive(BattleUnitModel unit)
         {
             unit.passiveDetail.AddPassive(new LorId(ModPack21341Init.PackageId, 20));
-            unit.passiveDetail.OnCreated();
+            if (unit.faction == Faction.Player) unit.passiveDetail.OnCreated();
         }
     }
 }

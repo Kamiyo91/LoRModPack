@@ -24,25 +24,13 @@ namespace ModPack21341.StageManager
 
         public override void OnWaveStart()
         {
-            UnitUtilities.TestingUnitValues();
             var currentStageFloorModel = Singleton<StageController>.Instance.GetCurrentStageFloorModel();
             _floor = Singleton<StageController>.Instance.GetStageModel().GetFloor(currentStageFloorModel.Sephirah);
-            UnitUtilities.FillUnitDataSingle(new UnitModel
-            {
-                Id = 10000004,
-                Name = "ModPack21341InitStoryMio",
-                DialogId = 201
-            }, _floor);
             CustomMapHandler.InitCustomMap("Mio", new ModPack21341InitMioMapManager(), false, true, 0.5f, 0.2f);
             CustomMapHandler.EnforceMap();
             Singleton<StageController>.Instance.CheckMapChange();
             _mioMapManager =
                 SingletonBehavior<BattleSceneRoot>.Instance.currentMapObject as ModPack21341InitMioMapManager;
-        }
-
-        public override void OnEndBattle()
-        {
-            UnitUtilities.RemoveUnitData(_floor, "ModPack21341InitStoryMio");
         }
 
         public override void OnRoundStart()
@@ -93,8 +81,7 @@ namespace ModPack21341.StageManager
             _tempMioAllyUnit = UnitUtilities.AddNewUnitPlayerSide(_floor, new UnitModel
             {
                 Id = 10000004,
-                Name = "ModPack21341InitStoryMio",
-                OverrideName = "Mio?",
+                Name = "Mio?",
                 Pos = playerUnitList.Count,
                 Sephirah = _floor.Sephirah
             });

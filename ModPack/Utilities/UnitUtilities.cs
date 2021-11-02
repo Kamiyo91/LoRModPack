@@ -51,13 +51,12 @@ namespace ModPack21341.Utilities
             BattleObjectManager.instance.InitUI();
         }
 
-        public static BattleUnitModel AddOriginalPlayerUnitPlayerSide(int index)
+        public static void AddOriginalPlayerUnitPlayerSide(int index)
         {
             var allyUnit = Singleton<StageController>.Instance.CreateLibrarianUnit_fromBattleUnitData(index);
             allyUnit.OnWaveStart();
             allyUnit.allyCardDetail.DrawCards(allyUnit.UnitData.unitData.GetStartDraw());
             AddEmotionPassives(allyUnit);
-            return allyUnit;
         }
 
         public static BattleUnitModel AddNewUnitEnemySide(UnitModel unit)
@@ -81,17 +80,33 @@ namespace ModPack21341.Utilities
 
         private static void AddEmotionPassives(BattleUnitModel unit)
         {
-            foreach (var emotionCard in BattleObjectManager.instance.GetAliveList(Faction.Player).FirstOrDefault()
+            var playerUnitsAlive = BattleObjectManager.instance.GetAliveList(Faction.Player);
+            if (!playerUnitsAlive.Any()) return;
+            foreach (var emotionCard in playerUnitsAlive.FirstOrDefault()
                 .emotionDetail.PassiveList.Where(x =>
-                    x.XmlInfo.TargetType == EmotionTargetType.AllIncludingEnemy))
+                    x.XmlInfo.TargetType == EmotionTargetType.AllIncludingEnemy ||
+                    x.XmlInfo.TargetType == EmotionTargetType.All))
+            {
+                if (unit.faction == Faction.Enemy &&
+                    emotionCard.XmlInfo.TargetType == EmotionTargetType.All) continue;
                 unit.emotionDetail.ApplyEmotionCard(emotionCard.XmlInfo);
+            }
         }
 
         public static BattleUnitModel AddNewUnitPlayerSide(StageLibraryFloorModel floor, UnitModel unit)
         {
-            var unitBattleDataList = floor.GetUnitBattleDataList();
-            var unitBattleData = unitBattleDataList.FirstOrDefault(x => string.Equals(x.unitData.name, unit.Name));
-            var allyUnit = CreateCustomLibrarianUnit(unit.Sephirah, unitBattleData, unit.Pos);
+            var unitData = new UnitDataModel(new LorId(ModPack21341Init.PackageId, unit.Id), floor.Sephirah);
+            unitData.SetCustomName(unit.Name);
+            var allyUnit = BattleObjectManager.CreateDefaultUnit(Faction.Player);
+            allyUnit.index = unit.Pos;
+            allyUnit.grade = unitData.grade;
+            allyUnit.formation = floor.GetFormationPosition(allyUnit.index);
+            var unitBattleData = new UnitBattleDataModel(Singleton<StageController>.Instance.GetStageModel(), unitData);
+            unitBattleData.Init();
+            allyUnit.SetUnitData(unitBattleData);
+            allyUnit.OnCreated();
+            BattleObjectManager.instance.RegisterUnit(allyUnit);
+            allyUnit.passiveDetail.OnUnitCreated();
             allyUnit.emotionDetail.SetEmotionLevel(unit.EmotionLevel);
             if (unit.LockedEmotion)
                 allyUnit.emotionDetail.SetMaxEmotionLevel(unit.MaxEmotionLevel);
@@ -101,27 +116,10 @@ namespace ModPack21341.Utilities
             allyUnit.cardSlotDetail.RecoverPlayPoint(allyUnit.cardSlotDetail.GetMaxPlayPoint());
             if (unit.AddEmotionPassive)
                 AddEmotionPassives(allyUnit);
-            if (!string.IsNullOrEmpty(unit.OverrideName))
-                allyUnit.UnitData.unitData.SetCustomName(unit.OverrideName);
             allyUnit.OnWaveStart();
+            SingletonBehavior<UICharacterRenderer>.Instance.SetCharacter(allyUnit.UnitData.unitData, allyUnit.index,
+                true);
             return allyUnit;
-        }
-
-        private static BattleUnitModel CreateCustomLibrarianUnit(SephirahType sephirah, UnitBattleDataModel battleData,
-            int index)
-        {
-            var floor = Singleton<StageController>.Instance.GetStageModel().GetFloor(sephirah);
-            var unitData = battleData.unitData;
-            var defaultUnit = BattleObjectManager.CreateDefaultUnit(Faction.Player);
-            defaultUnit.index = index;
-            defaultUnit.grade = unitData.grade;
-            defaultUnit.formation = floor.GetFormationPosition(defaultUnit.index);
-            defaultUnit.SetUnitData(battleData);
-            defaultUnit.OnCreated();
-            PutValueInLibrarianTeam(defaultUnit);
-            BattleObjectManager.instance.RegisterUnit(defaultUnit);
-            defaultUnit.passiveDetail.OnUnitCreated();
-            return defaultUnit;
         }
 
         public static void ReturnToTheOriginalPlayerUnit(BattleUnitModel unit, BookModel originalBook,
@@ -174,7 +172,8 @@ namespace ModPack21341.Utilities
             if (playerUnit == null) return;
             foreach (var unit in playerUnit)
             {
-                unit.bufListDetail.AddBufWithoutDuplication(new BattleUnitBuf_ModPack21341Init5());
+                if (!unit.bufListDetail.GetActivatedBufList().Exists(x => x is BattleUnitBuf_ModPack21341Init5))
+                    unit.bufListDetail.AddBufWithoutDuplication(new BattleUnitBuf_ModPack21341Init5());
                 unit.emotionDetail.SetEmotionLevel(5);
             }
         }
@@ -262,13 +261,7 @@ namespace ModPack21341.Utilities
             if (num > 0) owner.allyCardDetail.DrawCards(num);
         }
 
-        private static void PutValueInLibrarianTeam(BattleUnitModel unit)
-        {
-            var modelTeam = (BattleTeamModel) typeof(StageController).GetField("_librarianTeam",
-                AccessTools.all)?.GetValue(Singleton<StageController>.Instance);
-            modelTeam?.AddUnit(unit);
-        }
-
+        //NotUsed - For Custom Unit on Selection Screen
         private static UnitBattleDataModel AddCustomFixUnitModel(StageModel stage, LibraryFloorModel floor,
             UnitModel unit)
         {
@@ -295,16 +288,7 @@ namespace ModPack21341.Utilities
             list?.Add(unitBattleDataModel);
         }
 
-        public static void FillUnitData(UnitModel unit, StageLibraryFloorModel floor)
-        {
-            var modelTeam = (List<UnitBattleDataModel>) typeof(StageLibraryFloorModel).GetField("_unitList",
-                    AccessTools.all)
-                ?.GetValue(Singleton<StageController>.Instance.GetStageModel().GetFloor(floor.Sephirah));
-            for (var i = 0; i < 3; i++)
-                modelTeam?.Add(AddCustomFixUnitModel(Singleton<StageController>.Instance.GetStageModel(),
-                    floor._floorModel, unit));
-        }
-
+        //NotUsed - For Custom Unit on Selection Screen
         public static void FillUnitDataSingle(UnitModel unit, StageLibraryFloorModel floor)
         {
             var modelTeam = (List<UnitBattleDataModel>) typeof(StageLibraryFloorModel).GetField("_unitList",
@@ -330,14 +314,6 @@ namespace ModPack21341.Utilities
             var unitBattleDataModel = new UnitBattleDataModel(stage, data);
             unitBattleDataModel.Init();
             return unitBattleDataModel;
-        }
-
-        public static void RemoveUnitData(StageLibraryFloorModel floor, string name)
-        {
-            var modelTeam = (List<UnitBattleDataModel>) typeof(StageLibraryFloorModel).GetField("_unitList",
-                    AccessTools.all)
-                ?.GetValue(Singleton<StageController>.Instance.GetStageModel().GetFloor(floor.Sephirah));
-            modelTeam?.RemoveAll(x => string.Equals(x.unitData.name, name));
         }
 
         public static void BattleAbDialog(MonoBehaviour instance, List<AbnormalityCardDialog> dialogs)
