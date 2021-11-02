@@ -25,7 +25,9 @@ namespace ModPack21341.Characters.Hayate.PassiveAbilities
 
         public override void OnWaveStart()
         {
+            _lastPrePhase = false;
             _phase2 = false;
+            _finalPhase = false;
             owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 931));
             if (owner.faction == Faction.Enemy)
                 owner.bufListDetail.AddBufWithoutDuplication(new BattleUnitBuf_ModPack21341Init9());
@@ -35,6 +37,14 @@ namespace ModPack21341.Characters.Hayate.PassiveAbilities
                 BattleUnitBuf_ModPack21341Init8;
         }
 
+        public bool GetPrePhase()
+        {
+            return _lastPrePhase;
+        }
+        public void SetPrePhase(bool value)
+        {
+            _lastPrePhase = value;
+        }
         public override void OnRoundEnd()
         {
             _oneTurnCard = false;

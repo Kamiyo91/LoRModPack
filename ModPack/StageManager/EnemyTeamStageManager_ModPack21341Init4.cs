@@ -84,7 +84,7 @@ namespace ModPack21341.StageManager
 
         private void CheckLastPhase()
         {
-            if (_lastPhaseStarted || BattleObjectManager.instance.GetAliveList(Faction.Player).Count > 0) return;
+            if (_lastPhaseStarted || !_hayatePassive.GetPrePhase() || BattleObjectManager.instance.GetAliveList(Faction.Player).Count > 0) return;
             {
                 _lastPhaseStarted = true;
                 MapUtilities.PrepareChangeBgm("HayatePhase3.mp3", ref _changeBgm);

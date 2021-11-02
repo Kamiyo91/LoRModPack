@@ -82,6 +82,7 @@ namespace ModPack21341.StageManager
             {
                 Id = 10000004,
                 Name = "Mio?",
+                EmotionLevel = 4,
                 Pos = playerUnitList.Count,
                 Sephirah = _floor.Sephirah
             });
