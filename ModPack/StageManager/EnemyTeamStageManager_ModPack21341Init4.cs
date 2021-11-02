@@ -69,7 +69,7 @@ namespace ModPack21341.StageManager
         {
             if (_lastPhaseStarted) return;
             if (!_hayateModel.IsDead()) return;
-            _hayateModel.Revive(1);
+            _hayateModel.Revive(10);
             _hayateModel.breakDetail.ResetGauge();
             _hayateModel.breakDetail.RecoverBreakLife(1, true);
             _hayateModel.breakDetail.nextTurnBreak = false;

@@ -1,7 +1,7 @@
 ﻿namespace ModPack21341.Characters.Mio.DiceCardAbilities
 {
     //Death
-    public class DiceCardAbility_ModPack21341Init1 : DiceCardAbilityBase
+    public class DiceCardAbility_ModPack21341InitDice1 : DiceCardAbilityBase
     {
         public static string Desc =
             "[On Clash Win] Destroy all dice the opponent has\n[On Hit] Deal 45 Damage to the Target, if the Target goes below 15% Hp, kill it";
