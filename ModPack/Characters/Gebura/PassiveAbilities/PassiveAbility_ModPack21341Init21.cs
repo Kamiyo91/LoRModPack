@@ -12,6 +12,7 @@ namespace ModPack21341.Characters.Gebura.PassiveAbilities
         private BattleDialogueModel _dlg;
         private bool _egoTransform;
         private string _originalSkinName;
+        private bool _oneUseCard;
 
         public override void OnWaveStart()
         {
@@ -71,11 +72,17 @@ namespace ModPack21341.Characters.Gebura.PassiveAbilities
 
         private void UseEgoMassAttack(ref BattleDiceCardModel origin)
         {
-            if (owner.faction != Faction.Enemy || !_egoTransform || _count < 4 || owner.cardSlotDetail.PlayPoint < 6)
+            if (owner.faction != Faction.Enemy || !_egoTransform || _count < 4 || owner.cardSlotDetail.PlayPoint < 6 || _oneUseCard)
                 return;
-            _count = 0;
+            _oneUseCard = true;
             origin = BattleDiceCardModel.CreatePlayingCard(
                 ItemXmlDataList.instance.GetCardItem(new LorId(607001)));
+        }
+
+        public override void OnRoundEndTheLast()
+        {
+            _oneUseCard = false;
+            if(owner.faction == Faction.Enemy) owner.allyCardDetail.ExhaustCard(new LorId(607001));
         }
 
         public override void OnRoundEnd()

@@ -129,7 +129,7 @@ namespace ModPack21341.Characters.Kamiyo.PassiveAbilities
 
         public override void OnRoundEndTheLast()
         {
-            owner.allyCardDetail.ExhaustCard(new LorId(ModPack21341Init.PackageId, 45));
+            if (owner.faction == Faction.Enemy) owner.allyCardDetail.ExhaustCard(new LorId(ModPack21341Init.PackageId, 45));
             if (_phaseChanged && owner.faction == Faction.Enemy)
                 owner.cardSlotDetail.RecoverPlayPoint(owner.cardSlotDetail.GetMaxPlayPoint());
             CheckEgoMapUse();

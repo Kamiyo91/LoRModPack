@@ -17,6 +17,7 @@ namespace ModPack21341.Characters.Roland.PassiveAbilities
         private string _originalSkinName;
         private bool _specialActivated;
         private bool _usedMassEgo;
+        private bool _oneUseCard;
 
         public override void OnBattleEnd()
         {
@@ -75,7 +76,11 @@ namespace ModPack21341.Characters.Roland.PassiveAbilities
                 curCard.card.GetID() == new LorId(ModPack21341Init.PackageId, 26))
             {
                 owner.allyCardDetail.ExhaustACardAnywhere(curCard.card);
-                _usedMassEgo = true;
+                if (curCard.card.GetID() == new LorId(ModPack21341Init.PackageId, 26))
+                {
+                    _count = 0;
+                    _usedMassEgo = true;
+                }
             }
 
             if (curCard.card.GetID() == new LorId(ModPack21341Init.PackageId, 910))
@@ -88,6 +93,12 @@ namespace ModPack21341.Characters.Roland.PassiveAbilities
         public override void OnRoundEndTheLast()
         {
             _specialActivated = false;
+            _oneUseCard = false;
+            if (owner.faction == Faction.Enemy)
+            {
+                owner.allyCardDetail.ExhaustCard(new LorId(ModPack21341Init.PackageId, 26));
+                owner.allyCardDetail.ExhaustCard(new LorId(ModPack21341Init.PackageId, 29));
+            }
             if (_blackCheck)
                 ChangeToBlackSilence();
             if (owner.faction == Faction.Enemy && owner.bufListDetail.GetActivatedBufList()
@@ -122,11 +133,11 @@ namespace ModPack21341.Characters.Roland.PassiveAbilities
         {
             if (!owner.bufListDetail.GetActivatedBufList()
                     .Exists(x => x is BattleUnitBuf_ModPack21341Init25 && _count >= 4) ||
-                owner.cardSlotDetail.PlayPoint < 5)
+                owner.cardSlotDetail.PlayPoint < 5 || _oneUseCard)
                 return;
+            _oneUseCard = true;
             origin = BattleDiceCardModel.CreatePlayingCard(
                 ItemXmlDataList.instance.GetCardItem(new LorId(ModPack21341Init.PackageId, 26)));
-            _count = 0;
         }
 
         private void ChangeToBlackSilence()

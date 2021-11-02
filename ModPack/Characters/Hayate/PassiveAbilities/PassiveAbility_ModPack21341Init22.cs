@@ -55,7 +55,7 @@ namespace ModPack21341.Characters.Hayate.PassiveAbilities
 
         public override void OnRoundEndTheLast()
         {
-            owner.allyCardDetail.ExhaustCard(new LorId(ModPack21341Init.PackageId, 54));
+            if (owner.faction == Faction.Enemy) owner.allyCardDetail.ExhaustCard(new LorId(ModPack21341Init.PackageId, 54));
             if (_deleteEnemy)
             {
                 _deleteEnemy = false;

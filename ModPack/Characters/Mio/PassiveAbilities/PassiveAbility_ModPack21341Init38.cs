@@ -26,7 +26,7 @@ namespace ModPack21341.Characters.Mio.PassiveAbilities
 
         public override void OnRoundEndTheLast()
         {
-            owner.allyCardDetail.ExhaustCard(new LorId(ModPack21341Init.PackageId, 25));
+            if (owner.faction == Faction.Enemy) owner.allyCardDetail.ExhaustCard(new LorId(ModPack21341Init.PackageId, 25));
         }
 
         public void SetAwakened(bool status)

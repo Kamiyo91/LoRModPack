@@ -56,6 +56,11 @@ namespace ModPack21341.Characters.Angela.PassiveAbilities
 
         public override void OnRoundEndTheLast()
         {
+            if (owner.faction == Faction.Enemy)
+                foreach (var cardId in _egoCards)
+                {
+                    owner.allyCardDetail.ExhaustCard(cardId);
+                }
             if (BattleObjectManager.instance.GetAliveList(Faction.Enemy).Count < 2 && !_bufRemoved) ChangeAngelaPhase();
             if (_phase2Activated)
                 owner.cardSlotDetail.RecoverPlayPoint(owner.cardSlotDetail.GetMaxPlayPoint());
