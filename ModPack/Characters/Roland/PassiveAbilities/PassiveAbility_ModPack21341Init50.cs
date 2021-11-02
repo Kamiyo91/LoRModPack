@@ -14,10 +14,10 @@ namespace ModPack21341.Characters.Roland.PassiveAbilities
         private int _count;
         private BattleDialogueModel _dlg;
         private bool _halfHpReached;
+        private bool _oneUseCard;
         private string _originalSkinName;
         private bool _specialActivated;
         private bool _usedMassEgo;
-        private bool _oneUseCard;
 
         public override void OnBattleEnd()
         {
@@ -99,6 +99,7 @@ namespace ModPack21341.Characters.Roland.PassiveAbilities
                 owner.allyCardDetail.ExhaustCard(new LorId(ModPack21341Init.PackageId, 26));
                 owner.allyCardDetail.ExhaustCard(new LorId(ModPack21341Init.PackageId, 29));
             }
+
             if (_blackCheck)
                 ChangeToBlackSilence();
             if (owner.faction == Faction.Enemy && owner.bufListDetail.GetActivatedBufList()

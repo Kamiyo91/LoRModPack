@@ -17,11 +17,11 @@ namespace ModPack21341.Characters.Hayate.PassiveAbilities
         private bool _deleteEnemy;
         private bool _finalPhase;
         private bool _lastPrePhase;
+        private bool _oneTurnCard;
         private bool _phase2;
         private bool _showLastPrePhaseDlg;
         private BattleUnitModel _target;
         private bool _useCard;
-        private bool _oneTurnCard;
 
         public override void OnWaveStart()
         {
@@ -55,7 +55,8 @@ namespace ModPack21341.Characters.Hayate.PassiveAbilities
 
         public override void OnRoundEndTheLast()
         {
-            if (owner.faction == Faction.Enemy) owner.allyCardDetail.ExhaustCard(new LorId(ModPack21341Init.PackageId, 54));
+            if (owner.faction == Faction.Enemy)
+                owner.allyCardDetail.ExhaustCard(new LorId(ModPack21341Init.PackageId, 54));
             if (_deleteEnemy)
             {
                 _deleteEnemy = false;

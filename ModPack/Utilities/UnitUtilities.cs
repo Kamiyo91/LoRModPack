@@ -51,11 +51,13 @@ namespace ModPack21341.Utilities
             BattleObjectManager.instance.InitUI();
         }
 
-        public static void AddOriginalPlayerUnitPlayerSide(int index)
+        public static void AddOriginalPlayerUnitPlayerSide(int index, int emotionLevel)
         {
             var allyUnit = Singleton<StageController>.Instance.CreateLibrarianUnit_fromBattleUnitData(index);
             allyUnit.OnWaveStart();
             allyUnit.allyCardDetail.DrawCards(allyUnit.UnitData.unitData.GetStartDraw());
+            allyUnit.emotionDetail.SetEmotionLevel(emotionLevel);
+            allyUnit.emotionDetail.Reset();
             AddEmotionPassives(allyUnit);
         }
 

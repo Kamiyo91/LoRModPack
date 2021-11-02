@@ -15,5 +15,10 @@ namespace ModPack21341.Characters.Kamiyo.PassiveAbilities
         {
             UnitUtilities.SetPassiveCombatLog(this, owner);
         }
+
+        public override void OnRoundEnd_before()
+        {
+            if (BattleObjectManager.instance.GetAliveList(Faction.Enemy).Count < 1) owner.Die();
+        }
     }
 }

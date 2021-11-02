@@ -67,12 +67,14 @@ namespace ModPack21341.StageManager
 
         private void HayateIsDeadBeforePhase3()
         {
-            if (!_lastPhaseStarted || BattleObjectManager.instance.GetAliveList(Faction.Enemy).Count >= 1) return;
+            if (_lastPhaseStarted) return;
+            if (!_hayateModel.IsDead()) return;
             _hayateModel.Revive(1);
             _hayateModel.breakDetail.ResetGauge();
             _hayateModel.breakDetail.RecoverBreakLife(1, true);
             _hayateModel.breakDetail.nextTurnBreak = false;
         }
+
         private void ChangeToPhase2Music()
         {
             if (_musicChanged || !_hayatePassive.GetPhase2Status()) return;
@@ -125,7 +127,7 @@ namespace ModPack21341.StageManager
                 _sephiraModel.hp > _sephiraModel.MaxHp * 0.75f && !_hayatePassive.GetPhase2Status()) return;
             _firstStep = false;
             for (var i = 1; i < 5; i++)
-                UnitUtilities.AddOriginalPlayerUnitPlayerSide(i);
+                UnitUtilities.AddOriginalPlayerUnitPlayerSide(i, _sephiraModel.emotionDetail.EmotionLevel);
             UnitUtilities.RefreshCombatUI();
         }
     }

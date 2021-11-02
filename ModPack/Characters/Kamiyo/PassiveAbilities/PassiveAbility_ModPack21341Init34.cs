@@ -22,12 +22,12 @@ namespace ModPack21341.Characters.Kamiyo.PassiveAbilities
         private bool _egoMap;
         private StageLibraryFloorModel _floor;
         private bool _mapChange;
+        private bool _oneTurnCard;
         private BookModel _originalBook;
         private bool _phaseChanged;
         private bool _specialCase;
         private bool _summonMio;
         private bool _summonMioUsed;
-        private bool _oneTurnCard;
 
         public override bool BeforeTakeDamage(BattleUnitModel attacker, int dmg)
         {
@@ -129,7 +129,8 @@ namespace ModPack21341.Characters.Kamiyo.PassiveAbilities
 
         public override void OnRoundEndTheLast()
         {
-            if (owner.faction == Faction.Enemy) owner.allyCardDetail.ExhaustCard(new LorId(ModPack21341Init.PackageId, 45));
+            if (owner.faction == Faction.Enemy)
+                owner.allyCardDetail.ExhaustCard(new LorId(ModPack21341Init.PackageId, 45));
             if (_phaseChanged && owner.faction == Faction.Enemy)
                 owner.cardSlotDetail.RecoverPlayPoint(owner.cardSlotDetail.GetMaxPlayPoint());
             CheckEgoMapUse();
@@ -141,7 +142,7 @@ namespace ModPack21341.Characters.Kamiyo.PassiveAbilities
 
         public override void OnDie()
         {
-            if (!_summonMioUsed || owner.faction == Faction.Enemy && _phaseChanged) return;
+            if (!_summonMioUsed || owner.faction == Faction.Enemy) return;
             var mio = BattleObjectManager.instance.GetAliveList(owner.faction).FirstOrDefault(x => x != owner);
             mio?.Die();
         }
@@ -274,7 +275,8 @@ namespace ModPack21341.Characters.Kamiyo.PassiveAbilities
 
         public override BattleDiceCardModel OnSelectCardAuto(BattleDiceCardModel origin, int currentDiceSlotIdx)
         {
-            if (owner.faction != Faction.Enemy || owner.IsBreakLifeZero() || !_phaseChanged || _count < 3 || _oneTurnCard)
+            if (owner.faction != Faction.Enemy || owner.IsBreakLifeZero() || !_phaseChanged || _count < 3 ||
+                _oneTurnCard)
                 return base.OnSelectCardAuto(origin, currentDiceSlotIdx);
             origin = BattleDiceCardModel.CreatePlayingCard(
                 ItemXmlDataList.instance.GetCardItem(new LorId(ModPack21341Init.PackageId, 45)));
