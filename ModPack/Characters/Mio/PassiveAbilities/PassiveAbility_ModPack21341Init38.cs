@@ -8,6 +8,7 @@ namespace ModPack21341.Characters.Mio.PassiveAbilities
     {
         private bool _awakened;
         private int _count = 4;
+        private bool _oneTurnCard;
 
         public override void OnRoundEndTheLast_ignoreDead()
         {
@@ -21,6 +22,11 @@ namespace ModPack21341.Characters.Mio.PassiveAbilities
                 _ = owner.allyCardDetail.GetHand().Exists(x => x.GetID() == new LorId(ModPack21341Init.PackageId, 25))
                     ? _count = 4
                     : _count++;
+        }
+
+        public override void OnRoundEndTheLast()
+        {
+            owner.allyCardDetail.ExhaustCard(new LorId(ModPack21341Init.PackageId, 25));
         }
 
         public void SetAwakened(bool status)
@@ -44,13 +50,22 @@ namespace ModPack21341.Characters.Mio.PassiveAbilities
             return base.OnSelectCardAuto(origin, currentDiceSlotIdx);
         }
 
+        public override void OnRoundEnd()
+        {
+            _oneTurnCard = false;
+        }
+
         private void PutMassAttackCardOnDice(ref BattleDiceCardModel origin)
         {
-            if (!_awakened || _count < 4 || owner.IsBreakLifeZero() || !BattleObjectManager.instance
-                .GetAliveList(Faction.Player).Any(x => x.bufListDetail.IsTargetable())) return;
-            _count = 0;
+            if (!_awakened || _count < 4 || owner.IsBreakLifeZero() || _oneTurnCard) return;
+            _oneTurnCard = true;
             origin = BattleDiceCardModel.CreatePlayingCard(
                 ItemXmlDataList.instance.GetCardItem(new LorId(ModPack21341Init.PackageId, 25)));
+        }
+
+        public override void OnUseCard(BattlePlayingCardDataInUnitModel curCard)
+        {
+            if (curCard.card.GetID() == new LorId(ModPack21341Init.PackageId, 25)) _count = 0;
         }
 
         public override void OnLevelUpEmotion()

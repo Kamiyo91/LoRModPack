@@ -59,11 +59,20 @@ namespace ModPack21341.StageManager
 
         public override void OnRoundEndTheLast()
         {
+            HayateIsDeadBeforePhase3();
             ChangeToPhase2Music();
             CheckUnitSummon();
             CheckLastPhase();
         }
 
+        private void HayateIsDeadBeforePhase3()
+        {
+            if (!_lastPhaseStarted || BattleObjectManager.instance.GetAliveList(Faction.Enemy).Count >= 1) return;
+            _hayateModel.Revive(1);
+            _hayateModel.breakDetail.ResetGauge();
+            _hayateModel.breakDetail.RecoverBreakLife(1, true);
+            _hayateModel.breakDetail.nextTurnBreak = false;
+        }
         private void ChangeToPhase2Music()
         {
             if (_musicChanged || !_hayatePassive.GetPhase2Status()) return;
@@ -91,6 +100,7 @@ namespace ModPack21341.StageManager
                 _hayateModel.RecoverHP(231);
                 _hayateModel.breakDetail.ResetGauge();
                 _hayateModel.breakDetail.RecoverBreakLife(1, true);
+                _hayateModel.breakDetail.nextTurnBreak = false;
                 if (_hayateModel.passiveDetail.PassiveList.Find(x => x is PassiveAbility_ModPack21341Init24) is
                     PassiveAbility_ModPack21341Init24 shimmeringPassive)
                 {

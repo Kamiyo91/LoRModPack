@@ -21,6 +21,7 @@ namespace ModPack21341.Characters.Hayate.PassiveAbilities
         private bool _showLastPrePhaseDlg;
         private BattleUnitModel _target;
         private bool _useCard;
+        private bool _oneTurnCard;
 
         public override void OnWaveStart()
         {
@@ -36,6 +37,7 @@ namespace ModPack21341.Characters.Hayate.PassiveAbilities
 
         public override void OnRoundEnd()
         {
+            _oneTurnCard = false;
             if (_phase2 && owner.faction == Faction.Enemy)
                 _buf.stack += 10;
             else
@@ -53,6 +55,7 @@ namespace ModPack21341.Characters.Hayate.PassiveAbilities
 
         public override void OnRoundEndTheLast()
         {
+            owner.allyCardDetail.ExhaustCard(new LorId(ModPack21341Init.PackageId, 54));
             if (_deleteEnemy)
             {
                 _deleteEnemy = false;
@@ -149,6 +152,8 @@ namespace ModPack21341.Characters.Hayate.PassiveAbilities
 
             if (curCard.card.GetID() != new LorId(ModPack21341Init.PackageId, 54) &&
                 curCard.card.GetID() != new LorId(ModPack21341Init.PackageId, 55)) return;
+            _buf.stack = 0;
+            if (_useCard) _useCard = false;
             owner.allyCardDetail.ExhaustACardAnywhere(curCard.card);
             if (curCard.card.GetID() != new LorId(ModPack21341Init.PackageId, 54)) return;
             _deleteEnemy = true;
@@ -159,17 +164,17 @@ namespace ModPack21341.Characters.Hayate.PassiveAbilities
         {
             if (_lastPrePhase || owner.faction == Faction.Player)
                 return base.OnSelectCardAuto(origin, currentDiceSlotIdx);
-            if (_useCard)
+            if (_useCard && !_oneTurnCard)
             {
-                _useCard = false;
+                _oneTurnCard = true;
                 origin = BattleDiceCardModel.CreatePlayingCard(
                     ItemXmlDataList.instance.GetCardItem(new LorId(ModPack21341Init.PackageId, 54)));
                 return base.OnSelectCardAuto(origin, currentDiceSlotIdx);
             }
 
-            if (_buf.stack < 40 || owner.faction != Faction.Enemy || owner.IsBreakLifeZero())
+            if (_buf.stack < 40 || owner.faction != Faction.Enemy || owner.IsBreakLifeZero() || _oneTurnCard)
                 return base.OnSelectCardAuto(origin, currentDiceSlotIdx);
-            _buf.stack = 0;
+            _oneTurnCard = true;
             origin = BattleDiceCardModel.CreatePlayingCard(
                 ItemXmlDataList.instance.GetCardItem(new LorId(ModPack21341Init.PackageId, 54)));
             return base.OnSelectCardAuto(origin, currentDiceSlotIdx);
