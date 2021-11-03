@@ -48,7 +48,7 @@ namespace ModPack21341.Characters.Mio.CardAbilities
             if (!string.IsNullOrEmpty(owner.UnitData.unitData.workshopSkin) ||
                 owner.UnitData.unitData.bookItem != owner.UnitData.unitData.CustomBookItem) return;
             _motionChanged = true;
-            owner.view.charAppearance.ChangeMotion(ActionDetail.Guard);
+            owner.view.charAppearance.ChangeMotion(ActionDetail.Aim);
         }
 
         public override void OnReleaseCard()

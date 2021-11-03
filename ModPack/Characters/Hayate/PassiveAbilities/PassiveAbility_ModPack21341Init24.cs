@@ -22,7 +22,7 @@ namespace ModPack21341.Characters.Hayate.PassiveAbilities
             AddNewCard(new LorId(ModPack21341Init.PackageId, 53));
             AddNewCard(new LorId(ModPack21341Init.PackageId, 56));
             AddNewCard(new LorId(ModPack21341Init.PackageId, 48));
-            AddNewCard(new LorId(ModPack21341Init.PackageId, 48));
+            AddNewCard(new LorId(ModPack21341Init.PackageId, 52));
             AddNewCard(new LorId(ModPack21341Init.PackageId, 52));
             AddNewCard(new LorId(ModPack21341Init.PackageId, 52));
             AddNewCard(new LorId(ModPack21341Init.PackageId, 51));
