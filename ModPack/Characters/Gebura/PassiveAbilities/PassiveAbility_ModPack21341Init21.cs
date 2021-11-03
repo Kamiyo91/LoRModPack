@@ -60,8 +60,9 @@ namespace ModPack21341.Characters.Gebura.PassiveAbilities
         {
             if (curCard.card.GetID() == new LorId(ModPack21341Init.PackageId, 912))
                 owner.personalEgoDetail.RemoveCard(new LorId(ModPack21341Init.PackageId, 912));
-            if (curCard.card.GetID().id == 607001 && curCard.card.GetID().IsBasic())
-                owner.allyCardDetail.ExhaustACardAnywhere(curCard.card);
+            if (curCard.card.GetID().id != 607001 || !curCard.card.GetID().IsBasic()) return;
+            _count = 0;
+            owner.allyCardDetail.ExhaustACardAnywhere(curCard.card);
         }
 
         public override BattleDiceCardModel OnSelectCardAuto(BattleDiceCardModel origin, int currentDiceSlotIdx)
