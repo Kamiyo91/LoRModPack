@@ -11,6 +11,7 @@ using ModPack21341.Models;
 using ModPack21341.StageManager.MapManager.HayateStageMaps;
 using ModPack21341.Utilities;
 using ModPack21341.Utilities.CustomMapUtility.Assemblies;
+using UnityEngine;
 
 namespace ModPack21341.StageManager
 {
@@ -18,6 +19,7 @@ namespace ModPack21341.StageManager
     public class EnemyTeamStageManager_ModPack21341Init4 : EnemyTeamStageManager
     {
         private Task _changeBgm;
+        private List<BattleEmotionCardModel> _emotionCards;
         private bool _firstStep;
         private StageLibraryFloorModel _floor;
         private BattleUnitModel _hayateModel;
@@ -84,10 +86,12 @@ namespace ModPack21341.StageManager
 
         private void CheckLastPhase()
         {
-            if (_lastPhaseStarted || !_hayatePassive.GetPrePhase() || BattleObjectManager.instance.GetAliveList(Faction.Player).Count > 0) return;
+            if (_lastPhaseStarted || !_hayatePassive.GetPrePhase() ||
+                BattleObjectManager.instance.GetAliveList(Faction.Player).Count > 0) return;
             {
                 _lastPhaseStarted = true;
                 MapUtilities.PrepareChangeBgm("HayatePhase3.mp3", ref _changeBgm);
+                _emotionCards = UnitUtilities.SaveEmotionCards();
                 foreach (var unit in BattleObjectManager.instance.GetList(Faction.Player))
                     BattleObjectManager.instance.UnregisterUnit(unit);
                 var kamiyoModel = UnitUtilities.AddNewUnitPlayerSide(_floor, new UnitModel
@@ -115,6 +119,7 @@ namespace ModPack21341.StageManager
                 if (kamiyoModel.passiveDetail.PassiveList.Find(x => x is PassiveAbility_ModPack21341Init34) is
                     PassiveAbility_ModPack21341Init34 kamiyoPassive)
                     kamiyoPassive.SetEgoReadyFinalPhaseHayate();
+                UnitUtilities.ApplyEmotionCards(kamiyoModel, _emotionCards);
                 UnitUtilities.BattleAbDialog(_hayateModel.view.dialogUI,
                     new List<AbnormalityCardDialog>
                         {new AbnormalityCardDialog {id = "Hayate", dialog = "Kamiyo...The time has come!"}});

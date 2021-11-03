@@ -1,24 +1,30 @@
-﻿using ModPack21341.Utilities;
-using Sound;
-
-namespace ModPack21341.Characters.Hayate.CardAbilities
+﻿namespace ModPack21341.Characters.Hayate.CardAbilities
 {
     //Fingersnap
     public class DiceCardSelfAbility_ModPack21341Init9 : DiceCardSelfAbilityBase
     {
         public static string Desc =
-            "[On Use] Kill the Target and make them disappear from the field. This page cannot be redirected";
+            "[On Use] Kill the Target and make them disappear from the field at the end of the Scene. This page cannot be redirected";
 
         public override void OnStartBattle()
         {
-            SoundEffectPlayer.PlaySound("Creature/FingerSnap");
+            owner.view.charAppearance.ChangeMotion(ActionDetail.Default);
             card.target.Die(owner);
-            UnitUtilities.RefreshCombatUI();
         }
 
         public override bool IsTargetChangable(BattleUnitModel attacker)
         {
             return false;
+        }
+
+        public override void OnApplyCard()
+        {
+            owner.view.charAppearance.ChangeMotion(ActionDetail.Aim);
+        }
+
+        public override void OnReleaseCard()
+        {
+            owner.view.charAppearance.ChangeMotion(ActionDetail.Default);
         }
     }
 }

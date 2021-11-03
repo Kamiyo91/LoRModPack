@@ -126,19 +126,15 @@ namespace ModPack21341.Harmony
         {
             if (stage.ClassInfo.id.packageId != PackageId) return true;
             foreach (var unitDataModel in floor.GetUnitDataList())
-            {
-                if (stage.ClassInfo.id.id == 1)
+                switch (stage.ClassInfo.id.id)
                 {
-                    UnitUtilities.AddUnitSephiraOnly(__instance, stage, unitDataModel);
-                    return false;
+                    case 1:
+                        UnitUtilities.AddUnitSephiraOnly(__instance, stage, unitDataModel);
+                        return false;
+                    case 6:
+                        UnitUtilities.AddUnitSephiraOnly(__instance, stage, unitDataModel);
+                        return false;
                 }
-
-                if (stage.ClassInfo.id.id == 6)
-                {
-                    UnitUtilities.AddUnitSephiraOnly(__instance, stage, unitDataModel);
-                    return false;
-                }
-            }
 
             return true;
         }

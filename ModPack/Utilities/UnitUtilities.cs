@@ -95,6 +95,22 @@ namespace ModPack21341.Utilities
             }
         }
 
+        public static void ApplyEmotionCards(BattleUnitModel unit, IEnumerable<BattleEmotionCardModel> emotionCardList)
+        {
+            foreach (var card in emotionCardList) unit.emotionDetail.ApplyEmotionCard(card.XmlInfo);
+        }
+
+        public static List<BattleEmotionCardModel> SaveEmotionCards()
+        {
+            var emotionCardList = new List<BattleEmotionCardModel>();
+            var playerUnitsAlive = BattleObjectManager.instance.GetList(Faction.Player);
+            foreach (var emotionDetail in playerUnitsAlive.Select(x => x.emotionDetail))
+            foreach (var emotionCard in emotionDetail.PassiveList.Where(emotionCard =>
+                !emotionCardList.Contains(emotionCard)))
+                emotionCardList.Add(emotionCard);
+            return emotionCardList;
+        }
+
         public static BattleUnitModel AddNewUnitPlayerSide(StageLibraryFloorModel floor, UnitModel unit)
         {
             var unitData = new UnitDataModel(new LorId(ModPack21341Init.PackageId, unit.Id), floor.Sephirah);
@@ -230,7 +246,7 @@ namespace ModPack21341.Utilities
 
         public static List<int> GetHayateCardsId()
         {
-            return new List<int> {49, 51, 53, 48, 48, 50, 50, 56, 52, 52};
+            return new List<int> {49, 51, 53, 48, 50, 50, 56, 52, 52, 52};
         }
 
         public static void AddBuffInfo()

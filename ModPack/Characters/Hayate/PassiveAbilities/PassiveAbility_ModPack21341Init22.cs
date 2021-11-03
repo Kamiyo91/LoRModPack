@@ -41,10 +41,7 @@ namespace ModPack21341.Characters.Hayate.PassiveAbilities
         {
             return _lastPrePhase;
         }
-        public void SetPrePhase(bool value)
-        {
-            _lastPrePhase = value;
-        }
+
         public override void OnRoundEnd()
         {
             _oneTurnCard = false;
