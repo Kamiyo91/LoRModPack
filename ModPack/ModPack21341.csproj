@@ -76,9 +76,11 @@
   <ItemGroup>
     <Compile Include="Characters\Angela\PassiveAbilities\PassiveAbility_ModPack21341Init1.cs" />
     <Compile Include="Characters\Binah\PassiveAbilities\PassiveAbility_ModPack21341Init6.cs" />
+    <Compile Include="Characters\Hayate\CardAbilities\DiceCardSelfAbility_ModPack21341Init33.cs" />
     <Compile Include="Characters\Hayate\PassiveAbilities\PassiveAbility_ModPack21341Init52.cs" />
     <Compile Include="Characters\Mio\Buffs\BattleUnitBuf_ModPack21341Init14.cs" />
     <Compile Include="Characters\CommonBuffs\BattleUnitBuf_ModPack21341Init3.cs" />
+    <Compile Include="Characters\Mio\CardAbilities\DiceCardSelfAbility_ModPack21341Init34.cs" />
     <Compile Include="Characters\PurpleTear\Buffs\BattleUnitBuf_ModPack21341Init21.cs" />
     <Compile Include="Characters\PurpleTear\Buffs\BattleUnitBuf_ModPack21341Init22.cs" />
     <Compile Include="Characters\PurpleTear\Buffs\BattleUnitBuf_ModPack21341Init24.cs" />
