@@ -6,7 +6,7 @@ namespace ModPack21341.Characters.Hayate.CardAbilities
     public class DiceCardSelfAbility_ModPack21341Init11 : DiceCardSelfAbilityBase
     {
         public static string Desc =
-            "[Single Use]\nCan only be used at Emotion Level 5 and require 100 stacks of [Entertain Me!] buff.[On Use] [Kill] all enemies where [Max Hp] are lower then 250.If the [Max Hp] of the enemy is higher then 250, do 100 [Fixed Damage] instead.";
+            "[Single Use]\nCan only be used at Emotion Level 5 and require 100 stacks of [Entertain Me!] buff.[On Use] [Kill] all enemies where [Max Hp] are lower then 250.If the [Max Hp] of the enemy are higher then 250, do 250 [Fixed Damage] instead.";
 
         private bool _motionChange;
 
@@ -33,8 +33,8 @@ namespace ModPack21341.Characters.Hayate.CardAbilities
                 }
                 else
                 {
-                    unit.TakeDamage(100, DamageType.ETC);
-                    unit.breakDetail.TakeBreakDamage(100, DamageType.ETC);
+                    unit.TakeDamage(250, DamageType.ETC);
+                    unit.breakDetail.TakeBreakDamage(250, DamageType.ETC);
                 }
         }
 
