@@ -100,6 +100,11 @@ namespace ModPack21341.Utilities
             foreach (var card in emotionCardList) unit.emotionDetail.ApplyEmotionCard(card.XmlInfo);
         }
 
+        public static IEnumerable<BattleEmotionCardModel> GetEmotionCardByUnit(BattleUnitModel unit)
+        {
+            return unit.emotionDetail.PassiveList.ToList();
+        }
+
         public static List<BattleEmotionCardModel> SaveEmotionCards()
         {
             var emotionCardList = new List<BattleEmotionCardModel>();

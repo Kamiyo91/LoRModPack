@@ -1,4 +1,7 @@
-﻿namespace ModPack21341.Characters.Hayate.CardAbilities
+﻿using ModPack21341.StageManager;
+using ModPack21341.Utilities;
+
+namespace ModPack21341.Characters.Hayate.CardAbilities
 {
     //Fingersnap
     public class DiceCardSelfAbility_ModPack21341Init9 : DiceCardSelfAbilityBase
@@ -9,6 +12,9 @@
         public override void OnStartBattle()
         {
             owner.view.charAppearance.ChangeMotion(ActionDetail.Default);
+            if (Singleton<StageController>.Instance
+                .EnemyStageManager is EnemyTeamStageManager_ModPack21341Init4 manager)
+                manager.AddValueToEmotionCardList(UnitUtilities.GetEmotionCardByUnit(card.target));
             card.target.Die(owner);
         }
 

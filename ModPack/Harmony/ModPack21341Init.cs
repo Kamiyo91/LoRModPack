@@ -55,62 +55,39 @@ namespace ModPack21341.Harmony
         public static bool BookModel_GetThumbSprite(BookModel __instance, ref Sprite __result)
         {
             if (__instance.BookId.packageId != PackageId) return true;
-            if (__instance.BookId == new LorId(PackageId, 10000001) ||
-                __instance.BookId == new LorId(PackageId, 10000002))
+            switch (__instance.BookId.id)
             {
-                __result = Resources.Load<Sprite>("Sprites/Books/Thumb/243003");
-                return false;
+                case 10000001:
+                case 10000002:
+                    __result = Resources.Load<Sprite>("Sprites/Books/Thumb/243003");
+                    return false;
+                case 10000005:
+                    __result = ArtWorks["Knife_Default"];
+                    return false;
+                case 10000013:
+                    __result = Resources.Load<Sprite>("Sprites/Books/Thumb/102");
+                    return false;
+                case 10000014:
+                    __result = ArtWorks["Angela_Default"];
+                    return false;
+                case 10000015:
+                    __result = Resources.Load<Sprite>("Sprites/Books/Thumb/8");
+                    return false;
+                case 10000016:
+                    __result = Resources.Load<Sprite>("Sprites/Books/Thumb/250022");
+                    return false;
+                case 10000006:
+                    __result = Resources.Load<Sprite>("Sprites/Books/Thumb/250035");
+                    return false;
+                case 10000009:
+                    __result = Resources.Load<Sprite>("Sprites/Books/Thumb/250024");
+                    return false;
+                case 10000010:
+                    __result = ArtWorks["Hayate_Default"];
+                    return false;
+                default:
+                    return true;
             }
-
-            if (__instance.BookId == new LorId(PackageId, 10000005))
-            {
-                __result = ArtWorks["Knife_Default"];
-                return false;
-            }
-
-            if (__instance.BookId == new LorId(PackageId, 10000013))
-            {
-                __result = Resources.Load<Sprite>("Sprites/Books/Thumb/102");
-                return false;
-            }
-
-            if (__instance.BookId == new LorId(PackageId, 10000014))
-            {
-                __result = ArtWorks["Angela_Default"];
-                return false;
-            }
-
-            if (__instance.BookId == new LorId(PackageId, 10000015))
-            {
-                __result = Resources.Load<Sprite>("Sprites/Books/Thumb/8");
-                return false;
-            }
-
-            if (__instance.BookId == new LorId(PackageId, 10000016))
-            {
-                __result = Resources.Load<Sprite>("Sprites/Books/Thumb/250022");
-                return false;
-            }
-
-            if (__instance.BookId == new LorId(PackageId, 10000006))
-            {
-                __result = Resources.Load<Sprite>("Sprites/Books/Thumb/250035");
-                return false;
-            }
-
-            if (__instance.BookId == new LorId(PackageId, 10000009))
-            {
-                __result = Resources.Load<Sprite>("Sprites/Books/Thumb/250024");
-                return false;
-            }
-
-            if (__instance.BookId == new LorId(PackageId, 10000010))
-            {
-                __result = ArtWorks["Hayate_Default"];
-                return false;
-            }
-
-            return true;
         }
 
         public static void BookModel_SetXmlInfo(BookModel __instance, BookXmlInfo ____classInfo,
@@ -119,6 +96,8 @@ namespace ModPack21341.Harmony
             if (__instance.BookId.packageId == PackageId)
                 ____onlyCards.AddRange(____classInfo.EquipEffect.OnlyCard.Select(id =>
                     ItemXmlDataList.instance.GetCardItem(new LorId(PackageId, id))));
+            if (__instance.BookId.id == 250024 && __instance.BookId.IsBasic())
+                ____onlyCards.Add(ItemXmlDataList.instance.GetCardItem(new LorId(PackageId, 43)));
         }
 
         public static bool StageLibraryFloorModel_InitUnitList(StageLibraryFloorModel __instance, StageModel stage,

@@ -9,12 +9,10 @@
         public override void OnUseCard()
         {
             if (card.speedDiceResultValue >= 6)
-            {
                 card.ApplyDiceStatBonus(DiceMatch.AllDice, new DiceStatBonus
                 {
                     power = 1
                 });
-            }
         }
     }
 }

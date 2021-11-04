@@ -11,7 +11,6 @@ using ModPack21341.Models;
 using ModPack21341.StageManager.MapManager.HayateStageMaps;
 using ModPack21341.Utilities;
 using ModPack21341.Utilities.CustomMapUtility.Assemblies;
-using UnityEngine;
 
 namespace ModPack21341.StageManager
 {
@@ -84,6 +83,11 @@ namespace ModPack21341.StageManager
             MapUtilities.PrepareChangeBgm("HayatePhase2.mp3", ref _changeBgm);
         }
 
+        public void AddValueToEmotionCardList(IEnumerable<BattleEmotionCardModel> card)
+        {
+            _emotionCards.AddRange(card.Where(x => !_emotionCards.Contains(x)));
+        }
+
         private void CheckLastPhase()
         {
             if (_lastPhaseStarted || !_hayatePassive.GetPrePhase() ||
@@ -129,7 +133,8 @@ namespace ModPack21341.StageManager
         private void CheckUnitSummon()
         {
             if (!_firstStep ||
-                _sephiraModel.hp > _sephiraModel.MaxHp * 0.75f && !_hayatePassive.GetPhase2Status() || BattleObjectManager.instance.GetAliveList(Faction.Player).Count < 1) return;
+                _sephiraModel.hp > _sephiraModel.MaxHp * 0.75f && !_hayatePassive.GetPhase2Status() ||
+                BattleObjectManager.instance.GetAliveList(Faction.Player).Count < 1) return;
             _firstStep = false;
             for (var i = 1; i < 5; i++)
                 UnitUtilities.AddOriginalPlayerUnitPlayerSide(i, _sephiraModel.emotionDetail.EmotionLevel);

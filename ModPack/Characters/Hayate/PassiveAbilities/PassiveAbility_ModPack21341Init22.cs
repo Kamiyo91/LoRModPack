@@ -46,10 +46,12 @@ namespace ModPack21341.Characters.Hayate.PassiveAbilities
         {
             _oneTurnCard = false;
             if (_phase2 && owner.faction == Faction.Enemy)
+            {
                 if (_buf.stack + 10 > 100)
                     _buf.stack = 100;
                 else
                     _buf.stack += 10;
+            }
             else
             {
                 if (_buf.stack + 5 > 100)
