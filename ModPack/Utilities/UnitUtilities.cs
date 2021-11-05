@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml;
 using System.Xml.Serialization;
 using HarmonyLib;
+using LOR_DiceSystem;
 using LOR_XML;
 using ModPack21341.Characters.CommonBuffs;
 using ModPack21341.Characters.CommonPassiveAbilities;
@@ -401,6 +403,87 @@ namespace ModPack21341.Utilities
                 default:
                     return new List<int> {0, 1, 2};
             }
+        }
+
+        public static Dictionary<string, List<string>> GetCardKeywordListXml()
+        {
+            Dictionary<string, List<string>> result;
+            try
+            {
+                var dictionary = new Dictionary<string, List<string>>();
+                var xmlDocument = new XmlDocument();
+                var filename = ModPack21341Init.Path + "/CardKeywords/CardKeyword.xml";
+                xmlDocument.Load(filename);
+                var xmlNode = xmlDocument.SelectNodes("CardKeywordsRoot")?[0];
+                foreach (var obj in xmlNode.SelectNodes("Card"))
+                {
+                    var xmlNode2 = (XmlNode) obj;
+                    var list = (from XmlNode xmlNode3 in xmlNode2 select xmlNode3.InnerText).ToList();
+                    var xmlAttribute = xmlNode2.Attributes[0];
+                    dictionary[xmlAttribute.Value] = list;
+                }
+
+                result = dictionary;
+            }
+            catch (Exception)
+            {
+                result = null;
+            }
+
+            return result;
+        }
+
+        public static void AddOriginalAbilitiesKeywords(KeywordListUI instance, KeywordUI[] array,
+            Dictionary<string, int> dictionary, DiceCardXmlInfo cardInfo, IEnumerable<DiceBehaviour> behaviourList,
+            int num)
+        {
+            foreach (var text in cardInfo.Keywords)
+            {
+                var effectTextName = Singleton<BattleEffectTextsXmlList>.Instance.GetEffectTextName(text);
+                if (effectTextName == "") continue;
+                dictionary.Add(text, 1);
+                array[num].Init(effectTextName, Singleton<BattleEffectTextsXmlList>.Instance.GetEffectTextDesc(text));
+                num++;
+            }
+
+            var abilityKeywords = Singleton<BattleCardAbilityDescXmlList>.Instance.GetAbilityKeywords(cardInfo);
+            for (var j = 0; j < abilityKeywords.Count; j++)
+                if (j >= array.Length)
+                {
+                    Debug.LogError("Keywordcount over" + j);
+                }
+                else if (Singleton<BattleEffectTextsXmlList>.Instance.GetEffectTextName(abilityKeywords[j]) != "" &&
+                         !dictionary.ContainsKey(abilityKeywords[j]))
+                {
+                    dictionary.Add(abilityKeywords[j], 1);
+                    array[num].Init(Singleton<BattleEffectTextsXmlList>.Instance.GetEffectTextName(abilityKeywords[j]),
+                        Singleton<BattleEffectTextsXmlList>.Instance.GetEffectTextDesc(abilityKeywords[j]));
+                    num++;
+                }
+
+            foreach (var abilityKeywords_byScript in behaviourList.Select(diceBehaviour =>
+                Singleton<BattleCardAbilityDescXmlList>.Instance.GetAbilityKeywords_byScript(diceBehaviour.Script)))
+                for (var k = 0; k < abilityKeywords_byScript.Count; k++)
+                    if (k >= array.Length)
+                    {
+                        Debug.LogError("Keywordcount over" + k);
+                    }
+                    else
+                    {
+                        if (num >= array.Length ||
+                            Singleton<BattleEffectTextsXmlList>.Instance
+                                .GetEffectTextDesc(abilityKeywords_byScript[k]) == "") break;
+
+                        if (dictionary.ContainsKey(abilityKeywords_byScript[k]) ||
+                            Singleton<BattleEffectTextsXmlList>.Instance
+                                .GetEffectTextName(abilityKeywords_byScript[k]) == "") continue;
+                        dictionary.Add(abilityKeywords_byScript[k], 1);
+                        array[num].Init(
+                            Singleton<BattleEffectTextsXmlList>.Instance.GetEffectTextName(abilityKeywords_byScript[k]),
+                            Singleton<BattleEffectTextsXmlList>.Instance
+                                .GetEffectTextDesc(abilityKeywords_byScript[k]));
+                        num++;
+                    }
         }
     }
 }
