@@ -25,8 +25,9 @@ namespace ModPack21341.Characters.CommonCardAbilities
                 x is PassiveAbility_ModPack21341Init13) is PassiveAbility_ModPack21341Init13 passiveHappy)
             {
                 var stacks = passiveHappy.GetStack();
-                if (stacks < 3)
-                    passiveHappy.ChangeNameAndSetStacks(stacks + 1);
+                if (stacks >= 3) return;
+                passiveHappy.ChangeNameAndSetStacks(stacks + 1);
+                passiveHappy.InstantIncrease();
                 return;
             }
 
@@ -34,6 +35,7 @@ namespace ModPack21341.Characters.CommonCardAbilities
                 unit.passiveDetail.AddPassive(new LorId(ModPack21341Init.PackageId, 19)) as
                     PassiveAbility_ModPack21341Init13;
             passive?.ChangeNameAndSetStacks(1);
+            passive?.AfterInit();
             if (unit.faction == Faction.Player) unit.passiveDetail.OnCreated();
         }
     }

@@ -42,6 +42,21 @@ namespace ModPack21341.Characters.CommonPassiveAbilities
             owner.bufListDetail.AddKeywordBufThisRoundByEtc(KeywordBuf.Quickness, _stack);
         }
 
+        public void RemoveBuff()
+        {
+            EmotionalBurstUtilities.DecreaseStacksBufType(owner, KeywordBuf.Quickness, _stack);
+        }
+
+        public void AfterInit()
+        {
+            OnRoundStartAfter();
+        }
+
+        public void InstantIncrease()
+        {
+            owner.bufListDetail.AddKeywordBufThisRoundByEtc(KeywordBuf.Quickness, 1);
+        }
+
         public override void BeforeRollDice(BattleDiceBehavior behavior)
         {
             var number = RndChance.Next(0, 100);

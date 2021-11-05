@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using ModPack21341.Utilities;
 
 namespace ModPack21341.Characters.CommonPassiveAbilities
 {
@@ -39,6 +40,25 @@ namespace ModPack21341.Characters.CommonPassiveAbilities
             owner.bufListDetail.AddKeywordBufThisRoundByEtc(KeywordBuf.Endurance, _stack);
             owner.bufListDetail.AddKeywordBufThisRoundByEtc(KeywordBuf.Binding, _stack);
             owner.bufListDetail.AddKeywordBufThisRoundByEtc(KeywordBuf.Protection, _stack * 2);
+        }
+
+        public void RemoveBuff()
+        {
+            EmotionalBurstUtilities.DecreaseStacksBufType(owner, KeywordBuf.Endurance, _stack);
+            EmotionalBurstUtilities.DecreaseStacksBufType(owner, KeywordBuf.Binding, _stack);
+            EmotionalBurstUtilities.DecreaseStacksBufType(owner, KeywordBuf.Protection, _stack * 2);
+        }
+
+        public void InstantIncrease()
+        {
+            owner.bufListDetail.AddKeywordBufThisRoundByEtc(KeywordBuf.Endurance, 1);
+            owner.bufListDetail.AddKeywordBufThisRoundByEtc(KeywordBuf.Binding, 1);
+            owner.bufListDetail.AddKeywordBufThisRoundByEtc(KeywordBuf.Protection, 2);
+        }
+
+        public void AfterInit()
+        {
+            OnRoundStartAfter();
         }
 
         public override void OnRoundEnd()
