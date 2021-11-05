@@ -18,9 +18,9 @@ namespace ModPack21341.Harmony
         private static bool _keywordCalled;
         public static readonly Dictionary<string, Sprite> ArtWorks = new Dictionary<string, Sprite>();
         private static Dictionary<string, List<string>> _cardKeywords = new Dictionary<string, List<string>>();
-        private static readonly List<int> KamiyoCards = new List<int> {32, 33, 34, 35, 36, 46};
-        private static readonly List<int> MioCards = new List<int> {15, 16, 17, 18, 21, 22, 1, 23};
-        private static readonly List<int> HayateCards = new List<int> {49, 50, 51, 52, 53, 56, 47};
+        private static readonly List<int> KamiyoCards = new List<int> {32, 34, 36, 46};
+        private static readonly List<int> MioCards = new List<int> { 17, 18, 22, 23};
+        private static readonly List<int> HayateCards = new List<int> {49, 50, 51, 53, 56, 47};
         private static readonly List<int> SamuraiCards = new List<int> {8, 9, 10, 11, 12};
 
 
@@ -71,6 +71,7 @@ namespace ModPack21341.Harmony
                     __result = Resources.Load<Sprite>("Sprites/Books/Thumb/243003");
                     return false;
                 case 10000005:
+                case 10000012:
                     __result = ArtWorks["Knife_Default"];
                     return false;
                 case 10000013:
@@ -146,6 +147,12 @@ namespace ModPack21341.Harmony
             if (cardKeywords == null) return true;
 
             var num = 0;
+            if (!dictionary.ContainsKey("ModPack21341Init6"))
+            {
+                dictionary.Add("ModPack21341Init6", 1);
+                array[num].Init(_cardKeywords["ModPack21341Init6"][0], _cardKeywords["ModPack21341Init6"][1]);
+                num++;
+            }
             if (KamiyoCards.Contains(cardInfo.id.id) && !dictionary.ContainsKey("ModPack21341Init1"))
             {
                 dictionary.Add("ModPack21341Init1", 1);
@@ -176,18 +183,8 @@ namespace ModPack21341.Harmony
 
             if (cardInfo.id.id == 43 && !dictionary.ContainsKey("ModPack21341Init5"))
             {
-                dictionary.Add("ModPack21341Init6", 1);
-                array[num].Init(_cardKeywords["ModPack21341Init6"][0], _cardKeywords["ModPack21341Init6"][1]);
-                num++;
                 dictionary.Add("ModPack21341Init5", 1);
                 array[num].Init(_cardKeywords["ModPack21341Init5"][0], _cardKeywords["ModPack21341Init5"][1]);
-                num++;
-            }
-
-            if (cardInfo.id.id == 14 || cardInfo.id.id == 57 && !dictionary.ContainsKey("ModPack21341Init6"))
-            {
-                dictionary.Add("ModPack21341Init6", 1);
-                array[num].Init(_cardKeywords["ModPack21341Init6"][0], _cardKeywords["ModPack21341Init6"][1]);
                 num++;
             }
 
