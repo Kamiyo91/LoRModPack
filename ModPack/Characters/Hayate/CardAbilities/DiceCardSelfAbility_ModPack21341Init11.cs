@@ -12,7 +12,7 @@ namespace ModPack21341.Characters.Hayate.CardAbilities
 
         public override bool OnChooseCard(BattleUnitModel owner)
         {
-            return owner.emotionDetail.EmotionLevel >= 4 && owner.bufListDetail.GetActivatedBufList()
+            return owner.emotionDetail.EmotionLevel >= 5 && owner.bufListDetail.GetActivatedBufList()
                 .Find(x => x is BattleUnitBuf_ModPack21341Init8).stack >= 100;
         }
 
