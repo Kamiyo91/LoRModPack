@@ -7,7 +7,7 @@
         {
             foreach (var unit in BattleObjectManager.instance.GetAliveList(owner.faction == Faction.Player
                 ? Faction.Enemy
-                : Faction.Player)) unit.bufListDetail.AddKeywordBufByCard(KeywordBuf.Burn, 2, unit);
+                : Faction.Player)) unit.bufListDetail.AddKeywordBufByCard(KeywordBuf.Burn, 1, unit);
         }
 
         public override void OnSucceedAttack(BattleDiceBehavior behavior)

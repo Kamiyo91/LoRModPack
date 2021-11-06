@@ -24,8 +24,4 @@ namespace ModPack21341.Characters.Kamiyo.PassiveAbilities
             owner.breakDetail.RecoverBreak(2);
         }
     }
-
-    #region EmotionalBurstPassive
-
-    #endregion
 }

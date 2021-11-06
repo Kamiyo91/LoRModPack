@@ -33,7 +33,7 @@ namespace ModPack21341.Characters.Hayate.Buffs
         {
             base.Init(owner);
             typeof(BattleUnitBuf).GetField("_bufIcon", AccessTools.all)
-                ?.SetValue(this, ModPack21341Init.ArtWorks["TrueGod"]);
+                ?.SetValue(this, ModPack21341Init.ArtWorks["ModPack21341Init4"]);
             typeof(BattleUnitBuf).GetField("_iconInit", AccessTools.all)?.SetValue(this, true);
             InitAuraAndPlaySound();
             var buf = owner.bufListDetail.GetActivatedBufList().Find(x => x is BattleUnitBuf_ModPack21341Init8) as

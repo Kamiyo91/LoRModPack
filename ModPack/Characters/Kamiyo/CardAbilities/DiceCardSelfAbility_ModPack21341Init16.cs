@@ -3,13 +3,13 @@
     //BurningField3
     public class DiceCardSelfAbility_ModPack21341Init16 : DiceCardSelfAbilityBase
     {
-        public static string Desc = "[On Use]Inflict 3 burn to all enemies";
+        public static string Desc = "[On Use]Inflict 2 burn to all enemies";
 
         public override void OnUseCard()
         {
             foreach (var unit in BattleObjectManager.instance.GetAliveList(owner.faction == Faction.Player
                 ? Faction.Enemy
-                : Faction.Player)) unit.bufListDetail.AddKeywordBufByCard(KeywordBuf.Burn, 3, unit);
+                : Faction.Player)) unit.bufListDetail.AddKeywordBufByCard(KeywordBuf.Burn, 2, unit);
         }
     }
 }

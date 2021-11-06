@@ -7,7 +7,10 @@ using HarmonyLib;
 using LOR_DiceSystem;
 using Mod;
 using ModPack21341.Utilities;
+using TMPro;
+using UI;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ModPack21341.Harmony
 {
@@ -19,7 +22,7 @@ namespace ModPack21341.Harmony
         public static readonly Dictionary<string, Sprite> ArtWorks = new Dictionary<string, Sprite>();
         private static Dictionary<string, List<string>> _cardKeywords = new Dictionary<string, List<string>>();
         private static readonly List<int> KamiyoCards = new List<int> {32, 34, 36, 46};
-        private static readonly List<int> MioCards = new List<int> { 17, 18, 22, 23};
+        private static readonly List<int> MioCards = new List<int> {17, 18, 22, 23};
         private static readonly List<int> HayateCards = new List<int> {49, 50, 51, 53, 56, 47};
         private static readonly List<int> SamuraiCards = new List<int> {8, 9, 10, 11, 12};
 
@@ -38,6 +41,16 @@ namespace ModPack21341.Harmony
                 new HarmonyMethod(method));
             method = typeof(ModPack21341Init).GetMethod("KeywordListUI_Init");
             harmony.Patch(typeof(KeywordListUI).GetMethod("Init", AccessTools.all), new HarmonyMethod(method));
+            method = typeof(ModPack21341Init).GetMethod("UISettingInvenEquipPageListSlot_SetBooksData");
+            harmony.Patch(typeof(UISettingInvenEquipPageListSlot).GetMethod("SetBooksData", AccessTools.all),
+                new HarmonyMethod(method));
+            method = typeof(ModPack21341Init).GetMethod("UIInvenEquipPageListSlot_SetBooksData");
+            harmony.Patch(typeof(UIInvenEquipPageListSlot).GetMethod("SetBooksData", AccessTools.all),
+                new HarmonyMethod(method));
+            method = typeof(ModPack21341Init).GetMethod("UISpriteDataManager_GetStoryIcon");
+            harmony.Patch(typeof(UISpriteDataManager).GetMethod("GetStoryIcon", AccessTools.all),
+                new HarmonyMethod(method));
+
             MapUtilities.GetArtWorks(new DirectoryInfo(Path + "/ArtWork"));
             UnitUtilities.AddBuffInfo();
             RemoveError();
@@ -153,6 +166,7 @@ namespace ModPack21341.Harmony
                 array[num].Init(_cardKeywords["ModPack21341Init6"][0], _cardKeywords["ModPack21341Init6"][1]);
                 num++;
             }
+
             if (KamiyoCards.Contains(cardInfo.id.id) && !dictionary.ContainsKey("ModPack21341Init1"))
             {
                 dictionary.Add("ModPack21341Init1", 1);
@@ -189,6 +203,99 @@ namespace ModPack21341.Harmony
             }
 
             UnitUtilities.AddOriginalAbilitiesKeywords(__instance, array, dictionary, cardInfo, behaviourList, num);
+            return false;
+        }
+
+        public static bool UIInvenEquipPageListSlot_SetBooksData(UISettingInvenEquipPageListSlot __instance,
+            List<BookModel> books, UIStoryKeyData storyKey)
+        {
+            if (storyKey.workshopId != PackageId) return true;
+            var image = (Image) __instance.GetType().GetField("img_IconGlow", AccessTools.all).GetValue(__instance);
+            var image2 = (Image) __instance.GetType().GetField("img_Icon", AccessTools.all).GetValue(__instance);
+            var textMeshProUGUI = (TextMeshProUGUI) __instance.GetType().GetField("txt_StoryName", AccessTools.all)
+                .GetValue(__instance);
+            var listRoot =
+                (UIEquipPageScrollList) __instance.GetType().GetField("listRoot", AccessTools.all).GetValue(__instance);
+            var list = (List<UIOriginEquipPageSlot>) __instance.GetType().GetField("equipPageSlotList", AccessTools.all)
+                .GetValue(__instance);
+            if (books.Count >= 0)
+            {
+                image.enabled = true;
+                image2.enabled = true;
+                image2.sprite = ArtWorks["ModPack21341Init4"];
+                image.sprite = ArtWorks["ModPack21341Init4"];
+                textMeshProUGUI.text = "Kamiyo's Mod Pack";
+            }
+
+            __instance.SetFrameColor(UIColorManager.Manager.GetUIColor(UIColor.Default));
+            var list2 = new List<BookModel>((List<BookModel>) typeof(UIInvenEquipPageListSlot)
+                .GetMethod("ApplyFilterBooksInStory", AccessTools.all).Invoke(__instance, new object[]
+                {
+                    books
+                }));
+            __instance.SetEquipPagesData(list2);
+            var bookModel = list2.Find(x => x == UI.UIController.Instance.CurrentUnit.bookItem);
+            if (listRoot.CurrentSelectedBook == null && bookModel != null) listRoot.CurrentSelectedBook = bookModel;
+            if (listRoot.CurrentSelectedBook != null)
+            {
+                var uiOriginEquipPageSlot = list.Find(x => x.BookDataModel == listRoot.CurrentSelectedBook);
+                if (uiOriginEquipPageSlot != null) uiOriginEquipPageSlot.SetHighlighted(true, true);
+            }
+
+            __instance.SetSlotSize();
+            return false;
+        }
+
+        public static bool UISettingInvenEquipPageListSlot_SetBooksData(UISettingInvenEquipPageListSlot __instance,
+            List<BookModel> books, UIStoryKeyData storyKey)
+        {
+            if (storyKey.workshopId != PackageId) return true;
+            var image = (Image) __instance.GetType().GetField("img_IconGlow", AccessTools.all).GetValue(__instance);
+            var image2 = (Image) __instance.GetType().GetField("img_Icon", AccessTools.all).GetValue(__instance);
+            var textMeshProUGUI = (TextMeshProUGUI) __instance.GetType().GetField("txt_StoryName", AccessTools.all)
+                .GetValue(__instance);
+            var listRoot =
+                (UIEquipPageScrollList) __instance.GetType().GetField("listRoot", AccessTools.all).GetValue(__instance);
+            var list = (List<UIOriginEquipPageSlot>) __instance.GetType().GetField("equipPageSlotList", AccessTools.all)
+                .GetValue(__instance);
+            if (books.Count >= 0)
+            {
+                image.enabled = true;
+                image2.enabled = true;
+                image2.sprite = ArtWorks["ModPack21341Init4"];
+                image.sprite = ArtWorks["ModPack21341Init4"];
+                textMeshProUGUI.text = "Kamiyo's Mod Pack";
+            }
+
+            __instance.SetFrameColor(UIColorManager.Manager.GetUIColor(UIColor.Default));
+            var list2 = new List<BookModel>((List<BookModel>) typeof(UIInvenEquipPageListSlot)
+                .GetMethod("ApplyFilterBooksInStory", AccessTools.all).Invoke(__instance, new object[]
+                {
+                    books
+                }));
+            __instance.SetEquipPagesData(list2);
+            var bookModel = list2.Find(x => x == UI.UIController.Instance.CurrentUnit.bookItem);
+            if (listRoot.CurrentSelectedBook == null && bookModel != null) listRoot.CurrentSelectedBook = bookModel;
+            if (listRoot.CurrentSelectedBook != null)
+            {
+                var uioriginEquipPageSlot = list.Find(x => x.BookDataModel == listRoot.CurrentSelectedBook);
+                if (uioriginEquipPageSlot != null) uioriginEquipPageSlot.SetHighlighted(true, true);
+            }
+
+            __instance.SetSlotSize();
+            return false;
+        }
+
+        public static bool UISpriteDataManager_GetStoryIcon(UISpriteDataManager __instance,
+            ref UIIconManager.IconSet __result, string story)
+        {
+            if (!ArtWorks.ContainsKey(story)) return true;
+            __result = new UIIconManager.IconSet
+            {
+                type = story,
+                icon = ArtWorks[story],
+                iconGlow = ArtWorks[story]
+            };
             return false;
         }
     }

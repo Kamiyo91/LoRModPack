@@ -35,6 +35,9 @@ namespace ModPack21341.Characters.Hayate.PassiveAbilities
             owner.bufListDetail.AddBufWithoutDuplication(new BattleUnitBuf_ModPack21341Init8());
             _buf = owner.bufListDetail.GetActivatedBufList().Find(x => x is BattleUnitBuf_ModPack21341Init8) as
                 BattleUnitBuf_ModPack21341Init8;
+            if (!string.IsNullOrEmpty(owner.UnitData.unitData.workshopSkin) ||
+                owner.UnitData.unitData.bookItem == owner.UnitData.unitData.CustomBookItem) return;
+            owner.view.ChangeSkin(owner.UnitData.unitData.CustomBookItem.GetCharacterName());
         }
 
         public bool GetPrePhase()

@@ -18,7 +18,7 @@ namespace ModPack21341.StageManager
     public class EnemyTeamStageManager_ModPack21341Init4 : EnemyTeamStageManager
     {
         private Task _changeBgm;
-        private List<BattleEmotionCardModel> _emotionCards;
+        private List<BattleEmotionCardModel> _emotionCards = new List<BattleEmotionCardModel>();
         private bool _firstStep;
         private StageLibraryFloorModel _floor;
         private BattleUnitModel _hayateModel;
@@ -95,7 +95,7 @@ namespace ModPack21341.StageManager
             {
                 _lastPhaseStarted = true;
                 MapUtilities.PrepareChangeBgm("HayatePhase3.mp3", ref _changeBgm);
-                _emotionCards = UnitUtilities.SaveEmotionCards();
+                _emotionCards = UnitUtilities.SaveEmotionCards(_emotionCards).ToList();
                 foreach (var unit in BattleObjectManager.instance.GetList(Faction.Player))
                     BattleObjectManager.instance.UnregisterUnit(unit);
                 var kamiyoModel = UnitUtilities.AddNewUnitPlayerSide(_floor, new UnitModel

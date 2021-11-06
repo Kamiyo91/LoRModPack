@@ -107,9 +107,8 @@ namespace ModPack21341.Utilities
             return unit.emotionDetail.PassiveList.ToList();
         }
 
-        public static List<BattleEmotionCardModel> SaveEmotionCards()
+        public static IEnumerable<BattleEmotionCardModel> SaveEmotionCards(List<BattleEmotionCardModel> emotionCardList)
         {
-            var emotionCardList = new List<BattleEmotionCardModel>();
             var playerUnitsAlive = BattleObjectManager.instance.GetList(Faction.Player);
             foreach (var emotionDetail in playerUnitsAlive.Select(x => x.emotionDetail))
             foreach (var emotionCard in emotionDetail.PassiveList.Where(emotionCard =>
