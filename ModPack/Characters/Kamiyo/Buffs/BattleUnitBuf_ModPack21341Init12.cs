@@ -17,7 +17,7 @@ namespace ModPack21341.Characters.Kamiyo.Buffs
 
         public override bool isAssimilation => true;
         public override int paramInBufDesc => 0;
-        protected override string keywordId => "Kamiyo";
+        protected override string keywordId => "ModPack21341Init12";
         protected override string keywordIconId => "RedHood_Rage";
         public override string bufActivatedText => "Power + 1 - Inflict 3 Burn to self at the start of each Scene";
 

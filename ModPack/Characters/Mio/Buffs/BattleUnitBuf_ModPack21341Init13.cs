@@ -14,7 +14,7 @@ namespace ModPack21341.Characters.Mio.Buffs
         public override BufPositiveType positiveType => BufPositiveType.Negative;
         public override bool isAssimilation => true;
         public override int paramInBufDesc => 0;
-        protected override string keywordId => "CorruptedMio";
+        protected override string keywordId => "ModPack21341Init8";
         protected override string keywordIconId => "Final_BigBird_Darkness";
 
         public override string bufActivatedText =>

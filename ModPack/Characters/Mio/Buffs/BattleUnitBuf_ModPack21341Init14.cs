@@ -10,7 +10,7 @@
 
         public override BufPositiveType positiveType => BufPositiveType.Positive;
         public override int paramInBufDesc => 0;
-        protected override string keywordId => "Purification";
+        protected override string keywordId => "ModPack21341Init9";
         protected override string keywordIconId => "IndexRelease";
 
         public override string bufActivatedText =>

@@ -8,7 +8,7 @@ namespace ModPack21341.Characters.Hayate.Buffs
     {
         private int _addValue;
         public override BufPositiveType positiveType => BufPositiveType.Positive;
-        protected override string keywordId => "EntertainMe";
+        protected override string keywordId => "ModPack21341Init13";
 
         public override string bufActivatedText => _owner.faction == Faction.Player
             ? "On 90 or more Stacks,gain Power+1"
@@ -18,7 +18,7 @@ namespace ModPack21341.Characters.Hayate.Buffs
         {
             base.Init(owner);
             typeof(BattleUnitBuf).GetField("_bufIcon", AccessTools.all)
-                ?.SetValue(this, ModPack21341Init.ArtWorks["EM"]);
+                ?.SetValue(this, ModPack21341Init.ArtWorks["ModPack21341Init5"]);
             typeof(BattleUnitBuf).GetField("_iconInit", AccessTools.all)?.SetValue(this, true);
             _addValue = 1;
         }

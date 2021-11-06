@@ -8,7 +8,7 @@
             stack = 0;
         }
 
-        protected override string keywordId => "BlackMaskEgo";
+        protected override string keywordId => "ModPack21341Init10";
         public override int paramInBufDesc => 0;
         protected override string keywordIconId => "BlackFrantic";
         public override string bufActivatedText => "Power +1,draw 1 additional Card and Restore 1 Light each scene";

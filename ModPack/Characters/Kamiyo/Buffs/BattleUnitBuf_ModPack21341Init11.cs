@@ -8,7 +8,7 @@
             stack = 0;
         }
 
-        protected override string keywordId => "KamiyoHayate";
+        protected override string keywordId => "ModPack21341Init11";
         public override int paramInBufDesc => 0;
         protected override string keywordIconId => "BlackFrantic";
 

@@ -13,7 +13,7 @@ namespace ModPack21341.Characters.Mio.Buffs
         public override BufPositiveType positiveType => BufPositiveType.Positive;
         public override bool isAssimilation => true;
         public override int paramInBufDesc => 0;
-        protected override string keywordId => "Mio";
+        protected override string keywordId => "ModPack21341Init7";
         protected override string keywordIconId => "KeterFinal_Light";
 
         public override string bufActivatedText =>

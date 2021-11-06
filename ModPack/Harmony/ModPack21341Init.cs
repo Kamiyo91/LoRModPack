@@ -18,14 +18,7 @@ namespace ModPack21341.Harmony
     {
         public const string PackageId = "ModPack21341.Mod";
         public static string Path;
-        private static bool _keywordCalled;
         public static readonly Dictionary<string, Sprite> ArtWorks = new Dictionary<string, Sprite>();
-        private static Dictionary<string, List<string>> _cardKeywords = new Dictionary<string, List<string>>();
-        private static readonly List<int> KamiyoCards = new List<int> {32, 34, 36, 46};
-        private static readonly List<int> MioCards = new List<int> {17, 18, 22, 23};
-        private static readonly List<int> HayateCards = new List<int> {49, 50, 51, 53, 56, 47};
-        private static readonly List<int> SamuraiCards = new List<int> {8, 9, 10, 11, 12};
-
 
         public override void OnInitializeMod()
         {
@@ -39,8 +32,6 @@ namespace ModPack21341.Harmony
             method = typeof(ModPack21341Init).GetMethod("StageLibraryFloorModel_InitUnitList");
             harmony.Patch(typeof(StageLibraryFloorModel).GetMethod("InitUnitList", AccessTools.all),
                 new HarmonyMethod(method));
-            method = typeof(ModPack21341Init).GetMethod("KeywordListUI_Init");
-            harmony.Patch(typeof(KeywordListUI).GetMethod("Init", AccessTools.all), new HarmonyMethod(method));
             method = typeof(ModPack21341Init).GetMethod("UISettingInvenEquipPageListSlot_SetBooksData");
             harmony.Patch(typeof(UISettingInvenEquipPageListSlot).GetMethod("SetBooksData", AccessTools.all),
                 new HarmonyMethod(method));
@@ -50,7 +41,6 @@ namespace ModPack21341.Harmony
             method = typeof(ModPack21341Init).GetMethod("UISpriteDataManager_GetStoryIcon");
             harmony.Patch(typeof(UISpriteDataManager).GetMethod("GetStoryIcon", AccessTools.all),
                 new HarmonyMethod(method));
-
             MapUtilities.GetArtWorks(new DirectoryInfo(Path + "/ArtWork"));
             UnitUtilities.AddBuffInfo();
             RemoveError();
@@ -85,13 +75,13 @@ namespace ModPack21341.Harmony
                     return false;
                 case 10000005:
                 case 10000012:
-                    __result = ArtWorks["Knife_Default"];
+                    __result = ArtWorks["ModPack21341Init8"];
                     return false;
                 case 10000013:
                     __result = Resources.Load<Sprite>("Sprites/Books/Thumb/102");
                     return false;
                 case 10000014:
-                    __result = ArtWorks["Angela_Default"];
+                    __result = ArtWorks["ModPack21341Init6"];
                     return false;
                 case 10000015:
                     __result = Resources.Load<Sprite>("Sprites/Books/Thumb/8");
@@ -106,7 +96,7 @@ namespace ModPack21341.Harmony
                     __result = Resources.Load<Sprite>("Sprites/Books/Thumb/250024");
                     return false;
                 case 10000010:
-                    __result = ArtWorks["Hayate_Default"];
+                    __result = ArtWorks["ModPack21341Init7"];
                     return false;
                 default:
                     return true;
@@ -139,71 +129,6 @@ namespace ModPack21341.Harmony
                 }
 
             return true;
-        }
-
-        public static bool KeywordListUI_Init(KeywordListUI __instance, DiceCardXmlInfo cardInfo,
-            IEnumerable<DiceBehaviour> behaviourList)
-        {
-            if (cardInfo.id.packageId != PackageId) return true;
-            var array = (KeywordUI[]) __instance.GetType().GetField("keywordList", AccessTools.all)
-                ?.GetValue(__instance);
-            if (array == null) return true;
-            foreach (var t in array) t.gameObject.SetActive(false);
-            var dictionary = new Dictionary<string, int>();
-            if (!_keywordCalled)
-            {
-                _cardKeywords = UnitUtilities.GetCardKeywordListXml();
-                _keywordCalled = true;
-            }
-
-            var cardKeywords = _cardKeywords;
-            if (cardKeywords == null) return true;
-
-            var num = 0;
-            if (!dictionary.ContainsKey("ModPack21341Init6"))
-            {
-                dictionary.Add("ModPack21341Init6", 1);
-                array[num].Init(_cardKeywords["ModPack21341Init6"][0], _cardKeywords["ModPack21341Init6"][1]);
-                num++;
-            }
-
-            if (KamiyoCards.Contains(cardInfo.id.id) && !dictionary.ContainsKey("ModPack21341Init1"))
-            {
-                dictionary.Add("ModPack21341Init1", 1);
-                array[num].Init(_cardKeywords["ModPack21341Init1"][0], _cardKeywords["ModPack21341Init1"][1]);
-                num++;
-            }
-
-            if (HayateCards.Contains(cardInfo.id.id) && !dictionary.ContainsKey("ModPack21341Init3"))
-            {
-                dictionary.Add("ModPack21341Init3", 1);
-                array[num].Init(_cardKeywords["ModPack21341Init3"][0], _cardKeywords["ModPack21341Init3"][1]);
-                num++;
-            }
-
-            if (MioCards.Contains(cardInfo.id.id) && !dictionary.ContainsKey("ModPack21341Init2"))
-            {
-                dictionary.Add("ModPack21341Init2", 1);
-                array[num].Init(_cardKeywords["ModPack21341Init2"][0], _cardKeywords["ModPack21341Init2"][1]);
-                num++;
-            }
-
-            if (SamuraiCards.Contains(cardInfo.id.id) && !dictionary.ContainsKey("ModPack21341Init4"))
-            {
-                dictionary.Add("ModPack21341Init4", 1);
-                array[num].Init(_cardKeywords["ModPack21341Init4"][0], _cardKeywords["ModPack21341Init4"][1]);
-                num++;
-            }
-
-            if (cardInfo.id.id == 43 && !dictionary.ContainsKey("ModPack21341Init5"))
-            {
-                dictionary.Add("ModPack21341Init5", 1);
-                array[num].Init(_cardKeywords["ModPack21341Init5"][0], _cardKeywords["ModPack21341Init5"][1]);
-                num++;
-            }
-
-            UnitUtilities.AddOriginalAbilitiesKeywords(__instance, array, dictionary, cardInfo, behaviourList, num);
-            return false;
         }
 
         public static bool UIInvenEquipPageListSlot_SetBooksData(UISettingInvenEquipPageListSlot __instance,
