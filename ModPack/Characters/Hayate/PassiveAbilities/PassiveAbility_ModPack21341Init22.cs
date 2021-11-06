@@ -19,7 +19,9 @@ namespace ModPack21341.Characters.Hayate.PassiveAbilities
         private bool _lastPrePhase;
         private bool _oneTurnCard;
         private bool _phase2;
+        private bool _phase2Solo;
         private bool _showLastPrePhaseDlg;
+        private bool _soloBattle;
         private BattleUnitModel _target;
         private bool _useCard;
 
@@ -28,6 +30,8 @@ namespace ModPack21341.Characters.Hayate.PassiveAbilities
             _lastPrePhase = false;
             _phase2 = false;
             _finalPhase = false;
+            _soloBattle = false;
+            _phase2Solo = false;
             owner.personalEgoDetail.AddCard(new LorId(ModPack21341Init.PackageId, 931));
             if (owner.faction == Faction.Enemy)
                 owner.bufListDetail.AddBufWithoutDuplication(new BattleUnitBuf_ModPack21341Init9());
@@ -45,10 +49,15 @@ namespace ModPack21341.Characters.Hayate.PassiveAbilities
             return _lastPrePhase;
         }
 
+        public void SetPhase2Solo()
+        {
+            _phase2Solo = true;
+        }
+
         public override void OnRoundEnd()
         {
             _oneTurnCard = false;
-            if (_phase2 && owner.faction == Faction.Enemy)
+            if (_phase2 && (!_soloBattle || _phase2Solo) && owner.faction == Faction.Enemy)
             {
                 if (_buf.stack + 10 > 100)
                     _buf.stack = 100;
@@ -89,6 +98,20 @@ namespace ModPack21341.Characters.Hayate.PassiveAbilities
 
             if (_auraChange)
                 UnitUtilities.ActiveAwakeningDeckPassive(owner, "Hayate");
+        }
+
+        public void SetOriginalPhaseIgnore()
+        {
+            _phase2 = true;
+            _soloBattle = true;
+        }
+
+        public void ActiveEgo()
+        {
+            owner.bufListDetail.RemoveBufAll(typeof(BattleUnitBuf_ModPack21341Init15));
+            owner.bufListDetail.AddBufWithoutDuplication(new BattleUnitBuf_ModPack21341Init10());
+            if (owner.faction != Faction.Enemy) return;
+            owner.view.DisplayDlg(DialogType.SPECIAL_EVENT, "0");
         }
 
         public bool GetPhase2Status()
@@ -135,7 +158,7 @@ namespace ModPack21341.Characters.Hayate.PassiveAbilities
         {
             if (owner.hp - dmg <= owner.MaxHp * 0.5f && !_phase2 && owner.faction == Faction.Enemy)
                 ChangePhase();
-            if (owner.hp - dmg <= 1 && !_lastPrePhase && owner.faction == Faction.Enemy)
+            if (owner.hp - dmg <= 1 && !_lastPrePhase && !_soloBattle && owner.faction == Faction.Enemy)
                 ChangeToFinalPhase();
             return base.BeforeTakeDamage(attacker, dmg);
         }
@@ -207,6 +230,7 @@ namespace ModPack21341.Characters.Hayate.PassiveAbilities
         {
             _useCard = true;
             _phase2 = true;
+            _phase2Solo = true;
             _changeBuffs = true;
             owner.bufListDetail.AddBuf(new BattleUnitBuf_ModPack21341Init4());
             owner.RecoverHP(owner.MaxHp);

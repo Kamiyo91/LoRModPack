@@ -14,6 +14,10 @@ namespace ModPack21341.Characters.Mio.PassiveAbilities
             CheckMassAttackCard();
         }
 
+        public void SetCount(int count)
+        {
+            _count = count;
+        }
 
         private void CheckMassAttackCard()
         {
@@ -75,7 +79,8 @@ namespace ModPack21341.Characters.Mio.PassiveAbilities
 
         private void AddAttackEgoCard()
         {
-            if (owner.emotionDetail.EmotionLevel == 5)
+            if (owner.emotionDetail.EmotionLevel == 5 &&
+                owner.passiveDetail.PassiveList.Exists(x => x is PassiveAbility_ModPack21341Init37))
                 owner.allyCardDetail.AddNewCard(new LorId(ModPack21341Init.PackageId, 19));
         }
     }

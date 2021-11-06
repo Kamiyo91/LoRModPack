@@ -72,6 +72,7 @@ namespace ModPack21341.StageManager
             if (!(_mioGhostModel.passiveDetail.PassiveList.Find(x => x is PassiveAbility_ModPack21341Init38) is
                 PassiveAbility_ModPack21341Init38 mioPassive)) return;
             mioPassive.SetAwakened(true);
+            mioPassive.SetCount(2);
             mioPassive.Hide();
         }
 
@@ -131,6 +132,7 @@ namespace ModPack21341.StageManager
                 PassiveAbility_ModPack21341Init38 mioPassive)
             {
                 mioPassive.SetAwakened(true);
+                mioPassive.SetCount(2);
                 mioPassive.Hide();
             }
 

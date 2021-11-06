@@ -201,6 +201,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StageManager\EnemyTeamStageManager_ModPack21341Init4.cs" />
     <Compile Include="StageManager\EnemyTeamStageManager_ModPack21341Init3.cs" />
+    <Compile Include="StageManager\EnemyTeamStageManager_ModPack21341Init5.cs" />
     <Compile Include="StageManager\MapManager\BlackSilenceEgoMapManager\ModPack21341InitBlackSilenceEgoMapManager.cs" />
     <Compile Include="StageManager\MapManager\HayateStageMaps\ModPack21341InitHayateMapManager.cs" />
     <Compile Include="StageManager\MapManager\KamiyoStageMaps\ModPack21341InitKamiyo1MapManager.cs" />
