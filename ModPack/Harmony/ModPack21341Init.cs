@@ -11,6 +11,7 @@ using TMPro;
 using UI;
 using UnityEngine;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace ModPack21341.Harmony
 {
@@ -40,6 +41,9 @@ namespace ModPack21341.Harmony
                 new HarmonyMethod(method));
             method = typeof(ModPack21341Init).GetMethod("UISpriteDataManager_GetStoryIcon");
             harmony.Patch(typeof(UISpriteDataManager).GetMethod("GetStoryIcon", AccessTools.all),
+                new HarmonyMethod(method));
+            method = typeof(ModPack21341Init).GetMethod("BattleUnitInformationUI_PassiveList_SetData");
+            harmony.Patch(typeof(BattleUnitInformationUI_PassiveList).GetMethod("SetData", AccessTools.all),
                 new HarmonyMethod(method));
             MapUtilities.GetArtWorks(new DirectoryInfo(Path + "/ArtWork"));
             UnitUtilities.AddBuffInfo();
@@ -221,6 +225,75 @@ namespace ModPack21341.Harmony
                 icon = ArtWorks[story],
                 iconGlow = ArtWorks[story]
             };
+            return false;
+        }
+
+        public static bool BattleUnitInformationUI_PassiveList_SetData(BattleUnitInformationUI_PassiveList __instance,
+            List<PassiveAbilityBase> passivelist)
+        {
+            var list = (List<BattleUnitInformationUI_PassiveList.BattleUnitInformationPassiveSlot>) __instance.GetType()
+                .GetField("passiveSlotList", AccessTools.all).GetValue(__instance);
+            for (var i = list.Count; i < passivelist.Count; i++)
+            {
+                var battleUnitInformationPassiveSlot =
+                    new BattleUnitInformationUI_PassiveList.BattleUnitInformationPassiveSlot();
+                var rectTransform = Object.Instantiate(list[0].Rect, list[0].Rect.parent);
+                battleUnitInformationPassiveSlot.Rect = rectTransform;
+                for (var j = 0; j < battleUnitInformationPassiveSlot.Rect.childCount; j++)
+                    if (battleUnitInformationPassiveSlot.Rect.GetChild(j).gameObject.name.Contains("Glow"))
+                        battleUnitInformationPassiveSlot.img_IconGlow = battleUnitInformationPassiveSlot.Rect
+                            .GetChild(j).gameObject.GetComponent<Image>();
+                    else if (battleUnitInformationPassiveSlot.Rect.GetChild(j).gameObject.name.Contains("Desc"))
+                        battleUnitInformationPassiveSlot.txt_PassiveDesc = battleUnitInformationPassiveSlot.Rect
+                            .GetChild(j).gameObject.GetComponent<TextMeshProUGUI>();
+                    else
+                        battleUnitInformationPassiveSlot.img_Icon =
+                            rectTransform.GetChild(j).gameObject.GetComponent<Image>();
+                rectTransform.gameObject.SetActive(false);
+                list.Add(battleUnitInformationPassiveSlot);
+            }
+
+            var list2 =
+                (List<BattleUnitInformationUI_PassiveList.BattleUnitInformationPassiveSlot>)
+                typeof(BattleUnitInformationUI_PassiveList).GetField("passiveSlotList", AccessTools.all)
+                    .GetValue(__instance);
+            var rectTransform2 = (RectTransform) typeof(BattleUnitInformationUI_PassiveList)
+                .GetField("rect_passiveListPanel", AccessTools.all).GetValue(__instance);
+            foreach (var battleUnitInformationPassiveSlot2 in list2.Where(battleUnitInformationPassiveSlot2 =>
+                battleUnitInformationPassiveSlot2.Rect.gameObject.activeSelf))
+                battleUnitInformationPassiveSlot2.Rect.gameObject.SetActive(false);
+            var num = 0;
+            var k = 0;
+            var num2 = 0f;
+            while (k < passivelist.Count)
+            {
+                if (k > list2.Count) return false;
+                if (passivelist[k].isHide)
+                {
+                    k++;
+                }
+                else
+                {
+                    list2[num].SetData(passivelist[k]);
+                    list2[num].Rect.gameObject.SetActive(true);
+                    num2 += list2[num].Rect.sizeDelta.y * 0.2f + 20f;
+                    num++;
+                    k++;
+                }
+            }
+
+            if (k == 0)
+            {
+                __instance.SetActive(false);
+                return false;
+            }
+
+            __instance.SetActive(true);
+            num2 = num2 < 380f ? 380f : num2 + 100f;
+            var sizeDelta = rectTransform2.sizeDelta;
+            sizeDelta.y = num2;
+            rectTransform2.sizeDelta = sizeDelta;
+            rectTransform2.anchoredPosition = Vector3.zero;
             return false;
         }
     }

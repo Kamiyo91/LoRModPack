@@ -59,14 +59,14 @@ namespace ModPack21341.Characters.CommonPassiveAbilities
 
         public override void BeforeRollDice(BattleDiceBehavior behavior)
         {
-            var number = RndChance.Next(0, 100);
+            var isType = RndChance.Next(0, 100) <= _stack * 10;
             var value = _stack;
-            var buffTypeNegative = number <= _stack * 10;
-            if (behavior.GetDiceVanillaMax() - value < behavior.GetDiceVanillaMin() && buffTypeNegative)
+            if (behavior.GetDiceVanillaMax() - value < behavior.GetDiceVanillaMin() && isType)
                 value = behavior.GetDiceVanillaMax() - behavior.GetDiceVanillaMin();
-            isNegative = buffTypeNegative;
-            UnitUtilities.SetPassiveCombatLog(this, owner);
-            behavior.ApplyDiceStatBonus(buffTypeNegative
+            var copyPassive = (PassiveAbility_ModPack21341Init13) MemberwiseClone();
+            copyPassive.isNegative = isType;
+            UnitUtilities.SetPassiveCombatLog(copyPassive, owner);
+            behavior.ApplyDiceStatBonus(isType
                 ? new DiceStatBonus {max = value * -1}
                 : new DiceStatBonus {max = value});
         }
