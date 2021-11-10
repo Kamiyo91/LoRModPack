@@ -174,6 +174,12 @@ namespace ModPack21341.Characters.Hayate.PassiveAbilities
             _finalPhase = value;
         }
 
+        public override void OnDie()
+        {
+            if (_finalPhase)
+                BattleObjectManager.instance.GetAliveList(Faction.Player).FirstOrDefault()?.Die();
+        }
+
         public override BattleUnitModel ChangeAttackTarget(BattleDiceCardModel card, int idx)
         {
             if (card.GetID() != new LorId(ModPack21341Init.PackageId, 54)) return base.ChangeAttackTarget(card, idx);

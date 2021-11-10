@@ -16,9 +16,6 @@ namespace ModPack21341.Characters.Mio.Buffs
         protected override string keywordId => "ModPack21341Init7";
         protected override string keywordIconId => "KeterFinal_Light";
 
-        public override string bufActivatedText =>
-            "Power +1 - Recover 3 Hp and Stagger Resist at the end of each scene";
-
         public override void BeforeRollDice(BattleDiceBehavior behavior)
         {
             behavior.ApplyDiceStatBonus(

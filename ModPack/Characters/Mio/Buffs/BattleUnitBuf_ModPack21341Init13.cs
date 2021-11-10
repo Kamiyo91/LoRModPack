@@ -17,9 +17,6 @@ namespace ModPack21341.Characters.Mio.Buffs
         protected override string keywordId => "ModPack21341Init8";
         protected override string keywordIconId => "Final_BigBird_Darkness";
 
-        public override string bufActivatedText =>
-            "Power +4 - Lose 80 Hp and 95 Stagger Resist each Scene";
-
         public override void BeforeRollDice(BattleDiceBehavior behavior)
         {
             behavior.ApplyDiceStatBonus(

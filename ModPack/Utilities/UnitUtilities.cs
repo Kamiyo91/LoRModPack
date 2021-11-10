@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Xml.Serialization;
 using HarmonyLib;
 using LOR_XML;
 using ModPack21341.Characters.CommonBuffs;
@@ -58,6 +56,7 @@ namespace ModPack21341.Utilities
             allyUnit.allyCardDetail.DrawCards(allyUnit.UnitData.unitData.GetStartDraw());
             allyUnit.emotionDetail.SetEmotionLevel(emotionLevel);
             allyUnit.emotionDetail.Reset();
+            allyUnit.cardSlotDetail.RecoverPlayPoint(allyUnit.cardSlotDetail.GetMaxPlayPoint());
             AddEmotionPassives(allyUnit);
         }
 
@@ -108,9 +107,7 @@ namespace ModPack21341.Utilities
         public static IEnumerable<BattleEmotionCardModel> SaveEmotionCards(List<BattleEmotionCardModel> emotionCardList)
         {
             var playerUnitsAlive = BattleObjectManager.instance.GetList(Faction.Player);
-            foreach (var emotionDetail in playerUnitsAlive.Select(x => x.emotionDetail))
-            foreach (var emotionCard in emotionDetail.PassiveList.Where(emotionCard =>
-                !emotionCardList.Contains(emotionCard)))
+            foreach (var emotionCard in playerUnitsAlive.SelectMany(x => x.emotionDetail.PassiveList).Where(emotionCard => !emotionCardList.Exists(x => x.XmlInfo.Equals(emotionCard.XmlInfo))))
                 emotionCardList.Add(emotionCard);
             return emotionCardList;
         }
@@ -230,44 +227,27 @@ namespace ModPack21341.Utilities
 
         public static List<int> GetSamuraiCardsId()
         {
-            return new List<int> {7, 7, 3, 3, 4, 4, 5, 5, 6};
+            return new List<int> { 7, 7, 3, 3, 4, 4, 5, 5, 6 };
         }
 
         public static List<int> GetMioCardsId()
         {
-            return new List<int> {20, 20, 21, 22, 23, 1, 1, 13, 13};
+            return new List<int> { 20, 20, 21, 22, 23, 1, 1, 13, 13 };
         }
 
         private static List<int> GetKamiyoCardsId()
         {
-            return new List<int> {32, 36, 31, 31, 33, 33, 34, 34, 46};
+            return new List<int> { 32, 36, 31, 31, 33, 33, 34, 34, 46 };
         }
 
         public static List<int> GetBlackSilenceMaskCardsId()
         {
-            return new List<int> {705206, 705207, 705208, 39, 40, 41, 42, 702001, 702004};
+            return new List<int> { 705206, 705207, 705208, 39, 40, 41, 42, 702001, 702004 };
         }
 
         private static List<int> GetHayateCardsId()
         {
-            return new List<int> {49, 51, 53, 48, 50, 50, 56, 52, 52, 52};
-        }
-
-        public static void AddBuffInfo()
-        {
-            var dictionary =
-                typeof(BattleEffectTextsXmlList).GetField("_dictionary", AccessTools.all)
-                    ?.GetValue(Singleton<BattleEffectTextsXmlList>.Instance) as Dictionary<string, BattleEffectText>;
-            var files = new DirectoryInfo(ModPack21341Init.Path + "/BattleEffectTexts").GetFiles();
-            foreach (var t in files)
-                using (var stringReader = new StringReader(File.ReadAllText(t.FullName)))
-                {
-                    var battleEffectTextRoot =
-                        (BattleEffectTextRoot) new XmlSerializer(typeof(BattleEffectTextRoot))
-                            .Deserialize(stringReader);
-                    foreach (var battleEffectText in battleEffectTextRoot.effectTextList)
-                        dictionary?.Add(battleEffectText.ID, battleEffectText);
-                }
+            return new List<int> { 49, 51, 53, 48, 50, 50, 56, 52, 52, 52 };
         }
 
         public static void SetPassiveCombatLog(PassiveAbilityBase passive, BattleUnitModel owner)
@@ -285,17 +265,23 @@ namespace ModPack21341.Utilities
 
         public static void AddUnitSephiraOnly(StageLibraryFloorModel instance, StageModel stage, UnitDataModel data)
         {
-            var list = (List<UnitBattleDataModel>) instance.GetType().GetField("_unitList", AccessTools.all)
+            var list = (List<UnitBattleDataModel>)instance.GetType().GetField("_unitList", AccessTools.all)
                 ?.GetValue(instance);
             var unitBattleDataModel = new UnitBattleDataModel(stage, data);
             if (!unitBattleDataModel.unitData.isSephirah) return;
             unitBattleDataModel.Init();
             list?.Add(unitBattleDataModel);
         }
+        public static void ClearCharList(StageLibraryFloorModel instance)
+        {
+            var list = (List<UnitBattleDataModel>)instance.GetType().GetField("_unitList", AccessTools.all)
+                ?.GetValue(instance);
+            list?.Clear();
+        }
 
         public static void FillBaseUnit(StageLibraryFloorModel floor)
         {
-            var modelTeam = (List<UnitBattleDataModel>) typeof(StageLibraryFloorModel).GetField("_unitList",
+            var modelTeam = (List<UnitBattleDataModel>)typeof(StageLibraryFloorModel).GetField("_unitList",
                     AccessTools.all)
                 ?.GetValue(Singleton<StageController>.Instance.GetStageModel().GetFloor(floor.Sephirah));
             var stage = Singleton<StageController>.Instance.GetStageModel();
@@ -315,19 +301,19 @@ namespace ModPack21341.Utilities
         {
             var component = instance.GetComponent<CanvasGroup>();
             var dialog = dialogs[Random.Range(0, dialogs.Count)].dialog;
-            var txtAbnormalityDlg = (TextMeshProUGUI) typeof(BattleDialogUI).GetField("_txtAbnormalityDlg",
+            var txtAbnormalityDlg = (TextMeshProUGUI)typeof(BattleDialogUI).GetField("_txtAbnormalityDlg",
                 AccessTools.all)?.GetValue(instance);
             txtAbnormalityDlg.text = dialog;
             txtAbnormalityDlg.fontMaterial.SetColor("_GlowColor",
                 SingletonBehavior<BattleManagerUI>.Instance.negativeCoinColor);
             txtAbnormalityDlg.color = SingletonBehavior<BattleManagerUI>.Instance.negativeTextColor;
-            var canvas = (Canvas) typeof(BattleDialogUI).GetField("_canvas",
+            var canvas = (Canvas)typeof(BattleDialogUI).GetField("_canvas",
                 AccessTools.all)?.GetValue(instance);
             canvas.enabled = true;
             component.interactable = true;
             component.blocksRaycasts = true;
             txtAbnormalityDlg.GetComponent<AbnormalityDlgEffect>().Init();
-            var _ = (Coroutine) typeof(BattleDialogUI).GetField("_routine",
+            var _ = (Coroutine)typeof(BattleDialogUI).GetField("_routine",
                 AccessTools.all)?.GetValue(instance);
             var method = typeof(BattleDialogUI).GetMethod("AbnormalityDlgRoutine", AccessTools.all);
             instance.StartCoroutine(method.Invoke(instance, new object[0]) as IEnumerator);
@@ -365,13 +351,13 @@ namespace ModPack21341.Utilities
             switch (originalUnitIndex)
             {
                 case 0:
-                    return new List<int> {1, 2, 3};
+                    return new List<int> { 1, 2, 3 };
                 case 1:
-                    return new List<int> {0, 2, 3};
+                    return new List<int> { 0, 2, 3 };
                 case 2:
-                    return new List<int> {0, 1, 3};
+                    return new List<int> { 0, 1, 3 };
                 default:
-                    return new List<int> {0, 1, 2};
+                    return new List<int> { 0, 1, 2 };
             }
         }
     }

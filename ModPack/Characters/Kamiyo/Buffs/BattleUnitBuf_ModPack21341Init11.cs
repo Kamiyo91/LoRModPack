@@ -12,9 +12,6 @@
         public override int paramInBufDesc => 0;
         protected override string keywordIconId => "BlackFrantic";
 
-        public override string bufActivatedText =>
-            "At the end of each scene full recover Light.Power +4 against Hayate, when the battle ends,Die.";
-
         public override void BeforeRollDice(BattleDiceBehavior behavior)
         {
             behavior.ApplyDiceStatBonus(new DiceStatBonus {power = 4});

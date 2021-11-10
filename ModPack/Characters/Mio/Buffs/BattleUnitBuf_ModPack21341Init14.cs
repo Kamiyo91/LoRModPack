@@ -12,8 +12,5 @@
         public override int paramInBufDesc => 0;
         protected override string keywordId => "ModPack21341Init9";
         protected override string keywordIconId => "IndexRelease";
-
-        public override string bufActivatedText =>
-            "Once per scene nullify Damage if the attacker is Corrupted Self";
     }
 }

@@ -8,11 +8,9 @@ namespace ModPack21341.Characters.Hayate.Buffs
     {
         private int _addValue;
         public override BufPositiveType positiveType => BufPositiveType.Positive;
-        protected override string keywordId => "ModPack21341Init13";
 
-        public override string bufActivatedText => _owner.faction == Faction.Player
-            ? "On 90 or more Stacks,gain Power+1"
-            : "Come on!Show me what you got!";
+        protected override string keywordId =>
+            _owner.faction == Faction.Player ? "ModPack21341Init13" : "ModPack21341Init15";
 
         public override void Init(BattleUnitModel owner)
         {

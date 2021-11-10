@@ -214,3 +214,20 @@
             unitDataModel.InitBattleDialogByDefaultBook(new LorId(ModPack21341Init.PackageId, unit.DialogId));
             return unitBattleDataModel;
         }
+        
+        public static void AddBuffInfo()
+        {
+            var dictionary =
+                typeof(BattleEffectTextsXmlList).GetField("_dictionary", AccessTools.all)
+                    ?.GetValue(Singleton<BattleEffectTextsXmlList>.Instance) as Dictionary<string, BattleEffectText>;
+            var files = new DirectoryInfo(ModPack21341Init.Path + "/BattleEffectTexts").GetFiles();
+            foreach (var t in files)
+                using (var stringReader = new StringReader(File.ReadAllText(t.FullName)))
+                {
+                    var battleEffectTextRoot =
+                        (BattleEffectTextRoot) new XmlSerializer(typeof(BattleEffectTextRoot))
+                            .Deserialize(stringReader);
+                    foreach (var battleEffectText in battleEffectTextRoot.effectTextList)
+                        dictionary?.Add(battleEffectText.ID, battleEffectText);
+                }
+        }

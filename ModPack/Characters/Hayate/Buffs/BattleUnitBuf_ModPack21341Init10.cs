@@ -17,9 +17,6 @@ namespace ModPack21341.Characters.Hayate.Buffs
         public override int paramInBufDesc => 0;
         protected override string keywordId => "ModPack21341Init14";
 
-        public override string bufActivatedText =>
-            "Power +2, Gain and loss of [Entertain Me] stacks are doubled";
-
         public override void BeforeRollDice(BattleDiceBehavior behavior)
         {
             behavior.ApplyDiceStatBonus(
