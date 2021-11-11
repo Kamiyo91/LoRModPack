@@ -22,7 +22,6 @@ namespace ModPack21341.Harmony
         private static string _path;
         public static readonly Dictionary<string, Sprite> ArtWorks = new Dictionary<string, Sprite>();
         private static string _language;
-
         public override void OnInitializeMod()
         {
             var harmony = new HarmonyLib.Harmony("LOR.ModPack21341_MOD");
@@ -31,24 +30,27 @@ namespace ModPack21341.Harmony
             _path = Path.GetDirectoryName(
                 Uri.UnescapeDataString(new UriBuilder(Assembly.GetExecutingAssembly().CodeBase).Path));
             method = typeof(ModPack21341Init).GetMethod("BookModel_GetThumbSprite");
-            harmony.Patch(typeof(BookModel).GetMethod("GetThumbSprite", AccessTools.all), null,new HarmonyMethod(method));
+            harmony.Patch(typeof(BookModel).GetMethod("GetThumbSprite", AccessTools.all), null,
+                new HarmonyMethod(method));
             method = typeof(ModPack21341Init).GetMethod("StageLibraryFloorModel_InitUnitList");
             harmony.Patch(typeof(StageLibraryFloorModel).GetMethod("InitUnitList", AccessTools.all),
-                null,new HarmonyMethod(method));
+                null, new HarmonyMethod(method));
             method = typeof(ModPack21341Init).GetMethod("UISettingInvenEquipPageListSlot_SetBooksData");
             harmony.Patch(typeof(UISettingInvenEquipPageListSlot).GetMethod("SetBooksData", AccessTools.all),
-                null,new HarmonyMethod(method));
+                null, new HarmonyMethod(method));
             method = typeof(ModPack21341Init).GetMethod("UIInvenEquipPageListSlot_SetBooksData");
             harmony.Patch(typeof(UIInvenEquipPageListSlot).GetMethod("SetBooksData", AccessTools.all),
-                null,new HarmonyMethod(method));
+                null, new HarmonyMethod(method));
             method = typeof(ModPack21341Init).GetMethod("UISpriteDataManager_GetStoryIcon");
             harmony.Patch(typeof(UISpriteDataManager).GetMethod("GetStoryIcon", AccessTools.all),
-                null,new HarmonyMethod(method));
+                null, new HarmonyMethod(method));
             method = typeof(ModPack21341Init).GetMethod("BattleUnitInformationUI_PassiveList_SetData");
             harmony.Patch(typeof(BattleUnitInformationUI_PassiveList).GetMethod("SetData", AccessTools.all),
                 null,new HarmonyMethod(method));
             _language = GlobalGameManager.Instance.CurrentOption.language;
             MapUtilities.GetArtWorks(new DirectoryInfo(_path + "/ArtWork"));
+            UnitUtilities.ChangeCardItem(ItemXmlDataList.instance);
+            UnitUtilities.ChangeDialogItem(BattleDialogXmlList.Instance);
             AddLocalize();
             RemoveError();
         }

@@ -85,7 +85,8 @@ namespace ModPack21341.StageManager
 
         public void AddValueToEmotionCardList(IEnumerable<BattleEmotionCardModel> card)
         {
-            _emotionCards.AddRange(card.Where(emotionCard => !_emotionCards.Exists(x => x.XmlInfo.Equals(emotionCard.XmlInfo))));
+            _emotionCards.AddRange(card.Where(emotionCard =>
+                !_emotionCards.Exists(x => x.XmlInfo.Equals(emotionCard.XmlInfo))));
         }
 
         private void CheckLastPhase()

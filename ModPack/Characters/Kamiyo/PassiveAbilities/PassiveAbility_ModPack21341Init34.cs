@@ -57,7 +57,6 @@ namespace ModPack21341.Characters.Kamiyo.PassiveAbilities
         {
             RemoveImmortalBuff();
         }
-
         private void RemoveImmortalBuff()
         {
             if (owner.bufListDetail.GetActivatedBufList().Find(x => x is BattleUnitBuf_ModPack21341Init4) is

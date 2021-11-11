@@ -6,6 +6,7 @@ namespace ModPack21341.Characters.PurpleTear.CardAbilities
     //CustomDefenseStance
     public class DiceCardSelfAbility_ModPack21341Init26 : DiceCardSelfAbilityBase
     {
+        public static string Desc = "[On Play]Change to Guarding Stance and boost Defensive Dice Power by +1. Stance can be Changed every 2 Scenes";
         public override bool OnChooseCard(BattleUnitModel owner)
         {
             if (owner.bufListDetail.GetActivatedBuf(KeywordBuf.PurpleCoolTime) != null) return false;

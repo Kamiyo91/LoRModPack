@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
+using LOR_DiceSystem;
 using LOR_XML;
 using ModPack21341.Characters.CommonBuffs;
 using ModPack21341.Characters.CommonPassiveAbilities;
@@ -11,12 +12,26 @@ using ModPack21341.Models;
 using TMPro;
 using UI;
 using UnityEngine;
+using DialogType = LOR_XML.DialogType;
 using Random = UnityEngine.Random;
 
 namespace ModPack21341.Utilities
 {
     public static class UnitUtilities
     {
+        private static readonly List<int> PersonalCardList = new List<int>{900,901,903,904,906,907,
+            908, 909, 911, 912, 913, 914, 915, 916, 917, 928, 930, 931, 932 };
+        private static readonly List<int> EgoPersonalCardList = new List<int> { 902, 905, 910, 927, 929 };
+        private static readonly List<int> OnlyPageCardList = new List<int>
+        {
+            8,9,10,11,12,23,17,18,22,43,32,34,36,46,
+            47,49,50,51,53,56
+        };
+        private static readonly List<int> AngelaNpcCardList = new List<int> { 918, 919, 920, 921, 922, 923, 924, 925, 926 };
+        private static readonly List<int> SamuraiCardList = new List<int> { 8, 9, 10, 11, 12 };
+        private static readonly List<int> KamiyoCardList = new List<int> { 32, 34, 36, 46 };
+        private static readonly List<int> MioCardList = new List<int> { 23, 17, 18, 22 };
+        private static readonly List<int> HayateCardList = new List<int> { 47, 49, 50, 51, 53, 56 };
         public static void ChangeDeck(BattleUnitModel owner, IEnumerable<int> newDeck)
         {
             owner.allyCardDetail.ExhaustAllCards();
@@ -107,7 +122,8 @@ namespace ModPack21341.Utilities
         public static IEnumerable<BattleEmotionCardModel> SaveEmotionCards(List<BattleEmotionCardModel> emotionCardList)
         {
             var playerUnitsAlive = BattleObjectManager.instance.GetList(Faction.Player);
-            foreach (var emotionCard in playerUnitsAlive.SelectMany(x => x.emotionDetail.PassiveList).Where(emotionCard => !emotionCardList.Exists(x => x.XmlInfo.Equals(emotionCard.XmlInfo))))
+            foreach (var emotionCard in playerUnitsAlive.SelectMany(x => x.emotionDetail.PassiveList)
+                .Where(emotionCard => !emotionCardList.Exists(x => x.XmlInfo.Equals(emotionCard.XmlInfo))))
                 emotionCardList.Add(emotionCard);
             return emotionCardList;
         }
@@ -272,6 +288,7 @@ namespace ModPack21341.Utilities
             unitBattleDataModel.Init();
             list?.Add(unitBattleDataModel);
         }
+
         public static void ClearCharList(StageLibraryFloorModel instance)
         {
             var list = (List<UnitBattleDataModel>)instance.GetType().GetField("_unitList", AccessTools.all)
@@ -358,6 +375,266 @@ namespace ModPack21341.Utilities
                     return new List<int> { 0, 1, 3 };
                 default:
                     return new List<int> { 0, 1, 2 };
+            }
+        }
+
+        private static void SetBaseKeywordCard(LorId id, ref Dictionary<LorId, DiceCardXmlInfo> cardDictionary,
+            ref List<DiceCardXmlInfo> cardXmlList)
+        {
+            var keywordsList = GetKeywordsList(id.id).ToList();
+            var diceCardXmlInfo2 = CardOptionChange(cardDictionary[id], new List<CardOption>(), true, keywordsList);
+            cardDictionary[id] = diceCardXmlInfo2;
+            cardXmlList.Add(diceCardXmlInfo2);
+        }
+        private static void SetCustomCardOption(CardOption option, LorId id, bool keywordsRequired, ref Dictionary<LorId, DiceCardXmlInfo> cardDictionary, ref List<DiceCardXmlInfo> cardXmlList)
+        {
+            var keywordsList = new List<string>();
+            if (keywordsRequired) keywordsList = GetKeywordsList(id.id).ToList();
+            var diceCardXmlInfo2 = CardOptionChange(cardDictionary[id], new List<CardOption> { option }, keywordsRequired, keywordsList);
+            cardDictionary[id] = diceCardXmlInfo2;
+            cardXmlList.Add(diceCardXmlInfo2);
+        }
+        private static void SetRangeSpecial(LorId id, ref Dictionary<LorId, DiceCardXmlInfo> cardDictionary, ref List<DiceCardXmlInfo> cardXmlList)
+        {
+            var diceCardXmlInfo2 = CardOptionChange(cardDictionary[id], new List<CardOption>(), false, null, "", "", 0, true);
+            cardDictionary[id] = diceCardXmlInfo2;
+            cardXmlList.Add(diceCardXmlInfo2);
+        }
+        private static void SetAngelaCard(LorId id, ref Dictionary<LorId, DiceCardXmlInfo> cardDictionary, ref List<DiceCardXmlInfo> cardXmlList)
+        {
+            var skinName = "";
+            var mapName = "";
+            var skinHeight = 0;
+            SetAngelaCardInfo(id.id, ref skinName, ref mapName, ref skinHeight);
+            var diceCardXmlInfo2 = CardOptionChange(cardDictionary[id], new List<CardOption>(), false, null, skinName, mapName, skinHeight);
+            cardDictionary[id] = diceCardXmlInfo2;
+            cardXmlList.Add(diceCardXmlInfo2);
+        }
+
+        private static IEnumerable<string> GetKeywordsList(int id)
+        {
+            if (KamiyoCardList.Contains(id))
+                return new List<string> { "ModPack21341Init6", "ModPack21341Init1" };
+            if (MioCardList.Contains(id))
+                return new List<string> { "ModPack21341Init6", "ModPack21341Init2" };
+            if (HayateCardList.Contains(id))
+                return new List<string> { "ModPack21341Init6", "ModPack21341Init3" };
+            return SamuraiCardList.Contains(id) ? new List<string> { "ModPack21341Init6", "ModPack21341Init4" } : new List<string> { "ModPack21341Init6" };
+        }
+        private static void SetAngelaCardInfo(int id, ref string skinName, ref string mapName, ref int skinHeight)
+        {
+            switch (id)
+            {
+                case 918:
+                    skinName = "EGO_ScorchedGirl";
+                    mapName = "ScorchedGirl";
+                    break;
+                case 919:
+                    skinName = "EGO_Murderer";
+                    mapName = "Murderer";
+                    break;
+                case 920:
+                    skinName = "EGO_SpiderBud";
+                    mapName = "SpiderBud";
+                    break;
+                case 921:
+                    skinName = "EGO_Orchestra";
+                    break;
+                case 922:
+                    skinName = "EGO_Greed_Reason";
+                    mapName = "KingOfGreed";
+                    break;
+                case 923:
+                    skinName = "EGO_Nosferatu";
+                    mapName = "Nosferatu";
+                    break;
+                case 924:
+                    skinName = "EGO_Ozma";
+                    mapName = "Ozma";
+                    break;
+                case 925:
+                    skinName = "EGO_ApocalypseBird";
+                    mapName = "ApocalypseBird";
+                    skinHeight = 500;
+                    break;
+                case 926:
+                    skinName = "EGO_OneBadManyGood";
+                    mapName = "WhiteNight";
+                    break;
+            }
+        }
+        private static DiceCardXmlInfo CardOptionChange(DiceCardXmlInfo cardXml, List<CardOption> option, bool keywordRequired, List<string> keywords,
+            string skinName = "", string mapName = "", int skinHeight = 0, bool changeRange = false)
+        {
+            var spec = new DiceCardSpec
+            {
+                affection = cardXml.Spec.affection,
+                Cost = cardXml.Spec.Cost,
+                emotionLimit = cardXml.Spec.emotionLimit,
+                Ranged = CardRange.Special
+            };
+            return new DiceCardXmlInfo(cardXml.id)
+            {
+                workshopID = cardXml.workshopID,
+                workshopName = cardXml.workshopName,
+                Artwork = cardXml.Artwork,
+                Chapter = cardXml.Chapter,
+                category = cardXml.category,
+                DiceBehaviourList = cardXml.DiceBehaviourList,
+                _textId = cardXml._textId,
+                optionList = option.Any() ? option : cardXml.optionList,
+                Priority = cardXml.Priority,
+                Rarity = cardXml.Rarity,
+                Script = cardXml.Script,
+                ScriptDesc = cardXml.ScriptDesc,
+                Spec = changeRange ? spec : cardXml.Spec,
+                SpecialEffect = cardXml.SpecialEffect,
+                SkinChange = string.IsNullOrEmpty(skinName) ? cardXml.SkinChange : skinName,
+                SkinChangeType = cardXml.SkinChangeType,
+                SkinHeight = skinHeight != 0 ? skinHeight : cardXml.SkinHeight,
+                MapChange = string.IsNullOrEmpty(mapName) ? cardXml.MapChange : mapName,
+                PriorityScript = cardXml.PriorityScript,
+                Keywords = keywordRequired ? keywords : cardXml.Keywords
+            };
+        }
+        public static void ChangeCardItem(ItemXmlDataList instance)
+        {
+            var dictionary = (Dictionary<LorId, DiceCardXmlInfo>)instance.GetType()
+                .GetField("_cardInfoTable", AccessTools.all).GetValue(instance);
+            var list = (List<DiceCardXmlInfo>)instance.GetType()
+                .GetField("_cardInfoList", AccessTools.all).GetValue(instance);
+            foreach (var (key, _) in dictionary.Where(x => x.Key.packageId == ModPack21341Init.PackageId).ToList())
+            {
+                if (PersonalCardList.Contains(key.id))
+                {
+                    SetCustomCardOption(CardOption.Personal, key, false, ref dictionary, ref list);
+                    continue;
+                }
+
+                if (EgoPersonalCardList.Contains(key.id))
+                {
+                    SetCustomCardOption(CardOption.EgoPersonal, key, false, ref dictionary, ref list);
+                    continue;
+                }
+
+                if (OnlyPageCardList.Contains(key.id))
+                {
+                    SetCustomCardOption(CardOption.OnlyPage, key, true, ref dictionary, ref list);
+                    continue;
+                }
+
+                if (AngelaNpcCardList.Contains(key.id))
+                {
+                    SetAngelaCard(key, ref dictionary, ref list);
+                    continue;
+                }
+
+                if (key.id == 920)
+                {
+                    SetRangeSpecial(key, ref dictionary, ref list);
+                    continue;
+                }
+                SetBaseKeywordCard(key, ref dictionary, ref list);
+            }
+        }
+
+        public static void ChangeDialogItem(BattleDialogXmlList instance)
+        {
+            var dictionary = (Dictionary<string, BattleDialogRoot>)instance.GetType()
+                .GetField("_dictionary", AccessTools.all).GetValue(instance);
+            foreach (var item in dictionary.SelectMany(x => x.Value.characterList).Where(y => y.id.packageId == ModPack21341Init.PackageId))
+            {
+                if (item.id.id == 200)
+                {
+                    var dlg = new BattleDialog
+                    {
+                        dialogID = "0",
+                        dialogContent = "It doesn't look good.I'll do my best!"
+                    };
+                    var dlgList = new List<BattleDialog> {dlg};
+                    item.dialogTypeList.Add(new BattleDialogType
+                        {dialogType = DialogType.SPECIAL_EVENT, dialogList = dlgList});
+                }
+                if (item.id.id == 3)
+                {
+                    var dlg1 = new BattleDialog
+                    {
+                        dialogID = "0",
+                        dialogContent = "Everyone who stand in my way must vanish!!!"
+                    };
+                    var dlg2 = new BattleDialog
+                    {
+                        dialogID = "1",
+                        dialogContent = "I..I...Ahhhhh!"
+                    };
+                    var dlgList = new List<BattleDialog> { dlg1,dlg2 };
+                    item.dialogTypeList.Add(new BattleDialogType
+                        { dialogType = DialogType.SPECIAL_EVENT, dialogList = dlgList });
+                }
+                if (item.id.id == 201)
+                {
+                    var dlg1 = new BattleDialog
+                    {
+                        dialogID = "0",
+                        dialogContent = "The situation seems really bad."
+                    };
+                    var dlg2 = new BattleDialog
+                    {
+                        dialogID = "1",
+                        dialogContent = "I must stop her now"
+                    };
+                    var dlgList = new List<BattleDialog> { dlg1, dlg2 };
+                    item.dialogTypeList.Add(new BattleDialogType
+                        { dialogType = DialogType.SPECIAL_EVENT, dialogList = dlgList });
+                }
+                if (item.id.id == 202)
+                {
+                    var dlg1 = new BattleDialog
+                    {
+                        dialogID = "0",
+                        dialogContent = "It's not over yet!"
+                    };
+                    var dlg2 = new BattleDialog
+                    {
+                        dialogID = "1",
+                        dialogContent = "Not bad.Let's see how you'll handle this now!"
+                    };
+                    var dlgList = new List<BattleDialog> { dlg1, dlg2 };
+                    item.dialogTypeList.Add(new BattleDialogType
+                        { dialogType = DialogType.SPECIAL_EVENT, dialogList = dlgList });
+                }
+                if (item.id.id == 14)
+                {
+                    var dlg1 = new BattleDialog
+                    {
+                        dialogID = "0",
+                        dialogContent = "I'll not fall!Not now!"
+                    };
+                    var dlg2 = new BattleDialog
+                    {
+                        dialogID = "1",
+                        dialogContent = "Think you can keep up with me?..."
+                    };
+                    var dlgList = new List<BattleDialog> { dlg1, dlg2 };
+                    item.dialogTypeList.Add(new BattleDialogType
+                        { dialogType = DialogType.SPECIAL_EVENT, dialogList = dlgList });
+                }
+                if (item.id.id == 8 || item.id.id == 9)
+                {
+                    var dlg1 = new BattleDialog
+                    {
+                        dialogID = "0",
+                        dialogContent = "Playtime is over."
+                    };
+                    var dlg2 = new BattleDialog
+                    {
+                        dialogID = "1",
+                        dialogContent = "Time to end this."
+                    };
+                    var dlgList = new List<BattleDialog> { dlg1, dlg2 };
+                    item.dialogTypeList.Add(new BattleDialogType
+                        { dialogType = DialogType.SPECIAL_EVENT, dialogList = dlgList });
+                }
             }
         }
     }
