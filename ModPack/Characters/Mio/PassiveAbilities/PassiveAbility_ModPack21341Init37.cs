@@ -46,6 +46,7 @@ namespace ModPack21341.Characters.Mio.PassiveAbilities
             if (owner.passiveDetail.PassiveList.Find(x => x is PassiveAbility_ModPack21341Init38) is
                 PassiveAbility_ModPack21341Init38 passive) passive.SetCountValue(4);
         }
+
         private void ImmortalOnLethalDamage()
         {
             _deathCheck = true;

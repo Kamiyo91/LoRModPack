@@ -1,4 +1,4 @@
-﻿namespace ModPack21341.Characters.Hayate.CardAbilities
+﻿namespace ModPack21341.Characters.Mio.CardAbilities
 {
     //Speed6Power1
     public class DiceCardSelfAbility_ModPack21341Init34 : DiceCardSelfAbilityBase

@@ -6,7 +6,9 @@ namespace ModPack21341.Characters.PurpleTear.CardAbilities
     //CustomSlashStance
     public class DiceCardSelfAbility_ModPack21341Init29 : DiceCardSelfAbilityBase
     {
-        public static string Desc = "[On Play]Change to Slashing Stance and boost Slash Dice Power by +1. Stance can be Changed every 2 Scenes";
+        public static string Desc =
+            "[On Play]Change to Slashing Stance and boost Slash Dice Power by +1. Stance can be Changed every 2 Scenes";
+
         public override bool OnChooseCard(BattleUnitModel owner)
         {
             if (owner.bufListDetail.GetActivatedBuf(KeywordBuf.PurpleCoolTime) != null) return false;

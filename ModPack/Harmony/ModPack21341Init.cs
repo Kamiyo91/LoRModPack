@@ -13,6 +13,7 @@ using TMPro;
 using UI;
 using UnityEngine;
 using UnityEngine.UI;
+using Object = UnityEngine.Object;
 
 namespace ModPack21341.Harmony
 {
@@ -22,6 +23,7 @@ namespace ModPack21341.Harmony
         private static string _path;
         public static readonly Dictionary<string, Sprite> ArtWorks = new Dictionary<string, Sprite>();
         private static string _language;
+
         public override void OnInitializeMod()
         {
             var harmony = new HarmonyLib.Harmony("LOR.ModPack21341_MOD");
@@ -46,7 +48,7 @@ namespace ModPack21341.Harmony
                 null, new HarmonyMethod(method));
             method = typeof(ModPack21341Init).GetMethod("BattleUnitInformationUI_PassiveList_SetData");
             harmony.Patch(typeof(BattleUnitInformationUI_PassiveList).GetMethod("SetData", AccessTools.all),
-                null,new HarmonyMethod(method));
+                new HarmonyMethod(method));
             _language = GlobalGameManager.Instance.CurrentOption.language;
             MapUtilities.GetArtWorks(new DirectoryInfo(_path + "/ArtWork"));
             UnitUtilities.ChangeCardItem(ItemXmlDataList.instance);
@@ -59,13 +61,13 @@ namespace ModPack21341.Harmony
         {
             var dictionary =
                 typeof(BattleEffectTextsXmlList).GetField("_dictionary", AccessTools.all)
-                    .GetValue(Singleton<BattleEffectTextsXmlList>.Instance) as Dictionary<string, BattleEffectText>;
+                    ?.GetValue(Singleton<BattleEffectTextsXmlList>.Instance) as Dictionary<string, BattleEffectText>;
             var files = new DirectoryInfo(_path + "/Localize/" + _language + "/EffectTexts").GetFiles();
             foreach (var t in files)
                 using (var stringReader = new StringReader(File.ReadAllText(t.FullName)))
                 {
                     var battleEffectTextRoot =
-                        (BattleEffectTextRoot)new XmlSerializer(typeof(BattleEffectTextRoot))
+                        (BattleEffectTextRoot) new XmlSerializer(typeof(BattleEffectTextRoot))
                             .Deserialize(stringReader);
                     foreach (var battleEffectText in battleEffectTextRoot.effectTextList)
                         dictionary?.Add(battleEffectText.ID, battleEffectText);
@@ -329,9 +331,9 @@ namespace ModPack21341.Harmony
             List<BookModel> books, UIStoryKeyData storyKey)
         {
             if (storyKey.workshopId != PackageId) return;
-            var image = (Image)__instance.GetType().GetField("img_IconGlow", AccessTools.all).GetValue(__instance);
-            var image2 = (Image)__instance.GetType().GetField("img_Icon", AccessTools.all).GetValue(__instance);
-            var textMeshProUGUI = (TextMeshProUGUI)__instance.GetType().GetField("txt_StoryName", AccessTools.all)
+            var image = (Image) __instance.GetType().GetField("img_IconGlow", AccessTools.all).GetValue(__instance);
+            var image2 = (Image) __instance.GetType().GetField("img_Icon", AccessTools.all).GetValue(__instance);
+            var textMeshProUGUI = (TextMeshProUGUI) __instance.GetType().GetField("txt_StoryName", AccessTools.all)
                 .GetValue(__instance);
             if (books.Count < 0) return;
             image.enabled = true;
@@ -345,9 +347,9 @@ namespace ModPack21341.Harmony
             List<BookModel> books, UIStoryKeyData storyKey)
         {
             if (storyKey.workshopId != PackageId) return;
-            var image = (Image)__instance.GetType().GetField("img_IconGlow", AccessTools.all).GetValue(__instance);
-            var image2 = (Image)__instance.GetType().GetField("img_Icon", AccessTools.all).GetValue(__instance);
-            var textMeshProUGUI = (TextMeshProUGUI)__instance.GetType().GetField("txt_StoryName", AccessTools.all)
+            var image = (Image) __instance.GetType().GetField("img_IconGlow", AccessTools.all).GetValue(__instance);
+            var image2 = (Image) __instance.GetType().GetField("img_Icon", AccessTools.all).GetValue(__instance);
+            var textMeshProUGUI = (TextMeshProUGUI) __instance.GetType().GetField("txt_StoryName", AccessTools.all)
                 .GetValue(__instance);
             if (books.Count < 0) return;
             image.enabled = true;
@@ -369,15 +371,37 @@ namespace ModPack21341.Harmony
             };
         }
 
-        public static void BattleUnitInformationUI_PassiveList_SetData(BattleUnitInformationUI_PassiveList __instance,
+        public static bool BattleUnitInformationUI_PassiveList_SetData(BattleUnitInformationUI_PassiveList __instance,
             List<PassiveAbilityBase> passivelist)
         {
+            var list = (List<BattleUnitInformationUI_PassiveList.BattleUnitInformationPassiveSlot>) __instance.GetType()
+                .GetField("passiveSlotList", AccessTools.all)?.GetValue(__instance);
+            for (var i = list.Count; i < passivelist.Count; i++)
+            {
+                var battleUnitInformationPassiveSlot =
+                    new BattleUnitInformationUI_PassiveList.BattleUnitInformationPassiveSlot();
+                var rectTransform = Object.Instantiate(list[0].Rect, list[0].Rect.parent);
+                battleUnitInformationPassiveSlot.Rect = rectTransform;
+                for (var j = 0; j < battleUnitInformationPassiveSlot.Rect.childCount; j++)
+                    if (battleUnitInformationPassiveSlot.Rect.GetChild(j).gameObject.name.Contains("Glow"))
+                        battleUnitInformationPassiveSlot.img_IconGlow = battleUnitInformationPassiveSlot.Rect
+                            .GetChild(j).gameObject.GetComponent<Image>();
+                    else if (battleUnitInformationPassiveSlot.Rect.GetChild(j).gameObject.name.Contains("Desc"))
+                        battleUnitInformationPassiveSlot.txt_PassiveDesc = battleUnitInformationPassiveSlot.Rect
+                            .GetChild(j).gameObject.GetComponent<TextMeshProUGUI>();
+                    else
+                        battleUnitInformationPassiveSlot.img_Icon =
+                            rectTransform.GetChild(j).gameObject.GetComponent<Image>();
+                rectTransform.gameObject.SetActive(false);
+                list.Add(battleUnitInformationPassiveSlot);
+            }
+
             var list2 =
                 (List<BattleUnitInformationUI_PassiveList.BattleUnitInformationPassiveSlot>)
                 typeof(BattleUnitInformationUI_PassiveList).GetField("passiveSlotList", AccessTools.all)
-                    .GetValue(__instance);
-            var rectTransform2 = (RectTransform)typeof(BattleUnitInformationUI_PassiveList)
-                .GetField("rect_passiveListPanel", AccessTools.all).GetValue(__instance);
+                    ?.GetValue(__instance);
+            var rectTransform2 = (RectTransform) typeof(BattleUnitInformationUI_PassiveList)
+                .GetField("rect_passiveListPanel", AccessTools.all)?.GetValue(__instance);
             foreach (var battleUnitInformationPassiveSlot2 in list2.Where(battleUnitInformationPassiveSlot2 =>
                 battleUnitInformationPassiveSlot2.Rect.gameObject.activeSelf))
                 battleUnitInformationPassiveSlot2.Rect.gameObject.SetActive(false);
@@ -386,7 +410,7 @@ namespace ModPack21341.Harmony
             var num2 = 0f;
             while (k < passivelist.Count)
             {
-                if (k > list2.Count) return;
+                if (k > list2.Count) return false;
                 if (passivelist[k].isHide)
                 {
                     k++;
@@ -404,15 +428,17 @@ namespace ModPack21341.Harmony
             if (k == 0)
             {
                 __instance.SetActive(false);
-                return;
+                return false;
             }
 
             __instance.SetActive(true);
             num2 = num2 < 380f ? 380f : num2 + 100f;
+            if (rectTransform2 is null) return false;
             var sizeDelta = rectTransform2.sizeDelta;
             sizeDelta.y = num2;
             rectTransform2.sizeDelta = sizeDelta;
             rectTransform2.anchoredPosition = Vector3.zero;
+            return false;
         }
     }
 }

@@ -12,14 +12,14 @@ namespace ModPack21341.Characters.CommonPassiveAbilities
         private bool _activated;
         private List<int> _awakenedDeck;
         private bool _awakenedDeckIsActive;
-        private List<int> _originalDeck;
+        private List<LorId> _originalDeck;
 
         public override void Init(BattleUnitModel self)
         {
             base.Init(self);
             Hide();
             _awakenedDeckIsActive = false;
-            _originalDeck = owner.allyCardDetail.GetAllDeck().Select(x => x.GetID().id).ToList();
+            _originalDeck = owner.allyCardDetail.GetAllDeck().Select(x => x.GetID()).ToList();
             _activated = !owner.passiveDetail.PassiveList.Exists(x => x is PassiveAbility_ModPack21341Init50);
         }
 

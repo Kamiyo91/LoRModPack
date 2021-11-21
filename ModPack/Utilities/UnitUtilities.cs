@@ -12,31 +12,46 @@ using ModPack21341.Models;
 using TMPro;
 using UI;
 using UnityEngine;
-using DialogType = LOR_XML.DialogType;
 using Random = UnityEngine.Random;
 
 namespace ModPack21341.Utilities
 {
     public static class UnitUtilities
     {
-        private static readonly List<int> PersonalCardList = new List<int>{900,901,903,904,906,907,
-            908, 909, 911, 912, 913, 914, 915, 916, 917, 928, 930, 931, 932 };
-        private static readonly List<int> EgoPersonalCardList = new List<int> { 902, 905, 910, 927, 929 };
+        private static readonly List<int> PersonalCardList = new List<int>
+        {
+            900, 901, 903, 904, 906, 907,
+            908, 909, 911, 912, 913, 914, 915, 916, 917, 928, 930, 931, 932
+        };
+
+        private static readonly List<int> EgoPersonalCardList = new List<int> {902, 905, 910, 927, 929};
+
         private static readonly List<int> OnlyPageCardList = new List<int>
         {
-            8,9,10,11,12,23,17,18,22,43,32,34,36,46,
-            47,49,50,51,53,56
+            8, 9, 10, 11, 12, 23, 17, 22, 43, 32, 34, 36, 46,
+            47, 49, 50, 51, 53, 56
         };
-        private static readonly List<int> AngelaNpcCardList = new List<int> { 918, 919, 920, 921, 922, 923, 924, 925, 926 };
-        private static readonly List<int> SamuraiCardList = new List<int> { 8, 9, 10, 11, 12 };
-        private static readonly List<int> KamiyoCardList = new List<int> { 32, 34, 36, 46 };
-        private static readonly List<int> MioCardList = new List<int> { 23, 17, 18, 22 };
-        private static readonly List<int> HayateCardList = new List<int> { 47, 49, 50, 51, 53, 56 };
+
+        private static readonly List<int> AngelaNpcCardList = new List<int>
+            {918, 919, 920, 921, 922, 923, 924, 925, 926};
+
+        private static readonly List<int> SamuraiCardList = new List<int> {8, 9, 10, 11, 12};
+        private static readonly List<int> KamiyoCardList = new List<int> {32, 34, 36, 46};
+        private static readonly List<int> MioCardList = new List<int> {23, 17, 22};
+        private static readonly List<int> HayateCardList = new List<int> {47, 49, 50, 51, 53, 56};
+
         public static void ChangeDeck(BattleUnitModel owner, IEnumerable<int> newDeck)
         {
             owner.allyCardDetail.ExhaustAllCards();
             foreach (var cardId in newDeck)
                 owner.allyCardDetail.AddNewCardToDeck(new LorId(ModPack21341Init.PackageId, cardId));
+        }
+
+        public static void ChangeDeck(BattleUnitModel owner, IEnumerable<LorId> newDeck)
+        {
+            owner.allyCardDetail.ExhaustAllCards();
+            foreach (var cardId in newDeck)
+                owner.allyCardDetail.AddNewCardToDeck(cardId);
         }
 
         public static void PhaseChangeAllPlayerUnitRecoverBonus(int hp, int stagger, int light,
@@ -243,27 +258,27 @@ namespace ModPack21341.Utilities
 
         public static List<int> GetSamuraiCardsId()
         {
-            return new List<int> { 7, 7, 3, 3, 4, 4, 5, 5, 6 };
+            return new List<int> {7, 7, 3, 3, 4, 4, 5, 5, 6};
         }
 
         public static List<int> GetMioCardsId()
         {
-            return new List<int> { 20, 20, 21, 22, 23, 1, 1, 13, 13 };
+            return new List<int> {20, 20, 21, 22, 23, 1, 1, 13, 13};
         }
 
         private static List<int> GetKamiyoCardsId()
         {
-            return new List<int> { 32, 36, 31, 31, 33, 33, 34, 34, 46 };
+            return new List<int> {32, 36, 31, 31, 33, 33, 34, 34, 46};
         }
 
         public static List<int> GetBlackSilenceMaskCardsId()
         {
-            return new List<int> { 705206, 705207, 705208, 39, 40, 41, 42, 702001, 702004 };
+            return new List<int> {705206, 705207, 705208, 39, 40, 41, 42, 702001, 702004};
         }
 
         private static List<int> GetHayateCardsId()
         {
-            return new List<int> { 49, 51, 53, 48, 50, 50, 56, 52, 52, 52 };
+            return new List<int> {49, 51, 53, 48, 50, 50, 56, 52, 52, 52};
         }
 
         public static void SetPassiveCombatLog(PassiveAbilityBase passive, BattleUnitModel owner)
@@ -281,7 +296,7 @@ namespace ModPack21341.Utilities
 
         public static void AddUnitSephiraOnly(StageLibraryFloorModel instance, StageModel stage, UnitDataModel data)
         {
-            var list = (List<UnitBattleDataModel>)instance.GetType().GetField("_unitList", AccessTools.all)
+            var list = (List<UnitBattleDataModel>) instance.GetType().GetField("_unitList", AccessTools.all)
                 ?.GetValue(instance);
             var unitBattleDataModel = new UnitBattleDataModel(stage, data);
             if (!unitBattleDataModel.unitData.isSephirah) return;
@@ -291,14 +306,14 @@ namespace ModPack21341.Utilities
 
         public static void ClearCharList(StageLibraryFloorModel instance)
         {
-            var list = (List<UnitBattleDataModel>)instance.GetType().GetField("_unitList", AccessTools.all)
+            var list = (List<UnitBattleDataModel>) instance.GetType().GetField("_unitList", AccessTools.all)
                 ?.GetValue(instance);
             list?.Clear();
         }
 
         public static void FillBaseUnit(StageLibraryFloorModel floor)
         {
-            var modelTeam = (List<UnitBattleDataModel>)typeof(StageLibraryFloorModel).GetField("_unitList",
+            var modelTeam = (List<UnitBattleDataModel>) typeof(StageLibraryFloorModel).GetField("_unitList",
                     AccessTools.all)
                 ?.GetValue(Singleton<StageController>.Instance.GetStageModel().GetFloor(floor.Sephirah));
             var stage = Singleton<StageController>.Instance.GetStageModel();
@@ -318,19 +333,19 @@ namespace ModPack21341.Utilities
         {
             var component = instance.GetComponent<CanvasGroup>();
             var dialog = dialogs[Random.Range(0, dialogs.Count)].dialog;
-            var txtAbnormalityDlg = (TextMeshProUGUI)typeof(BattleDialogUI).GetField("_txtAbnormalityDlg",
+            var txtAbnormalityDlg = (TextMeshProUGUI) typeof(BattleDialogUI).GetField("_txtAbnormalityDlg",
                 AccessTools.all)?.GetValue(instance);
             txtAbnormalityDlg.text = dialog;
             txtAbnormalityDlg.fontMaterial.SetColor("_GlowColor",
                 SingletonBehavior<BattleManagerUI>.Instance.negativeCoinColor);
             txtAbnormalityDlg.color = SingletonBehavior<BattleManagerUI>.Instance.negativeTextColor;
-            var canvas = (Canvas)typeof(BattleDialogUI).GetField("_canvas",
+            var canvas = (Canvas) typeof(BattleDialogUI).GetField("_canvas",
                 AccessTools.all)?.GetValue(instance);
             canvas.enabled = true;
             component.interactable = true;
             component.blocksRaycasts = true;
             txtAbnormalityDlg.GetComponent<AbnormalityDlgEffect>().Init();
-            var _ = (Coroutine)typeof(BattleDialogUI).GetField("_routine",
+            var _ = (Coroutine) typeof(BattleDialogUI).GetField("_routine",
                 AccessTools.all)?.GetValue(instance);
             var method = typeof(BattleDialogUI).GetMethod("AbnormalityDlgRoutine", AccessTools.all);
             instance.StartCoroutine(method.Invoke(instance, new object[0]) as IEnumerator);
@@ -368,13 +383,13 @@ namespace ModPack21341.Utilities
             switch (originalUnitIndex)
             {
                 case 0:
-                    return new List<int> { 1, 2, 3 };
+                    return new List<int> {1, 2, 3};
                 case 1:
-                    return new List<int> { 0, 2, 3 };
+                    return new List<int> {0, 2, 3};
                 case 2:
-                    return new List<int> { 0, 1, 3 };
+                    return new List<int> {0, 1, 3};
                 default:
-                    return new List<int> { 0, 1, 2 };
+                    return new List<int> {0, 1, 2};
             }
         }
 
@@ -386,27 +401,36 @@ namespace ModPack21341.Utilities
             cardDictionary[id] = diceCardXmlInfo2;
             cardXmlList.Add(diceCardXmlInfo2);
         }
-        private static void SetCustomCardOption(CardOption option, LorId id, bool keywordsRequired, ref Dictionary<LorId, DiceCardXmlInfo> cardDictionary, ref List<DiceCardXmlInfo> cardXmlList)
+
+        private static void SetCustomCardOption(CardOption option, LorId id, bool keywordsRequired,
+            ref Dictionary<LorId, DiceCardXmlInfo> cardDictionary, ref List<DiceCardXmlInfo> cardXmlList)
         {
             var keywordsList = new List<string>();
             if (keywordsRequired) keywordsList = GetKeywordsList(id.id).ToList();
-            var diceCardXmlInfo2 = CardOptionChange(cardDictionary[id], new List<CardOption> { option }, keywordsRequired, keywordsList);
+            var diceCardXmlInfo2 = CardOptionChange(cardDictionary[id], new List<CardOption> {option}, keywordsRequired,
+                keywordsList);
             cardDictionary[id] = diceCardXmlInfo2;
             cardXmlList.Add(diceCardXmlInfo2);
         }
-        private static void SetRangeSpecial(LorId id, ref Dictionary<LorId, DiceCardXmlInfo> cardDictionary, ref List<DiceCardXmlInfo> cardXmlList)
+
+        private static void SetRangeSpecial(LorId id, ref Dictionary<LorId, DiceCardXmlInfo> cardDictionary,
+            ref List<DiceCardXmlInfo> cardXmlList)
         {
-            var diceCardXmlInfo2 = CardOptionChange(cardDictionary[id], new List<CardOption>(), false, null, "", "", 0, true);
+            var diceCardXmlInfo2 =
+                CardOptionChange(cardDictionary[id], new List<CardOption>(), false, null, "", "", 0, true);
             cardDictionary[id] = diceCardXmlInfo2;
             cardXmlList.Add(diceCardXmlInfo2);
         }
-        private static void SetAngelaCard(LorId id, ref Dictionary<LorId, DiceCardXmlInfo> cardDictionary, ref List<DiceCardXmlInfo> cardXmlList)
+
+        private static void SetAngelaCard(LorId id, ref Dictionary<LorId, DiceCardXmlInfo> cardDictionary,
+            ref List<DiceCardXmlInfo> cardXmlList)
         {
             var skinName = "";
             var mapName = "";
             var skinHeight = 0;
             SetAngelaCardInfo(id.id, ref skinName, ref mapName, ref skinHeight);
-            var diceCardXmlInfo2 = CardOptionChange(cardDictionary[id], new List<CardOption>(), false, null, skinName, mapName, skinHeight);
+            var diceCardXmlInfo2 = CardOptionChange(cardDictionary[id], new List<CardOption>(), false, null, skinName,
+                mapName, skinHeight);
             cardDictionary[id] = diceCardXmlInfo2;
             cardXmlList.Add(diceCardXmlInfo2);
         }
@@ -414,13 +438,16 @@ namespace ModPack21341.Utilities
         private static IEnumerable<string> GetKeywordsList(int id)
         {
             if (KamiyoCardList.Contains(id))
-                return new List<string> { "ModPack21341Init6", "ModPack21341Init1" };
+                return new List<string> {"ModPack21341Init6", "ModPack21341Init1"};
             if (MioCardList.Contains(id))
-                return new List<string> { "ModPack21341Init6", "ModPack21341Init2" };
+                return new List<string> {"ModPack21341Init6", "ModPack21341Init2"};
             if (HayateCardList.Contains(id))
-                return new List<string> { "ModPack21341Init6", "ModPack21341Init3" };
-            return SamuraiCardList.Contains(id) ? new List<string> { "ModPack21341Init6", "ModPack21341Init4" } : new List<string> { "ModPack21341Init6" };
+                return new List<string> {"ModPack21341Init6", "ModPack21341Init3"};
+            return SamuraiCardList.Contains(id)
+                ? new List<string> {"ModPack21341Init6", "ModPack21341Init4"}
+                : new List<string> {"ModPack21341Init6"};
         }
+
         private static void SetAngelaCardInfo(int id, ref string skinName, ref string mapName, ref int skinHeight)
         {
             switch (id)
@@ -463,7 +490,9 @@ namespace ModPack21341.Utilities
                     break;
             }
         }
-        private static DiceCardXmlInfo CardOptionChange(DiceCardXmlInfo cardXml, List<CardOption> option, bool keywordRequired, List<string> keywords,
+
+        private static DiceCardXmlInfo CardOptionChange(DiceCardXmlInfo cardXml, List<CardOption> option,
+            bool keywordRequired, List<string> keywords,
             string skinName = "", string mapName = "", int skinHeight = 0, bool changeRange = false)
         {
             var spec = new DiceCardSpec
@@ -497,11 +526,12 @@ namespace ModPack21341.Utilities
                 Keywords = keywordRequired ? keywords : cardXml.Keywords
             };
         }
+
         public static void ChangeCardItem(ItemXmlDataList instance)
         {
-            var dictionary = (Dictionary<LorId, DiceCardXmlInfo>)instance.GetType()
+            var dictionary = (Dictionary<LorId, DiceCardXmlInfo>) instance.GetType()
                 .GetField("_cardInfoTable", AccessTools.all).GetValue(instance);
-            var list = (List<DiceCardXmlInfo>)instance.GetType()
+            var list = (List<DiceCardXmlInfo>) instance.GetType()
                 .GetField("_cardInfoList", AccessTools.all).GetValue(instance);
             foreach (var (key, _) in dictionary.Where(x => x.Key.packageId == ModPack21341Init.PackageId).ToList())
             {
@@ -534,15 +564,17 @@ namespace ModPack21341.Utilities
                     SetRangeSpecial(key, ref dictionary, ref list);
                     continue;
                 }
+
                 SetBaseKeywordCard(key, ref dictionary, ref list);
             }
         }
 
         public static void ChangeDialogItem(BattleDialogXmlList instance)
         {
-            var dictionary = (Dictionary<string, BattleDialogRoot>)instance.GetType()
+            var dictionary = (Dictionary<string, BattleDialogRoot>) instance.GetType()
                 .GetField("_dictionary", AccessTools.all).GetValue(instance);
-            foreach (var item in dictionary.SelectMany(x => x.Value.characterList).Where(y => y.id.packageId == ModPack21341Init.PackageId))
+            foreach (var item in dictionary.SelectMany(x => x.Value.characterList)
+                .Where(y => y.id.packageId == ModPack21341Init.PackageId))
             {
                 if (item.id.id == 200)
                 {
@@ -555,6 +587,7 @@ namespace ModPack21341.Utilities
                     item.dialogTypeList.Add(new BattleDialogType
                         {dialogType = DialogType.SPECIAL_EVENT, dialogList = dlgList});
                 }
+
                 if (item.id.id == 3)
                 {
                     var dlg1 = new BattleDialog
@@ -567,10 +600,11 @@ namespace ModPack21341.Utilities
                         dialogID = "1",
                         dialogContent = "I..I...Ahhhhh!"
                     };
-                    var dlgList = new List<BattleDialog> { dlg1,dlg2 };
+                    var dlgList = new List<BattleDialog> {dlg1, dlg2};
                     item.dialogTypeList.Add(new BattleDialogType
-                        { dialogType = DialogType.SPECIAL_EVENT, dialogList = dlgList });
+                        {dialogType = DialogType.SPECIAL_EVENT, dialogList = dlgList});
                 }
+
                 if (item.id.id == 201)
                 {
                     var dlg1 = new BattleDialog
@@ -583,10 +617,11 @@ namespace ModPack21341.Utilities
                         dialogID = "1",
                         dialogContent = "I must stop her now"
                     };
-                    var dlgList = new List<BattleDialog> { dlg1, dlg2 };
+                    var dlgList = new List<BattleDialog> {dlg1, dlg2};
                     item.dialogTypeList.Add(new BattleDialogType
-                        { dialogType = DialogType.SPECIAL_EVENT, dialogList = dlgList });
+                        {dialogType = DialogType.SPECIAL_EVENT, dialogList = dlgList});
                 }
+
                 if (item.id.id == 202)
                 {
                     var dlg1 = new BattleDialog
@@ -599,10 +634,11 @@ namespace ModPack21341.Utilities
                         dialogID = "1",
                         dialogContent = "Not bad.Let's see how you'll handle this now!"
                     };
-                    var dlgList = new List<BattleDialog> { dlg1, dlg2 };
+                    var dlgList = new List<BattleDialog> {dlg1, dlg2};
                     item.dialogTypeList.Add(new BattleDialogType
-                        { dialogType = DialogType.SPECIAL_EVENT, dialogList = dlgList });
+                        {dialogType = DialogType.SPECIAL_EVENT, dialogList = dlgList});
                 }
+
                 if (item.id.id == 14)
                 {
                     var dlg1 = new BattleDialog
@@ -615,10 +651,11 @@ namespace ModPack21341.Utilities
                         dialogID = "1",
                         dialogContent = "Think you can keep up with me?..."
                     };
-                    var dlgList = new List<BattleDialog> { dlg1, dlg2 };
+                    var dlgList = new List<BattleDialog> {dlg1, dlg2};
                     item.dialogTypeList.Add(new BattleDialogType
-                        { dialogType = DialogType.SPECIAL_EVENT, dialogList = dlgList });
+                        {dialogType = DialogType.SPECIAL_EVENT, dialogList = dlgList});
                 }
+
                 if (item.id.id == 8 || item.id.id == 9)
                 {
                     var dlg1 = new BattleDialog
@@ -631,9 +668,9 @@ namespace ModPack21341.Utilities
                         dialogID = "1",
                         dialogContent = "Time to end this."
                     };
-                    var dlgList = new List<BattleDialog> { dlg1, dlg2 };
+                    var dlgList = new List<BattleDialog> {dlg1, dlg2};
                     item.dialogTypeList.Add(new BattleDialogType
-                        { dialogType = DialogType.SPECIAL_EVENT, dialogList = dlgList });
+                        {dialogType = DialogType.SPECIAL_EVENT, dialogList = dlgList});
                 }
             }
         }
